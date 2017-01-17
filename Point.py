@@ -9,5 +9,7 @@ class Point(object):
 
     def get_coordinate(self):
         return (self.x, self.y)
-    
+    def toString(self):
+        return "(" + str(self.x + "," + str(self.y + ")"))
+
     
