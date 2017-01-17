@@ -5,34 +5,47 @@
 ##  send commands to slave( ie pi)
 ##  disconnect
 import bluetooth
-class BlutoothController(object):
-    def __init__(self, target_name, py_address):
-        self.target_name = "KAIZEN"
-        self.target_address = None
-        self.nearby_devices = None
-        self.is_connected = False
-        self.py_address = "B8:27:EB:26:F6:A4"
-        self.port = 1
-        self.sock = None
+class BluetoothController(object):
+    target_name = "KAIZEN"
+    target_address = "B8:27:EB:26:F6:A4"
+    nearby_devices = None
+    is_connected = False
+    port = 1
+    sock = None
+    #def __init__(se, target_name, target_address,target_port):
+    #    target_name = "KAIZEN"
+    #    target_address = target_address
+    #    port = target_port 
 
-    def connect(self):
-        self.nearby_devices = bluetooth.discover_devices()
-        for bluetooth_address in self.nearby_devices:
-            if self.target_name == bluetooth.lookup_name(bluetooth_address):
-                self.is_connected = True
-                self.target_address = bluetooth_address
-                if self.target_address is not None:
-                    print "found target bluetooth device with address ", self.target_address
+    @staticmethod
+    def connect():
+        print 'Blutooth Controller Searching for devices... '
+        nearby_devices = bluetooth.discover_devices()
+        for bluetooth_address in nearby_devices:
+            if BluetoothController.target_name == bluetooth.lookup_name(bluetooth_address):
+                BluetoothController.is_connected = True
+                target_address = bluetooth_address
+                if target_address is not None:
+                    print "Blutooth Controller  found target with address ", target_address
+                    BluetoothController.connect_to_slave()
                 else:
                     print "could not find target bluetooth device nearby"
                 break
-        self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        print "Connecting to Slave...."
-        self.sock.connect((self.py_address, self.port))
-
-    def bluetooth_disconnect(self):
-        self.sock.close()
-
-    def send_command(self,command):
-        self.sock.send(command)
+    @staticmethod
+    def connect_to_slave():
+        BluetoothController.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+        print "Blutooth Controller  Connecting to Slave...."
+        BluetoothController.sock.connect((BluetoothController.target_address, BluetoothController.port))
+        print"Blutooth Controller conected success"
+    @staticmethod    
+    def disconnect():
+        BluetoothController.sock.close()
+    @staticmethod
+    def send_command(command):
+        BluetoothController.sock.send(command)
         
+if __name__ == '__main__':
+    #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
+    BluetoothController.connect()
+    BluetoothController.send_command("f")
+    raw_input("Press to close")
