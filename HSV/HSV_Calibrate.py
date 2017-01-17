@@ -7,8 +7,9 @@ import urllib2
 import sys
 from Color import Color
 
-upperColor = Color()
-lowerColor = Color()
+colorName =raw_input("Enter the color : ")
+upperColor = Color(colorName,1)
+lowerColor = Color(colorName,0)
 cap=cv2.VideoCapture(0)
 
 def HSVProcess(x):
@@ -33,7 +34,6 @@ cv2.createTrackbar('s','img',0,255,HSVProcess)
 cv2.createTrackbar('v','img',0,255,HSVProcess)
 cv2.createTrackbar('t','img',0,255,HSVProcess)
 cv2.createTrackbar('e1','img',0,255,HSVProcess)
-colorName =raw_input("Enter the color : ")
 
 
 while(1):
@@ -44,7 +44,7 @@ while(1):
 
         t = cv2.getTrackbarPos('t','img')
 
-        mask = cv2.inRange(hsv, lowerColor.getArray(), upperColor.getArray())
+        mask = cv2.inRange(hsv, lowerColor.get_array(), upperColor.get_array())
 
         res = cv2.bitwise_and(resized,resized, mask= mask)
         gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)

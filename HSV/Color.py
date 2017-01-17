@@ -1,11 +1,7 @@
 import numpy as np
 class Color():
-    def __init__(self):
-        self.H=0
-        self.S=0
-        self.V=0
-
-    def __init__(self,color,type):
+    
+    def __init__(self,color="red", type=1):
         colorFile = open(color + ".txt","r")
         colorData = colorFile.read()
         colorFile.close()
@@ -23,6 +19,6 @@ class Color():
     def toString(self):
         return str(self.H)  + "," + str(self.S)  + "," + str(self.V)
     
-    def getArray(self):
-        return np.array([self.H , self.S , self.V])
+    def get_array(self):
+        return np.array([int(self.H), int(self.S), int(self.V)])
 
