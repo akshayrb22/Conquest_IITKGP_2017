@@ -38,7 +38,7 @@ cv2.createTrackbar('e1','img',0,255,HSVProcess)
 
 while(1):
  
-        res,i = cap.read(1)
+        res, i = cap.read(1)
         resized = imutils.resize(i, width=690)
         hsv = cv2.cvtColor(resized, cv2.COLOR_BGR2HSV)
 
