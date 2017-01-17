@@ -9,12 +9,12 @@ def angle_for_marker():
 
     
 
-    
+    '''
     cv2.drawContours(resized, [c2], -1, (0, 255, 0), 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
     cv2.circle(resized, (cX2, cY2), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
     cv2.putText(resized, shape3+'y', (cX2, cY2), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 0, 255), 2)
     cv2.line(resized,(cX,cY),(cX2,cY2),(255,cyan,0),2)#draws line from one point to the other, last arg means thickness
-    cyan=cyan-1
+    cyan=cyan-1'''
     return ang
 
 def distance(pt1,pt2):

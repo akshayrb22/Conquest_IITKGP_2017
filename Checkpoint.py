@@ -4,18 +4,17 @@
 ##  contour
 ##  area
 ##  angle with respect townhall
-##  define a function to locate contour position
-##  class point to represent position i.e. x coordinate,y coordinate, point
 
+from ImageProcess import Frame
+import Utils
+from Point import Point
+import cv2
 
 class Checkpoint(object):
-    global area 
-    global center_point
-    global cX
-    global cY
     def __init__(self):
-        
-    def FindContour(self,image):
+        self.area = 0
+        self.center_point = Point(0,0)
+    def FindContour(self, image):
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
@@ -28,6 +27,23 @@ class Checkpoint(object):
         contours = contours[0] if imutils.is_cv2() else contours[1]
         sd = ShapeDetector()
         return contours
+    def FindCenter(contour):
+        Frame.get_center_from_contour(contour)
+    def FindAngle():
+        angle_for_marker()
+    
+
+if __name__ == '__main__':
+    Resource = Checkpoint()
+    checkpt_cntr = Resource.FindContour(Frame.image)
+    Resource.FindAngle()
+    Resource.FindCenter(checkpt_cntr)
+    
+
+
+
+
+
     
 
 
