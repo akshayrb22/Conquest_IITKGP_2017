@@ -2,4 +2,3 @@
 ##Functionalities required-
 ##  a graph class
 ##  mapped graph
-##  
