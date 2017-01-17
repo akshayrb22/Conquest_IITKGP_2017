@@ -29,7 +29,7 @@ class Frame(object):
 
     @staticmethod
     def cap_frame():
-        Frame.res, Frame.image = Frame.camera.read(1)
+        Frame.res, Frame.image = Frame.camera.read()
     @staticmethod
     def find_ratio():
         Frame.resized = imutils.resize(Frame.image, height=600)
@@ -40,7 +40,8 @@ class Frame(object):
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, lower_color.getArray(), upper_color.getArray())
+        mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
+
     @staticmethod
     def get_center_from_contour(contour):
         for c in contour:
@@ -66,8 +67,10 @@ class Frame(object):
 
 if __name__ == '__main__':
     Frame.connect(0)
-    Frame.cap_frame()
-    Frame.find_ratio()
-    cv2.imwrite("frame.jpg", Frame.image)
-    cv2.imshow("frame", Frame.image)
-    Frame.get_center_color("red")
+    while True:
+        Frame.cap_frame()
+        Frame.find_ratio()
+        cv2.imwrite("frame.jpg", Frame.image)
+        cv2.imshow("frame.jpg", Frame.image)
+        #rame.get_center_color("red")
+    quit()
