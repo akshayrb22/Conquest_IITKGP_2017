@@ -30,7 +30,7 @@ class Checkpoint(object):
     def FindCenter(contour):
         Frame.get_center_from_contour(contour)
     def FindAngle():
-        angle_for_marker()
+        angle_for_marker((0,0),FindCenter()
     
 
 if __name__ == '__main__':

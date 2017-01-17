@@ -7,9 +7,10 @@
 
 import math
 import numpy as np
-def angle_for_marker():
-    opp=float((((cX-cX)*(cX-cX))+((cY-cY2)*(cY-cY2)))^(1/2))
-    hyp=float((((cX-cX2)*(cX-cX2))+((cY-cY2)*(cY-cY2)))^(1/2))
+def angle_for_marker(p1,p2):
+    
+    opp=float((((p1.x-p1.x)*(p1.x-p1.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
+    hyp=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
     sinn=float(opp/hyp)
     angle = math.acos(float(sinn))
     ang=round(math.degrees(angle),2)
@@ -25,9 +26,8 @@ def angle_for_marker():
     return ang
 
 def distance(pt1,pt2):
-    (x1,y1)=pt1
-    (x2,y2)=pt2
-    dist=float((((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)))^(1/2))
+    
+    dist=float((((pt1.x-pt2.x)*(pt1.x-pt2.x))+((pt1.y-pt2.y)*(pt1.y-pt2.y)))^(1/2))
     return dist
     
     
