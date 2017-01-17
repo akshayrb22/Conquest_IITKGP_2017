@@ -10,6 +10,9 @@ class Point(object):
     def get_coordinate(self):
         return (self.x, self.y)
     def toString(self):
-        return "(" + str(self.x + "," + str(self.y + ")"))
+        return "(" + str(self.x) + "," + str(self.y) + ")"
 
+if __name__ == '__main__':
+    point = Point(10,20)
+    print point.toString()
     
