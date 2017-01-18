@@ -23,7 +23,8 @@ class BotController(object):
 
         self.position.x = (point_of_red.x + point_of_green.x) / 2
         self.position.y = (point_of_red.y + point_of_green.y) / 2
-    
+        return self.position
+
     def moveforward(self):
         BluetoothController.send_command("f")
         
