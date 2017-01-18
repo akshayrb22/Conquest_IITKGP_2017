@@ -17,13 +17,14 @@ class BotController(object):
         self.angle = 0
     def getPosition(self):
         #assume that you are calling Akshyas Image proccesing function
-        Frame.cap_frame()
+        Frame.capture_frame()
         contours, point_of_red = Frame.processFrame("red", "BOT T", (0, 0, 255))
         contours, point_of_green = Frame.processFrame("green", "BOT B", (0, 255, 0))
 
         self.position.x = (point_of_red.x + point_of_green.x) / 2
         self.position.y = (point_of_red.y + point_of_green.y) / 2
-    
+        return self.position
+
     def moveforward(self):
         BluetoothController.send_command("f")
         

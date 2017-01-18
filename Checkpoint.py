@@ -18,8 +18,4 @@ class Checkpoint(object):
         self.quad = quad
     def __lt__(self, other):
          return self.distance < other.distance
-    #def FindCenter(contour):
-    #    Frame.get_center_from_contour(contour)
-    #def FindAngle(self):
-    #    angle_for_marker(Point(0,0), self.center_point)
     
