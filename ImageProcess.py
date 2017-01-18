@@ -40,8 +40,13 @@ class Frame(object):
         Frame.res, Frame.image = Frame.camera.read()
     @staticmethod
     def show_frame():
-        cv2.imwrite("frame.jpg", Frame.image)
-        cv2.imshow("frame.jpg", Frame.image)
+        hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
+        res = cv2.bitwise_and(Frame.resized,Frame.resized)
+        gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        #cv2.imwrite("frame.jpg", Frame.resized)
+        cv2.imshow("frame", Frame.resized)
+        cv2.waitKey(0)
     @staticmethod
     def find_ratio():
         Frame.resized = imutils.resize(Frame.image, height=600)
@@ -50,26 +55,29 @@ class Frame(object):
 
     @staticmethod
     def processFrame(color,contour_name,contour_color):
-        print 'Frame: processFrame called '
+        #print 'Frame: processFrame called '
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
-        contours=  Frame.find_contour()
-        center, area = Frame.get_center(contours,contour_name,contour_color)
-        return contours,center
+        
+        
+        contours=  Frame.find_contour(lower_color.T)
+        checkPointList = Frame.get_center(contours,contour_name,contour_color)
+        return contours,checkPointList
 
 
     @staticmethod
     def processResource(color,contour_name,contour_color):
-        print 'Frame: processResource called '
+        #print 'Frame: processResource called '
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
-        contour =  Frame.find_contour()
+        
+        contour =  Frame.find_contour(lower_color.T)
         return Frame.processArea(contour)
 
     @staticmethod
@@ -98,6 +106,7 @@ class Frame(object):
                 position.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
+                
                 c = c.astype("float")
                 c *= Frame.ratio
                 c = c.astype("int")
@@ -144,13 +153,13 @@ class Frame(object):
         return checkPointList
         
     @staticmethod
-    def find_contour():
-        print 'Frame: findContour called '
+    def find_contour(threshold):
+        #print 'Frame: findContour called '
         gray = cv2.cvtColor(Frame.image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 120, 255, cv2.THRESH_BINARY)[1]
+        thresh = cv2.threshold(blurred, float(threshold), 255, cv2.THRESH_BINARY)[1]
         edges = cv2.Canny(thresh,100,200)
-        edges_resized = imutils.resize(edges, width=600)
+        edges_resized = imutils.resize(edges, width=1000)
         # find contours in the thresholded image and initialize the
         cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
@@ -164,7 +173,11 @@ class Frame(object):
 
     @staticmethod
     def get_center(contour,contour_name,color):
-        print 'Frame: getCenter called '
+        #print 'Frame: getCenter called '
+
+        #orign
+        origin = Point(0,0)
+        checkPointList = []
         for c in contour:
             # compute the center of the contour, then detect the name of the
             # shape using only the contour
@@ -178,17 +191,19 @@ class Frame(object):
                 point = Point()
                 point.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio)#uses moment of inertia concept
                 point.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
+                dist = float((((origin.x-point.x)*(origin.x-point.x))+((origin.y - point.y )*(origin.x - point.y)))^(1/2))
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
+                print "Position: " + point.toString()
                 c = c.astype("float")
                 c *= Frame.ratio
                 c = c.astype("int")
                 area=cv2.contourArea(c)
                 if area> 20:
                     Frame.draw_contour(c,contour_name,point,color)
-                
-                print point.toString()
-                return point, area
+                    checkPointList.append(Checkpoint(area,point,dist,0,0,0))
+                #print point.toString()
+        return checkPointList
 
 '''
 if __name__ == '__main__':
