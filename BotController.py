@@ -9,17 +9,19 @@
 ##  should contain the bot class with all it's properties
 from Point import Point
 from BluetoothController import BluetoothController
+from ImageProcess import Frame
 
 class BotController(object):
     def __init__(self):
-        self.position = Point(0,0)
-        self.angle=0
+        self.position = Point(0, 0)
+        self.angle = 0
     def getPosition(self):
         #assume that you are calling Akshyas Image proccesing function
-        point_of_red = Point(10, 10) #TODO
-        point_of_green = Point(10,20)
+        Frame.cap_frame()
+        contours, point_of_red = Frame.processFrame("red", "BOT T", (0, 0, 255))
+        contours, point_of_green = Frame.processFrame("green", "BOT B", (0, 255, 0))
 
-        self.position.x  = (point_of_red.x + point_of_green.x) / 2
+        self.position.x = (point_of_red.x + point_of_green.x) / 2
         self.position.y = (point_of_red.y + point_of_green.y) / 2
     
     def moveforward(self):
