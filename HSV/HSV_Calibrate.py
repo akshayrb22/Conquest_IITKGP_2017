@@ -10,7 +10,7 @@ from Color import Color
 colorName =raw_input("Enter the color : ")
 upperColor = Color(colorName,1)
 lowerColor = Color(colorName,0)
-cap=cv2.VideoCapture(0)
+cap=cv2.VideoCapture(1)
 
 def HSVProcess(x):
 

@@ -61,6 +61,6 @@ if __name__ == '__main__':
     bot.getPosition()
     BluetoothController.connect()
     print bot.position.toString()
-    bot.turnClockwise()
+    bot.moveforward()
     raw_input("press")
     
