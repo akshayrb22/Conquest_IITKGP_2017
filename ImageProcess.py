@@ -14,7 +14,8 @@ from PIL import Image
 import imutils
 from Point import Point
 from HSV import Color
-
+from pyimagesearch import shapedetector
+cap=cv2.VideoCapture(cameraID)
 class Frame(object):
     elements = []
     camera = None
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     while True:
         Frame.cap_frame()
         Frame.find_ratio()
-        cv2.imwrite("frame.jpg", Frame.image)
+        #cv2.imwrite("frame.jpg", Frame.image)
         cv2.imshow("frame.jpg", Frame.image)
         #rame.get_center_color("red")
     quit()
