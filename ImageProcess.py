@@ -30,14 +30,16 @@ class Frame(object):
     @staticmethod
     def connect( cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
+        Frame.camera.set(10,0.5)
         
     @staticmethod
     def disconnect():
         cv2.VideoCapture.release()
 
     @staticmethod
-    def cap_frame():
+    def capture_frame():
         Frame.res, Frame.image = Frame.camera.read()
+        Frame.find_ratio()
     @staticmethod
     def show_frame():
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
@@ -55,7 +57,8 @@ class Frame(object):
 
     @staticmethod
     def processFrame(color,contour_name,contour_color):
-        #print 'Frame: processFrame called '
+        #print 'Frame: processFrame called
+        
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
@@ -76,16 +79,16 @@ class Frame(object):
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
-        
+        #cv2.imshow('result',result)
         contour =  Frame.find_contour(lower_color.T)
-        return Frame.processArea(contour)
+        return Frame.processArea(contour,contour_color)
 
     @staticmethod
-    def processArea(contour):
+    def processArea(contour,contour_color):
 
         cyan = 255
         #orign
-        origin = Point(0,0)
+        origin = Point(400 ,400)
 
         checkPointList = []
 
@@ -110,19 +113,22 @@ class Frame(object):
                 c = c.astype("float")
                 c *= Frame.ratio
                 c = c.astype("int")
-                area=cv2.contourArea(c)
-                
-                upper_bound = area/6.25 + 800
-                lower_bound = area/6.25 + 200
-                if area > lower_bound and area <upper_bound:
+                area = cv2.contourArea(c)
+                #print "area :" + str(area)
+                upper_bound =  30#area/6.25 + 400
+                lower_bound =  50#area/6.25 + 50
+                display_contour = False
+                if area > 1300: #area > lower_bound and area < upper_bound:
                     shapeMessage = 'sqr'
-                elif area > lower_bound/2 and area < (upper_bound/2+ 400):
+                    display_contour = True
+                elif  area > 800:#area > lower_bound/2 and area < (upper_bound/2+ 400):
                     shapeMessage = 'trng'
+                    display_contour = True
                 else:
                     shapeMessage = 'null'
-                if area > 17:
+                if area < 2000  and display_contour:
                     if(shape == 'circle' or shape == 'square' or shape == 'rectangle' or shape == 'triangle'):
-                        if area > 255:
+                        if area > 150 :
                             dist2 = float((((origin.x - origin.x ) * (origin.x - origin.x ))+((origin.y - position.y )*(origin.y - position.y )))^(1/2))
                             dist = float((((origin.x-position.x)*(origin.x-position.x))+((origin.y - position.y )*(origin.x - position.y)))^(1/2))
                             sinn = float(dist2/dist)
@@ -143,7 +149,7 @@ class Frame(object):
                             
                             checkPointList.append(Checkpoint(area,position,dist,cyan,angle,quad))
                             
-                            cv2.drawContours(Frame.resized, [c], -1, (0, 255, 0), 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
+                            cv2.drawContours(Frame.resized, [c], -1, contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
                             cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 0, 255), 2)
                             cv2.line(Frame.resized,origin.get_coordinate(),position.get_coordinate(),(255,cyan,0),2)#draws line from one point ti the other, last arg means thickness
@@ -157,9 +163,10 @@ class Frame(object):
         #print 'Frame: findContour called '
         gray = cv2.cvtColor(Frame.image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        thresh = cv2.threshold(blurred, float(threshold), 255, cv2.THRESH_BINARY)[1]
-        edges = cv2.Canny(thresh,100,200)
+        thresh = cv2.threshold(blurred, 80 , 100, cv2.THRESH_BINARY)[1]
+        edges = cv2.Canny(thresh,10,100)
         edges_resized = imutils.resize(edges, width=1000)
+        cv2.imshow('contour', edges_resized)
         # find contours in the thresholded image and initialize the
         cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
@@ -167,7 +174,7 @@ class Frame(object):
     
     @staticmethod
     def draw_contour(contour,contour_name,postion,color):
-        cv2.drawContours(Frame.resized, [contour], -1, (0, 255, 0), 2)
+        cv2.drawContours(Frame.resized, [contour], -1, color, 2)
         cv2.putText(Frame.resized, contour_name, (postion.x, postion.y), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 255, 255), 2)
         cv2.circle(Frame.resized, (postion.x, postion.y),3 , (0, 0, 0), -1)
 
@@ -199,7 +206,7 @@ class Frame(object):
                 c *= Frame.ratio
                 c = c.astype("int")
                 area=cv2.contourArea(c)
-                if area> 20:
+                if area> 200:
                     Frame.draw_contour(c,contour_name,point,color)
                     checkPointList.append(Checkpoint(area,point,dist,0,0,0))
                 #print point.toString()

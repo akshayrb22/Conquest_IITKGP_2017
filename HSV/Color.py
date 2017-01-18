@@ -29,3 +29,4 @@ class Color():
 if __name__ == '__main__':
     color = Color("yellow",1)
     print color.toString()
+    print color.get_array()
