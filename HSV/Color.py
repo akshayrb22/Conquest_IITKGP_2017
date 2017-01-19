@@ -23,7 +23,9 @@ class Color():
     
     def get_array(self):
         return np.array([int(self.H), int(self.S), int(self.V)])
-
+    
+    def get(self):
+        return (self.H,self.S,self.V)
 
 
 if __name__ == '__main__':

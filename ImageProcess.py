@@ -61,9 +61,21 @@ class Frame(object):
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, checkpointType.lower_color.get_array(), checkpointType.upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
-        #cv2.imshow('result',result)
-        contour =  Frame.find_contour(checkpointType.lower_color.T)
-        return Frame.processCheckpoints(contour, checkpointType)
+        gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        thresh = cv2.threshold(blurred, float(checkpointType.lower_color.T) , 100, cv2.THRESH_BINARY)[1]
+        edges = cv2.Canny(thresh,10,100)
+        edges_resized = imutils.resize(edges, width=1000)
+        #cv2.imshow('edges_resized', edges_resized)
+        # find contours in the thresholded image and initialize the
+        cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contour = cnts[0] if imutils.is_cv2() else cnts[1]
+        
+        #contour =  Frame.find_contour(checkpointType.lower_color.T)
+        if(checkpointType.type == "Res"):
+            return Frame.processCheckpoints(contour, checkpointType)
+        else:
+            return Frame.get_center(contour,checkpointType)
 
     @staticmethod
     def processCheckpoints(contour,checkpointType):
@@ -97,7 +109,7 @@ class Frame(object):
                 area = cv2.contourArea(c)
 
                 display_contour = False
-                if area > 1000:
+                if area > 1000: 
                     shapeMessage = 'sqr'
                     display_contour = True
                 elif  area > 800:
@@ -158,7 +170,7 @@ class Frame(object):
         cv2.circle(Frame.resized, (postion.x, postion.y),3 , (0, 0, 0), -1)
 
     @staticmethod
-    def get_center(contour,contour_name,color):
+    def get_center(contour,checkpointType):
         #print 'Frame: getCenter called '
 
         #orign
@@ -180,13 +192,13 @@ class Frame(object):
                 dist = float((((origin.x-point.x)*(origin.x-point.x))+((origin.y - point.y )*(origin.x - point.y)))^(1/2))
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
-                print "Position: " + point.toString()
+                #print "Position: " + point.toString()
                 c = c.astype("float")
                 c *= Frame.ratio
                 c = c.astype("int")
                 area=cv2.contourArea(c)
-                if area> 200:
-                    Frame.draw_contour(c,contour_name,point,color)
+                if area > 200:
+                    Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
                     checkPointList.append(Checkpoint(area,point,dist,0,0,0))
                 #print point.toString()
         return checkPointList

@@ -27,6 +27,6 @@ class CheckpointType(object):
         self.area = Area(color)
         self.upper_color = Color.Color(color, 1)
         self.lower_color = Color.Color(color, 0)
-        self.checkpoint_type = checkpoint_type
+        self.type = checkpoint_type
 
 
