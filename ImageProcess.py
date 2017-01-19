@@ -28,10 +28,13 @@ class Frame(object):
     resized = None
     contour = None
     @staticmethod
-    def connect( cameraID):
+    def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
+<<<<<<< HEAD
+=======
         Frame.camera.set(10,0.5)
         
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
     @staticmethod
     def disconnect():
         cv2.VideoCapture.release()
@@ -56,14 +59,29 @@ class Frame(object):
         return Frame.image, Frame.resized, Frame.ratio
 
     @staticmethod
+<<<<<<< HEAD
+    def processFrame(color, contour_name, contour_color):
+        print 'Frame: processFrame called '
+=======
     def processFrame(color,contour_name,contour_color):
         #print 'Frame: processFrame called
         
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
+<<<<<<< HEAD
+        contours = Frame.find_contour()
+        center, area = Frame.get_center(contours, contour_name, contour_color)
+        return contours, center
+
+
+    @staticmethod
+    def processResource(color, contour_name, contour_color):
+        print 'Frame: processResource called '
+=======
         
         
         contours=  Frame.find_contour(lower_color.T)
@@ -74,21 +92,31 @@ class Frame(object):
     @staticmethod
     def processResource(color,contour_name,contour_color):
         #print 'Frame: processResource called '
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
         lower_color = Color.Color(color, 0)
         upper_color = Color.Color(color, 1)
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
+<<<<<<< HEAD
+        contour = Frame.find_contour()
+        return Frame.processArea(contour)
+=======
         #cv2.imshow('result',result)
         contour =  Frame.find_contour(lower_color.T )
         return Frame.processArea(contour,contour_color)
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
 
     @staticmethod
     def processArea(contour,contour_color):
 
         cyan = 255
         #orign
+<<<<<<< HEAD
+        origin = Point(0, 0)
+=======
         origin = Point(400 ,400)
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
 
         checkPointList = []
 
@@ -98,14 +126,12 @@ class Frame(object):
             # compute the center of the contour, then detect the name of the
             # shape using only the contour
             Moment = cv2.moments(c)
-            
-
             if Moment["m00"] > 0:
 
                 shapeDetector = ShapeDetector()
                 shape = shapeDetector.detect(c)
                 position = Point()
-                position.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio)#uses moment of inertia concept
+                position.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio) #uses moment of inertia concept
                 position.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
@@ -114,11 +140,17 @@ class Frame(object):
                 c *= Frame.ratio
                 c = c.astype("int")
                 area = cv2.contourArea(c)
+<<<<<<< HEAD
+                upper_bound = area/6.25 + 800
+                lower_bound = area/6.25 + 200
+                if area > lower_bound and area < upper_bound:
+=======
                 #print "area :" + str(area)
                 upper_bound =  30#area/6.25 + 400
                 lower_bound =  50#area/6.25 + 50
                 display_contour = False
                 if area > 1300: #area > lower_bound and area < upper_bound:
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
                     shapeMessage = 'sqr'
                     display_contour = True
                 elif  area > 800:#area > lower_bound/2 and area < (upper_bound/2+ 400):
@@ -147,12 +179,12 @@ class Frame(object):
                                 quad = 1
                                 angle = 90 - angle
                             
-                            checkPointList.append(Checkpoint(area,position,dist,cyan,angle,quad))
+                            checkPointList.append(Checkpoint(area, position, dist, cyan, angle, quad))
                             
                             cv2.drawContours(Frame.resized, [c], -1, contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
-                            cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 0, 255), 2)
-                            cv2.line(Frame.resized,origin.get_coordinate(),position.get_coordinate(),(255,cyan,0),2)#draws line from one point ti the other, last arg means thickness
+                            cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                            cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
                             cyan = cyan - 1    
         #sort checkpoints
         checkPointList.sort()
@@ -163,18 +195,29 @@ class Frame(object):
         #print 'Frame: findContour called '
         gray = cv2.cvtColor(Frame.image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+<<<<<<< HEAD
+        thresh = cv2.threshold(blurred, 120, 255, cv2.THRESH_BINARY)[1]
+        edges = cv2.Canny(thresh, 100, 200)
+        edges_resized = imutils.resize(edges, width=600)
+=======
         thresh = cv2.threshold(blurred, 80 , 100, cv2.THRESH_BINARY)[1]
         edges = cv2.Canny(thresh,10,100)
         edges_resized = imutils.resize(edges, width=1000)
         cv2.imshow('contour', edges_resized)
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
         # find contours in the thresholded image and initialize the
-        cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
         return cnts
     
     @staticmethod
+<<<<<<< HEAD
+    def draw_contour(contour, contour_name, postion,color):
+        cv2.drawContours(Frame.resized, [contour], -1, (0, 255, 0), 2)
+=======
     def draw_contour(contour,contour_name,postion,color):
         cv2.drawContours(Frame.resized, [contour], -1, color, 2)
+>>>>>>> 84db2649764dac54704f970b544aadd6c20a14ee
         cv2.putText(Frame.resized, contour_name, (postion.x, postion.y), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 255, 255), 2)
         cv2.circle(Frame.resized, (postion.x, postion.y),3 , (0, 0, 0), -1)
 

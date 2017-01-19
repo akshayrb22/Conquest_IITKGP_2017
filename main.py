@@ -1,11 +1,11 @@
-from ImageProcess import Frame
+ from ImageProcess import Frame
 from time import sleep
 from BotController import BotController
 from BluetoothController import BluetoothController
 #connect Bluetooth
 #BluetoothController.connect()
 
-Frame.connect(1)
+Frame.connect(0)
 
 Frame.capture_frame()
 
@@ -25,3 +25,4 @@ while True:
     
 
 #for resource in listOfResource
+

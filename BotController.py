@@ -54,6 +54,10 @@ class BotController(object):
     
     def turnClockwise(self):
         BluetoothController.send_command("c")
+        
+
+
+
 
 
 
