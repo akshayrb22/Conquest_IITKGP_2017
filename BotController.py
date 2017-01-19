@@ -10,26 +10,28 @@
 from Point import Point
 from BluetoothController import BluetoothController
 from ImageProcess import Frame
-from Checkpoint import Checkpoint
-from FindDirectionality import Direction, Orientation
+from Checkpoint import Checkpoint,CheckpointType
 import FindDirectionality
+from FindDirectionality import Direction, Orientation,MovementFunctions
+import FindDirectionality
+from Utils import  Utils
+from time import sleep
 class Bot(object):
     AngleRange = 5
     position = Point(0, 0)
     angle = 0
-   
-        
     @staticmethod
-    def UpdateBotProperties():
+    def UpdateProperties():
         #assume that you are calling Akshay's Image proccesing function
-        Frame.capture_frame()
-        contours, point_of_red = Frame.processFrame("red", "BOT T", (0, 0, 255))
-        contours, point_of_green = Frame.processFrame("green", "BOT B", (0, 255, 0))
+        #Frame.capture_frame()
+        redCheckPoint = Checkpoint(0,Point(275,275),0,0,0,0) #Frame.processStream(botBack_red)[0]
+        greenCheckPoint = Checkpoint(0,Point(275,300),0,0,0,0) # Frame.processStream(botFront_green)[0]
 
-        Bot.position.x = (point_of_red.x + point_of_green.x) / 2
-        Bot.position.y = (point_of_red.y + point_of_green.y) / 2
-        Bot.angle = angle_for_marker(point_of_red, point_of_green)
-
+        Bot.position.x = (redCheckPoint.center.x + greenCheckPoint.center.x) / 2
+        Bot.position.y = (redCheckPoint.center.y + greenCheckPoint.center.y) / 2
+        Bot.angle = Utils.angleBetweenPoints(redCheckPoint.center, greenCheckPoint.center)
+        print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
+        sleep(1)
         return Bot.position, Bot.angle
 
     @staticmethod
@@ -47,18 +49,19 @@ class Bot(object):
     @staticmethod
     def moveDirection(direction):
         BluetoothController.send_command(Direction.command[direction])
-        Bot.UpdateBotProperties()
+        Bot.UpdateProperties()
+        print "direction" + direction
     @staticmethod
     def changeOrientation(orientation):
         BluetoothController.send_command(Orientation.command[orientation])
-        Bot.UpdateBotProperties()
-
+        Bot.UpdateProperties()
+        print "orientation: " + orientation
 
 
     @staticmethod
-    def BackToTownhall(Townhall, ListOfObstacles = None):
-        Bot.UpdateBotProperties()
-        if Bot.position == Townhall.position:
+    def BackToTownhall(townhallPosition, ListOfObstacles = None):
+        Bot.UpdateProperties()
+        if Bot.position == townhallPosition:
             Bot.Stop()
             ##TODO wait for some time
         else:
@@ -69,27 +72,36 @@ class Bot(object):
                     Bot.changeOrientation(orientation)
                 Bot.moveDirection(direction)
                     ##TODO add the wait function
-
+            Bot.Stop()      
     @staticmethod
-    def Traverse(ListOfResources, ListOfObstacles = None):
-    
+    def Traverse(ListOfResources, townhall, ListOfObstacles = None):
+        
         for target in ListOfResources:
-            Bot.UpdateBotProperties()
-            if bot.position == target.position:
+            Bot.UpdateProperties()
+            if Bot.position == target.center:
                 Bot.Stop()
                 Bot.Blink()
                 ##TODO wait for some time
             else:
-                angle, orientation, direction = get_direction(target.angle)
+                angle, orientation, direction = MovementFunctions.get_direction(target.angle)
                 
                     
-                while Bot.position != target.position:#TODO make this a range function
+                while Bot.position != target.center:#TODO make this a range function
                     while Bot.angle >= angle + Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
                         Bot.changeOrientation(orientation)
                     Bot.moveDirection(direction)
                     ##TODO add the wait function
-
+                Bot.Stop()
+                Bot.Blink()
+            BackToTownhall(townhall, ListOfObstacles = None)
+            
+                ##TODO wait for some time
 if __name__ == '__main__':
+    botFront_green = CheckpointType('botFront', 'green',(0,255,0))
+    botBack_red = CheckpointType('botBack', 'red',(0,0,255))
+    resourceList = []
+    resourceList.append(Checkpoint(0,Point(275,0),0,0,0,0))
+    Bot.UpdateProperties()
+    townhall=Checkpoint(0,Bot.position,0,0,0,0)
     BluetoothController.connect()
-    Bot.moveDirection(Direction.FORWARD)
-    raw_input()
+    Bot.Traverse(resourceList,townhall)
