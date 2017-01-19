@@ -30,7 +30,7 @@ class Frame(object):
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
-        Frame.camera.set(10,0.5)
+        Frame.camera.set(10,0.1)
     @staticmethod
     def disconnect():
         cv2.VideoCapture.release()
