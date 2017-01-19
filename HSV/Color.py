@@ -2,7 +2,7 @@ import numpy as np
 class Color():
     
     def __init__(self,color, type):
-        print 'opening file'  + str(color)
+        print 'Reading Color from file : '  + str(color)
         colorFile = open( color + ".txt","r")
         colorData = colorFile.read()
         colorFile.close()
@@ -23,7 +23,9 @@ class Color():
     
     def get_array(self):
         return np.array([int(self.H), int(self.S), int(self.V)])
-
+    
+    def get(self):
+        return (self.H,self.S,self.V)
 
 
 if __name__ == '__main__':
