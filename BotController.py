@@ -91,5 +91,5 @@ class Bot(object):
 
 if __name__ == '__main__':
     BluetoothController.connect()
-    Bot.moveDirection(Direction.FORWARD)
-    raw_input()
+    bot.turnAntiClockwise()
+    raw_input("type")

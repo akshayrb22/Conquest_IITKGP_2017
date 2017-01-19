@@ -30,7 +30,8 @@ class Frame(object):
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
-        Frame.camera.set(10,0.5)
+        #Frame.camera.set(10,0.5)
+        Frame.camera.set(12,1000)
 
     @staticmethod
     def disconnect():
@@ -64,7 +65,7 @@ class Frame(object):
         gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         thresh = cv2.threshold(blurred, float(checkpointType.lower_color.T) , 100, cv2.THRESH_BINARY)[1]
-        edges = cv2.Canny(thresh,10,100)
+        edges = cv2.Canny(thresh,0,0)
         edges_resized = imutils.resize(edges, width=1000)
         #cv2.imshow('edges_resized', edges_resized)
         # find contours in the thresholded image and initialize the

@@ -1,6 +1,6 @@
 from ImageProcess import Frame
 from time import sleep
-from BotController import BotController
+#from BotController import BotController
 from BluetoothController import BluetoothController
 from Checkpoint import CheckpointType
 from Area import Area
