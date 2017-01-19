@@ -131,7 +131,7 @@ def get_direction(angle_of_resource):
             direction = Direction.RIGHT
 
     msg = "Resource is at {resource} degree. Turn the bot by {angle} degree {motion}, and move {direction}"
-    msg = msg.format(resource=angle_of_resource, angle=angle, motion=orientation, direction=direction)
+    msg = msg.format(resource = angle_of_resource, angle=angle, motion=orientation, direction=direction)
     print(msg)
 
     result = (angle, orientation, direction)
@@ -140,3 +140,4 @@ def get_direction(angle_of_resource):
 
 if __name__ == '__main__':
     print get_direction(45)
+    
