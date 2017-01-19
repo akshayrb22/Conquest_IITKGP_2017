@@ -80,7 +80,7 @@ class Frame(object):
         mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
         #cv2.imshow('result',result)
-        contour =  Frame.find_contour(lower_color.T)
+        contour =  Frame.find_contour(lower_color.T )
         return Frame.processArea(contour,contour_color)
 
     @staticmethod

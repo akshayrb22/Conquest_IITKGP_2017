@@ -1,7 +1,7 @@
 import numpy as np
 class Color():
     
-    def __init__(self,color="red", type=1):
+    def __init__(self,color, type):
         print 'opening file'  + str(color)
         colorFile = open( color + ".txt","r")
         colorData = colorFile.read()

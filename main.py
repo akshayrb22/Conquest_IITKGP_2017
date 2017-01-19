@@ -19,7 +19,7 @@ while True:
     Frame.capture_frame()
     #redContours,redCenterPoint = Frame.processFrame('yellow',"Yellow",(0,255,0))
     checkPoints = Frame.processResource('yellow',"Res",(0, 0, 150))
-    #checkPoints = Frame.processResource("red","Red",(0, 255, 150))
+    checkPoints = Frame.processResource("red","Red",(0, 255, 150))
 
     Frame.show_frame()
     
