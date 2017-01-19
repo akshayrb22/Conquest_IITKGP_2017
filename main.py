@@ -5,7 +5,7 @@ from BluetoothController import BluetoothController
 #connect Bluetooth
 #BluetoothController.connect()
 
-Frame.connect(1)
+Frame.connect(0)
 
 Frame.capture_frame()
 
