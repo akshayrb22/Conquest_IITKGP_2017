@@ -31,6 +31,7 @@ class Frame(object):
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
         Frame.camera.set(10,0.5)
+
     @staticmethod
     def disconnect():
         cv2.VideoCapture.release()
@@ -54,32 +55,18 @@ class Frame(object):
         Frame.ratio = Frame.image.shape[0] / float(Frame.resized.shape[0])
         return Frame.image, Frame.resized, Frame.ratio
 
-    @staticmethod
-    def processFrame(color,contour_name,contour_color):
-        #print 'Frame: processFrame called
-        lower_color = Color.Color(color, 0)
-        upper_color = Color.Color(color, 1)
-        hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
-        result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
-        contours=  Frame.find_contour(lower_color.T)
-        checkPointList = Frame.get_center(contours,contour_name,contour_color)
-        return contours,checkPointList
-
 
     @staticmethod
-    def processResource(color,contour_name,contour_color):
-        lower_color = Color.Color(color, 0)
-        upper_color = Color.Color(color, 1)
+    def processStream(checkpointType):
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, lower_color.get_array(), upper_color.get_array())
+        mask = cv2.inRange(hsv, checkpointType.lower_color.get_array(), checkpointType.upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
         #cv2.imshow('result',result)
-        contour =  Frame.find_contour(lower_color.T )
-        return Frame.processArea(contour,contour_color)
+        contour =  Frame.find_contour(checkpointType.lower_color.T)
+        return Frame.processCheckpoints(contour, checkpointType)
 
     @staticmethod
-    def processArea(contour,contour_color):
+    def processCheckpoints(contour,checkpointType):
 
         cyan = 255
         #orign
@@ -100,6 +87,7 @@ class Frame(object):
                 position = Point()
                 position.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio) #uses moment of inertia concept
                 position.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
+                
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
                 
@@ -107,14 +95,12 @@ class Frame(object):
                 c *= Frame.ratio
                 c = c.astype("int")
                 area = cv2.contourArea(c)
-                #print "area :" + str(area)
-                upper_bound =  30#area/6.25 + 400
-                lower_bound =  50#area/6.25 + 50
+
                 display_contour = False
-                if area > 1300: #area > lower_bound and area < upper_bound:
+                if area > 1000:
                     shapeMessage = 'sqr'
                     display_contour = True
-                elif  area > 800:#area > lower_bound/2 and area < (upper_bound/2+ 400):
+                elif  area > 800:
                     shapeMessage = 'trng'
                     display_contour = True
                 else:
@@ -142,7 +128,7 @@ class Frame(object):
                             
                             checkPointList.append(Checkpoint(area, position, dist, cyan, angle, quad))
                             
-                            cv2.drawContours(Frame.resized, [c], -1, contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
+                            cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
                             cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
                             cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness

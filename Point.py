@@ -11,8 +11,17 @@ class Point(object):
         return (self.x, self.y)
     def toString(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"
+    def __lt__(self, other):
+        if self.x <= other.x:
+            return True
+        return False
 
 if __name__ == '__main__':
-    point = Point(10,20)
-    print point.toString()
+    points = []
+    points.append(Point(30, 20))
+    points.append(Point(10, 25))
+    points.append(Point(20, 30))
+    points.sort()
+    for point in points:
+        print point.toString()
     
