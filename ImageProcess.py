@@ -72,7 +72,7 @@ class Frame(object):
         contour = cnts[0] if imutils.is_cv2() else cnts[1]
         
         #contour =  Frame.find_contour(checkpointType.lower_color.T)
-        if(checkpointType.type == "Res"):
+        if(checkpointType.type == "Resource"):
             return Frame.processCheckpoints(contour, checkpointType)
         else:
             return Frame.get_center(contour,checkpointType)
