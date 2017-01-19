@@ -23,11 +23,13 @@ class Direction(object):
     FORWARD_RIGHT = 'FORWARD_RIGHT'  # 45 deg
     BACKWARD_LEFT = 'BACKWARD_LEFT'  # 225 deg
     BACKWARD_RIGHT = 'BACKWARD_RIGHT'  # 315 deg
+    command = {FORWARD:'f',BACKWARD:'b',LEFT:'l',RIGHT:'r',BACKWARD_LEFT:'bl',BACKWARD_RIGHT:'br',FORWARD_LEFT:'fl',FORWARD_RIGHT:'fr'}
 
 
 class Orientation(object):
     CLOCKWISE = 'CLOCKWISE'
     ANTI_CLOCKWISE = 'ANTI_CLOCKWISE'
+    command = {CLOCKWISE:'c', ANTI_CLOCKWISE:'ac'}
 
 
 def get_sector(angle_of_resource):
@@ -134,10 +136,9 @@ def get_direction(angle_of_resource):
     msg = msg.format(resource = angle_of_resource, angle=angle, motion=orientation, direction=direction)
     print(msg)
 
-    result = (angle, orientation, direction)
-    return result
+    return angle, orientation, direction
 
 
 if __name__ == '__main__':
-    print get_direction(45)
+    print get_direction(285)
     
