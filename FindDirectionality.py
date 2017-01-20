@@ -29,7 +29,7 @@ class Direction(object):
 class Orientation(object):
     CLOCKWISE = 'CLOCKWISE'
     ANTI_CLOCKWISE = 'ANTI_CLOCKWISE'
-    command = {CLOCKWISE:'r', ANTI_CLOCKWISE:'l'}
+    command = {CLOCKWISE:'c', ANTI_CLOCKWISE:'a'}
 
 
 class MovementFunctions():

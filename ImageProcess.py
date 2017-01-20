@@ -12,7 +12,7 @@ import cv2
 import PIL
 from PIL import Image
 import imutils
-import Utils
+from Utils import Utils
 from Point import Point
 from HSV import Color
 from pyimagesearch.shapedetector import ShapeDetector
@@ -131,29 +131,7 @@ class Frame(object):
                             
                             origin = Frame.townHall.center
                             #print origin.toString()
-                            dist2 = float((((origin.x - origin.x ) * (origin.x - origin.x ))+((origin.y - position.y )*(origin.y - position.y )))^(1/2))
-                            dist = float((((origin.x - position.x)*(origin.x - position.x))+((origin.y - position.y )*(origin.x - position.y)))^(1/2))
-                            sinn = float(dist2/dist)
-                            if sinn > 1:
-                                sinn = 1
-                            if sinn < 0:
-                                sinn = 0
-                            angle = math.acos(float(sinn))
-                            angle = round(math.degrees(angle), 2)
-
-                            if position.x > origin.x and position.y > origin.y:
-                                quad = 4
-                                angle = 270 + angle
-                            elif position.x < origin.x and position.y > origin.y:
-                                quad = 3
-                                angle = 270 - angle
-                            elif position.x < origin.x and position.y < origin.y:
-                                quad = 2
-                                angle = angle + 90
-                            else:
-                                quad = 1
-                                angle = 90 - angle
-
+                            angle, dist = Utils.angleBetweenPoints(origin,position)
                             Frame.runTimeCounter += 1    
                             
                             checkPointList.append(Checkpoint(area, position, dist, cyan, angle))

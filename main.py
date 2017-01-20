@@ -5,12 +5,17 @@ from BluetoothController import BluetoothController
 from Checkpoint import CheckpointType, Checkpoint
 from Area import Area
 from Point import Point
+import math
 from BotController import Bot
 import cv2
 #from FindDirectionality import Direction, Orientation,MovementFunctions
+
+
 #connect Bluetooth
 BluetoothController.connect()
 Bot.Stop()
+
+
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
 #obstacle = CheckpointType("Obstacle", "blue")

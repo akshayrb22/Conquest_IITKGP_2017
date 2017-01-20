@@ -5,29 +5,57 @@
 ##  Angle for marker()
 ##  distance formula()
 
-import math
+from math import *
 import numpy as np
 from Point import Point
 class Utils(object):
+
     @staticmethod
-    def angleBetweenPoints(p1,p2):
-        opp=float((((p1.x-p1.x)*(p1.x-p1.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
-        hyp=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
-        sinn=float(opp/hyp)
-        angle = math.acos(float(sinn))
-        ang=round(math.degrees(angle),2)
-        '''
-        cv2.drawContours(resized, [c2], -1, (0, 255, 0), 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
-        cv2.circle(resized, (cX2, cY2), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
-        cv2.putText(resized, shape3+'y', (cX2, cY2), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 0, 255), 2)
-        cv2.line(resized,(cX,cY),(cX2,cY2),(255,cyan,0),2)#draws line from one point to the other, last arg means thickness
-        cyan=cyan-1'''
-        return ang
+    def angleBetweenPoints(origin,position):
+        deltaY = position.y - origin.y
+        deltaX = position.x - origin.x
+        angleInDegrees = atan2(deltaY, deltaX) * float(180) / 3.14
+        return angleInDegrees,None
+
     @staticmethod
     def distance(pt1,pt2):
-    
-        dist=float((((pt1.x-pt2.x)*(pt1.x-pt2.x))+((pt1.y-pt2.y)*(pt1.y-pt2.y)))^(1/2))
+        dist = float((((pt1.x-pt2.x)*(pt1.x-pt2.x))+((pt1.y-pt2.y)*(pt1.y-pt2.y)))^(1/2))
         return dist
+'''
+    @staticmethod
+    def angleBetweenPoints(origin,position):
+        # adj=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p1.y)*(p1.y-p1.y)))^(1/2))
+        # print adj
+        # hyp=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
+        # print hyp
+        # cos=float(adj/hyp)
+        # print cos
+        # angle = math.acos(float(cos))
+        # ang=round(math.degrees(angle),2)
+        dist2 = math.sqrt(float(abs((origin.y - position.y )*(origin.y - position.y ))))
+        dist = math.sqrt(float(abs(((origin.x - position.x)*(origin.x - position.x))+((origin.y - position.y )*(origin.x - position.y)))))
+        sinn = float(dist2/dist)
+        
+        if sinn > 1:
+            sinn = 1
+        if sinn < 0:
+            sinn = 0        angle = math.asin(float(sinn))
+        angle = round(math.degrees(angle), 2)
+        if position.x > origin.x and position.y > origin.y:
+            angle = 270 + angle
+        elif position.x < origin.x and position.y > origin.y:
+            angle = 270 - angle
+        elif position.x < origin.x and position.y < origin.y:
+            angle = angle + 90
+        elif origin.x < position.x and origin.y > position.y:
+            angle = 90 - angle
+        return angle,dist
+'''
+
     
     
+if __name__ == '__main__' :
+    p1=Point(0,0)
+    p2=Point(0,10)
+    print Utils.angleBetweenPoints(p1,p2)
     
