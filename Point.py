@@ -15,7 +15,12 @@ class Point(object):
         if self.x <= other.x:
             return True
         return False
-
+    @staticmethod
+    def inRange(point1,point2):
+        if point1.x in range(point2.x - 50,point2.x + 50) and point1.y in range(point2.y - 50,point2.y + 50) :
+            return True
+        else:
+            return False
 if __name__ == '__main__':
     points = []
     points.append(Point(30, 20))

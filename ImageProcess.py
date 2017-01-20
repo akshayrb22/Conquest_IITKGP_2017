@@ -27,6 +27,9 @@ class Frame(object):
     ratio = None
     resized = None
     contour = None
+    townHall = None  #is of type Checkpoints
+    runTimeCounter = 1
+    runOnce = True
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
@@ -42,26 +45,29 @@ class Frame(object):
         Frame.res, Frame.image = Frame.camera.read()
         Frame.find_ratio()
     @staticmethod
-    def show_frame():
+    def show_frame():#
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         res = cv2.bitwise_and(Frame.resized,Frame.resized)
         gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         #cv2.imwrite("frame.jpg", Frame.resized)
         cv2.imshow("frame", Frame.resized)
-        cv2.waitKey(0)
+        cv2.waitKey(5) & 0xFF
     @staticmethod
     def find_ratio():
         Frame.resized = imutils.resize(Frame.image, height=600)
         Frame.ratio = Frame.image.shape[0] / float(Frame.resized.shape[0])
         return Frame.image, Frame.resized, Frame.ratio
 
+    @staticmethod
+    def drawCircle(point,color):
+        cv2.circle(Frame.resized, point.get_coordinate(), 10 , color, -1)
 
     @staticmethod
     def processStream(checkpointType):
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, checkpointType.lower_color.get_array(), checkpointType.upper_color.get_array())
-        result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)
+        result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)#TODO figure out why we put the same source for both parameters
         gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         thresh = cv2.threshold(blurred, float(checkpointType.lower_color.T) , 100, cv2.THRESH_BINARY)[1]
@@ -83,7 +89,7 @@ class Frame(object):
 
         cyan = 255
         #orign
-        origin = Point(400 ,400)
+        #
 
         checkPointList = []
 
@@ -118,14 +124,23 @@ class Frame(object):
                     display_contour = True
                 else:
                     shapeMessage = 'null'
-                if area < 2000  and display_contour:
+                if display_contour:
                     if(shape == 'circle' or shape == 'square' or shape == 'rectangle' or shape == 'triangle'):
                         if area > 150 :
+                            angle = 0
+                            
+                            origin = Frame.townHall.center
+                            #print origin.toString()
                             dist2 = float((((origin.x - origin.x ) * (origin.x - origin.x ))+((origin.y - position.y )*(origin.y - position.y )))^(1/2))
-                            dist = float((((origin.x-position.x)*(origin.x-position.x))+((origin.y - position.y )*(origin.x - position.y)))^(1/2))
+                            dist = float((((origin.x - position.x)*(origin.x - position.x))+((origin.y - position.y )*(origin.x - position.y)))^(1/2))
                             sinn = float(dist2/dist)
+                            if sinn > 1:
+                                sinn = 1
+                            if sinn < 0:
+                                sinn = 0
                             angle = math.acos(float(sinn))
                             angle = round(math.degrees(angle), 2)
+
                             if position.x > origin.x and position.y > origin.y:
                                 quad = 4
                                 angle = 270 + angle
@@ -138,14 +153,23 @@ class Frame(object):
                             else:
                                 quad = 1
                                 angle = 90 - angle
+
+                            Frame.runTimeCounter += 1    
                             
-                            checkPointList.append(Checkpoint(area, position, dist, cyan, angle, quad))
+                            checkPointList.append(Checkpoint(area, position, dist, cyan, angle))
                             
                             cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
+                            
+                            
+                            x,y,w,h = cv2.boundingRect(c)
+                            cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
+
                             cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
                             cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
-                            cyan = cyan - 1    
+                            cyan = cyan - 1
+                            if Frame.runTimeCounter <= 2: 
+                                return checkPointList
         #sort checkpoints
         checkPointList.sort()
         return checkPointList
@@ -173,9 +197,6 @@ class Frame(object):
     @staticmethod
     def get_center(contour,checkpointType):
         #print 'Frame: getCenter called '
-
-        #orign
-        origin = Point(0,0)
         checkPointList = []
         for c in contour:
             # compute the center of the contour, then detect the name of the
@@ -184,7 +205,12 @@ class Frame(object):
             
 
             if Moment["m00"] > 0:
-
+                origin = None
+                if not Frame.runOnce:
+                    origin = Frame.townHall.center
+                else:
+                    origin = Point(0,0)
+                Frame.runTimeCounter += 1
                 shapeDetector = ShapeDetector()
                 shape = shapeDetector.detect(c)
                 point = Point()
@@ -200,8 +226,8 @@ class Frame(object):
                 area=cv2.contourArea(c)
                 if area > 200:
                     Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
-                    checkPointList.append(Checkpoint(area,point,dist,0,0,0))
-                #print point.toString()
+                    checkPointList.append(Checkpoint(area,point,dist,0,0))
+                
         return checkPointList
 
 '''
@@ -218,4 +244,19 @@ if __name__ == '__main__':
         #cv2.imwrite("frame.jpg", Frame.image)
         #cv2.imshow("frame.jpg", Frame.image)
         #rame.get_center_color("red")
+
+
+                            if position.x > origin.x and position.y > origin.y:
+                                quad = 4
+                                angle = 270 + angle
+                            elif position.x < origin.x and position.y > origin.y:
+                                quad = 3
+                                angle = 270 - angle
+                            elif position.x < origin.x and position.y < origin.y:
+                                quad = 2
+                                angle = angle + 90
+                            else:
+                                quad = 1
+                                angle = 90 - angle
+
         '''

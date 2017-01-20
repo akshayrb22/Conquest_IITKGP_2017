@@ -83,6 +83,7 @@ while(1):
                 area=cv2.contourArea(c)
                 if area > 310:
                     cv2.drawContours(res, [c], -1, (255,0,0), 2)
+                    
                     cv2.putText(res, str(area) , (cX,cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
                     if area > max_area:
                         max_area = area

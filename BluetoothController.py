@@ -34,7 +34,7 @@ class BluetoothController(object):
     @staticmethod
     def connect_to_slave():
         BluetoothController.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        print "Blutooth Controller  Connecting to Slave...."
+        print "Blutooth Controller  >> Connecting to Slave...."
         BluetoothController.sock.connect((BluetoothController.target_address, BluetoothController.port))
         print"Blutooth Controller conected success"
     @staticmethod    
@@ -43,9 +43,10 @@ class BluetoothController(object):
     @staticmethod
     def send_command(command):
         BluetoothController.sock.send(command)
+        return
         
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
     BluetoothController.connect()
-    BluetoothController.send_command("f")
+    BluetoothController.send_command("s")
     raw_input("Press to close")

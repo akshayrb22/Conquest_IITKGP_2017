@@ -10,14 +10,16 @@ from HSV import Color
 from Area import Area
 import cv2
 
+
 class Checkpoint(object):
-    def __init__(self,area,position,distance,color,angle,quad):
+    
+    def __init__(self,area,position,distance,color,angle):
         self.area = area
         self.center = position
         self.distance = distance #distance from origin to resource
         self.color = color
         self.angle = angle
-        self.quad = quad
+        
     def __lt__(self, other):
          return self.distance < other.distance
 

@@ -23,13 +23,13 @@ class Direction(object):
     FORWARD_RIGHT = 'FORWARD_RIGHT'  # 45 deg
     BACKWARD_LEFT = 'BACKWARD_LEFT'  # 225 deg
     BACKWARD_RIGHT = 'BACKWARD_RIGHT'  # 315 deg
-    command = {FORWARD:'f',BACKWARD:'b',LEFT:'l',RIGHT:'r',BACKWARD_LEFT:'bl',BACKWARD_RIGHT:'br',FORWARD_LEFT:'fl',FORWARD_RIGHT:'fr'}
+    command = {FORWARD:'f',BACKWARD:'b',LEFT:'l',RIGHT:'r',BACKWARD_LEFT:'lb',BACKWARD_RIGHT:'rb',FORWARD_LEFT:'lfd',FORWARD_RIGHT:'rfd'}
 
 
 class Orientation(object):
     CLOCKWISE = 'CLOCKWISE'
     ANTI_CLOCKWISE = 'ANTI_CLOCKWISE'
-    command = {CLOCKWISE:'c', ANTI_CLOCKWISE:'ac'}
+    command = {CLOCKWISE:'r', ANTI_CLOCKWISE:'l'}
 
 
 class MovementFunctions():
@@ -109,7 +109,7 @@ class MovementFunctions():
                 direction = Direction.FORWARD_LEFT
         elif sector == 4:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.FORWARD_LEFT
+                direction = Direction.FORWARD_RIGHT  
             else:
                 direction = Direction.LEFT
         elif sector == 5:
@@ -127,7 +127,7 @@ class MovementFunctions():
                 direction = Direction.BACKWARD
             else:
                 direction = Direction.BACKWARD_RIGHT
-        else:
+        else :
             if orientation == Orientation.ANTI_CLOCKWISE:
                 direction = Direction.BACKWARD_RIGHT
             else:
