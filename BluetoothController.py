@@ -13,7 +13,7 @@ class BluetoothController(object):
     port = 1
     sock = None
     #def __init__(se, target_name, target_address,target_port):
-    #    target_name = "KAIZEN"
+    #    target_name = "KAIZEN""
     #    target_address = target_address
     #    port = target_port 
 
