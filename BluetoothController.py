@@ -42,7 +42,7 @@ class BluetoothController(object):
         BluetoothController.sock.close()
     @staticmethod
     def send_command(command):
-        #BluetoothController.sock.send(command)
+        BluetoothController.sock.send(command)
         return
         
 if __name__ == '__main__':

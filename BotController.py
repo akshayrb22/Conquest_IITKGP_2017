@@ -85,7 +85,7 @@ class Bot(object):
         BluetoothController.send_command("blink")
     @staticmethod
     def moveDirection(direction):
-        BluetoothController.send_command(Direction.command[direction])
+        #BluetoothController.send_command(Direction.command[direction])
 
         print "direction: " + direction
         sleep(0.1)
@@ -93,13 +93,13 @@ class Bot(object):
         Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
-        BluetoothController.send_command(Orientation.command[orientation])
+        #BluetoothController.send_command(Orientation.command[orientation])
 
         print "orientation: " + orientation
         sleep(0.1)
 
-        Bot.Stop()
-        Bot.UpdateProperties()
+        Bot.position,Bot.angle = Bot.UpdateProperties()
+        return Bot.position, Bot.angle
     @staticmethod
     def BackToTownhall(ListOfObstacles = None):
         Bot.UpdateProperties()
@@ -112,7 +112,7 @@ class Bot(object):
             while not Point.inRange(Bot.position, Bot.townHall.position):
                 print "Turning ######"
                 while Bot.angle >= angle + Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
-                    Bot.changeOrientation(orientation)
+                    Bot.position,Bot.angle = Bot.changeOrientation(orientation)
                 print "Moving##########"
                 Bot.moveDirection(direction)
             Bot.Stop()      
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     botFront_green = CheckpointType('botFront', 'green',(0,255,0))
     botBack_red = CheckpointType('botBack', 'red',(0,0,255))
     resourceList = []
-    resourceList.append(Checkpoint(0,Point(275,0),0,0,0,0))
+    resourceList.append(Checkpoint(0,Point(275,0),0,0,0))
     Bot.UpdateProperties()
     townhall=Checkpoint(0,Bot.position,0,0,0,0)
     BluetoothController.connect()
