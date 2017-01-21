@@ -54,11 +54,11 @@ class SimpleGraph(object):
   
     
     
-    def heuristic(a, b):
-    (x1, y1) = a
-    (x2, y2) = b
-    distance=float((((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)))^(1/2))
-    return distance
+    def heuristic(self, a, b):
+        (x1, y1) = a
+        (x2, y2) = b
+        distance=float((((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)))^(1/2))
+        return distance
 
 
 

@@ -5,8 +5,6 @@
 ##  find bot
 ##  find resources,obstacles,town hall
 ##  resizing, ratio
-
-
 import numpy as np
 import cv2
 import PIL
