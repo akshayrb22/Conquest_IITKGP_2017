@@ -34,9 +34,9 @@ class BluetoothController(object):
     @staticmethod
     def connect_to_slave():
         BluetoothController.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        print "Blutooth Controller  >> Connecting to Slave...."
+        print "Bluetooth Controller  >> Connecting to Slave...."
         BluetoothController.sock.connect((BluetoothController.target_address, BluetoothController.port))
-        print"Blutooth Controller conected success"
+        print"Bluetooth Controller conected success"
     @staticmethod    
     def disconnect():
         BluetoothController.sock.close()

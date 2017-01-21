@@ -86,7 +86,6 @@ class Bot(object):
     @staticmethod
     def moveDirection(direction):
         BluetoothController.send_command(Direction.command[direction])
-
         print "direction: " + direction
         sleep(0.1)
         Bot.Stop()

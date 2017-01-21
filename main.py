@@ -1,10 +1,6 @@
 from ImageProcess import Frame
 from time import sleep
-<<<<<<< HEAD
 from BotController import Bot
-=======
-#from BotController import BotController
->>>>>>> 272a79b3afb286126eae056b10cc56d664eb4026
 from BluetoothController import BluetoothController
 from Checkpoint import CheckpointType, Checkpoint
 from Area import Area

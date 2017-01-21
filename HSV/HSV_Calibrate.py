@@ -48,7 +48,7 @@ max_area = 0
 min_area = 10000
 while(1):
  
-        res, i = cap.read(1)
+        res, i = cap.read(0)
         resized = imutils.resize(i, width=690)
         ratio = resized.shape[0] / float(resized.shape[0])
 
