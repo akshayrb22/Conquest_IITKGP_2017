@@ -48,6 +48,7 @@ while True:
     Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
   
     Bot.Traverse(resource_checkPoints)
+    print "hi"
 
 #for resource in listOfResource
 
