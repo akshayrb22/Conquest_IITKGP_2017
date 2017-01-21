@@ -48,7 +48,7 @@ max_area = 0
 min_area = 10000
 while(1):
  
-        res, i = cap.read(1)
+        res, i = cap.read()
         resized = imutils.resize(i, width=690)
         ratio = resized.shape[0] / float(resized.shape[0])
 
@@ -96,7 +96,7 @@ while(1):
         cv2.imshow('frame',edges)
         cv2.imshow('mask',mask)
         cv2.imshow('resized',res)
-        #cv2.imshow("as",resized)
+        cv2.imshow("original",resized)
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
             break
