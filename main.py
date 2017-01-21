@@ -11,8 +11,8 @@ import cv2
 
 
 #connect Bluetooth
-#BluetoothController.connect()
-#Bot.Stop()
+BluetoothController.connect()
+Bot.Stop()
 
 
 Frame.connect(1)

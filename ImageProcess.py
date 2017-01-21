@@ -141,8 +141,8 @@ class Frame(object):
                             x,y,w,h = cv2.boundingRect(c)
                             cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
 
-                            cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-                            cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
+                            #cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                            #cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
                             cyan = cyan - 1
                             if Frame.runTimeCounter <= 2: 
                                 return checkPointList
@@ -167,7 +167,7 @@ class Frame(object):
     @staticmethod
     def draw_contour(contour,contour_name,postion,color):
         cv2.drawContours(Frame.resized, [contour], -1, color, 2)
-        cv2.putText(Frame.resized, contour_name, (postion.x, postion.y), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 255, 255), 2)
+        #cv2.putText(Frame.resized, contour_name, (postion.x, postion.y), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 255, 255), 2)
         cv2.circle(Frame.resized, (postion.x, postion.y),3 , (0, 0, 0), -1)
 
     @staticmethod

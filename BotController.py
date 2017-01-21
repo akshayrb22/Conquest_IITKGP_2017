@@ -19,7 +19,7 @@ from time import sleep
 import copy
 import cv2
 class Bot(object):
-    AngleRange = 180
+    AngleRange = 5
     position = Point(0, 0)
     angle = 0
     botFront = None#CheckpointType('botFront', 'green',(0,255,0))
@@ -55,7 +55,7 @@ class Bot(object):
             Bot.position.x = (Bot.prevBack.center.x + Bot.prevFront.center.x) / 2
             Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
             Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
-            print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
+            #print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
             #sleep(1)
             
             if Bot.runOnce:#Frame.runTimeCounter == 6:
@@ -63,13 +63,20 @@ class Bot(object):
                 Bot.runOnce = False
                 Frame.runOnce = False
             else:
+                #TODO Move to ImageProess
                 Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+                cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+                cv2.putText(Frame.resized, "   " + str(Utils.distance(Bot.position,Bot.currentTarget.center)), Utils.midPoint(Bot.position,Bot.currentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentTarget.center.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
+                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
                 Frame.drawCircle(Frame.townHall.center,(0,255,255))
                 resource_checkPoints = Frame.processStream(Bot.resource)
+             
+
 
             #print "Townhall center is:" + str(Frame.townHall.center.toString())
             Frame.drawCircle(Bot.position,(0,255,0))
-            cv2.putText(Frame.resized, " BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+            cv2.putText(Frame.resized, "           BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
 
         Frame.show_frame()
         return Bot.position, Bot.angle
@@ -88,18 +95,18 @@ class Bot(object):
         BluetoothController.send_command("blink")
     @staticmethod
     def moveDirection(direction):
-        #BluetoothController.send_command(Direction.command[direction])
+        BluetoothController.send_command(Direction.command[direction])
 
         print "direction: " + direction
-        sleep(0.1)
-        Bot.Stop()
+        #sleep(0.1)
+        #Bot.Stop()
         Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
-        #BluetoothController.send_command(Orientation.command[orientation])
+        BluetoothController.send_command(Orientation.command[orientation])
 
         print "orientation: " + orientation
-        sleep(0.1)
+        #sleep(0.1)
 
         Bot.UpdateProperties()
         #return Bot.position, Bot.angle
@@ -136,22 +143,23 @@ class Bot(object):
 
                 while not Point.inRange(Bot.position, target.center):
                     print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                    while Bot.angle >= target.angle - Bot.AngleRange or Bot.angle <= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
-                        print "Bot angle:" + str(Bot.angle)
-                        print "target angle:" + str(target.angle)
+                    while Bot.angle <= target.angle - Bot.AngleRange or Bot.angle >= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
+                        
                         if Bot.angle - target.angle < 0:
-                            Bot.changeOrientation(Orientation.CLOCKWISE) 
+                            Bot.changeOrientation(Orientation.ANTI_CLOCKWISE) 
                         else:
-                            Bot.changeOrientation(Orientation.ANTI_CLOCKWISE)
-
-                        #Bot.changeOrientation(orientation) 
-                    Bot.moveDirection(MovementFunctions.get_direction(angle_of_resource))
+                            Bot.changeOrientation(Orientation.CLOCKWISE)
+                    print "##############################################################################"
+                    #sleep(3)
+                        
+                    Bot.moveDirection(Direction.FORWARD)
                 Bot.Stop()
                 Bot.Blink()
                 print 'Reached Destination  >>>>>>>>>> '
                 sleep(10)
+                
                 BluetoothController.send_command("stop")
-            Bot.BackToTownhall(ListOfObstacles = None)
+            #Bot.BackToTownhall(ListOfObstacles = None)
             
                 ##TODO wait for some time
 if __name__ == '__main__':
