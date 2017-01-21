@@ -17,8 +17,9 @@ import FindDirectionality
 from Utils import  Utils
 from time import sleep
 import copy
+import cv2
 class Bot(object):
-    AngleRange = 5
+    AngleRange = 180
     position = Point(0, 0)
     angle = 0
     botFront = None#CheckpointType('botFront', 'green',(0,255,0))
@@ -42,31 +43,33 @@ class Bot(object):
         #print "BOT Contours " + str(len(backCheckPointList))  + " , " + str(len(frontCheckPointList))
         if(len(backCheckPointList) <=0 or len(frontCheckPointList)  <= 0):
             print "Failed to Capture bot position !!! >>>>>>>>>>>>>> "
-        backCheckPoint = None
-        frontCheckPoint = None
-        if len(backCheckPointList) > 0 and len(frontCheckPointList) > 0:
-            Bot.prevBack = backCheckPointList[0]
-            Bot.prevFront = frontCheckPointList[0]
-        
-        #print "Counter is:" + str(Frame.runTimeCounter)
-
-        Bot.position.x = (Bot.prevBack.center.x + Bot.prevFront.center.x) / 2
-        Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
-        Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
-        print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
-        #sleep(1)
-        
-        if Bot.runOnce:#Frame.runTimeCounter == 6:
-            Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
-            Bot.runOnce = False
-            Frame.runOnce = False
         else:
-            Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
-            Frame.drawCircle(Frame.townHall.center,(0,255,255))
-            resource_checkPoints = Frame.processStream(Bot.resource)
+            backCheckPoint = None
+            frontCheckPoint = None
+            if len(backCheckPointList) > 0 and len(frontCheckPointList) > 0:
+                Bot.prevBack = backCheckPointList[0]
+                Bot.prevFront = frontCheckPointList[0]
+            
+            #print "Counter is:" + str(Frame.runTimeCounter)
 
-        #print "Townhall center is:" + str(Frame.townHall.center.toString())
-        Frame.drawCircle(Bot.position,(0,255,0))
+            Bot.position.x = (Bot.prevBack.center.x + Bot.prevFront.center.x) / 2
+            Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
+            Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
+            print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
+            #sleep(1)
+            
+            if Bot.runOnce:#Frame.runTimeCounter == 6:
+                Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
+                Bot.runOnce = False
+                Frame.runOnce = False
+            else:
+                Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+                Frame.drawCircle(Frame.townHall.center,(0,255,255))
+                resource_checkPoints = Frame.processStream(Bot.resource)
+
+            #print "Townhall center is:" + str(Frame.townHall.center.toString())
+            Frame.drawCircle(Bot.position,(0,255,0))
+            cv2.putText(Frame.resized, " BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
 
         Frame.show_frame()
         return Bot.position, Bot.angle
@@ -85,20 +88,21 @@ class Bot(object):
         BluetoothController.send_command("blink")
     @staticmethod
     def moveDirection(direction):
-        BluetoothController.send_command(Direction.command[direction])
+        #BluetoothController.send_command(Direction.command[direction])
+
         print "direction: " + direction
         sleep(0.1)
         Bot.Stop()
         Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
-        BluetoothController.send_command(Orientation.command[orientation])
+        #BluetoothController.send_command(Orientation.command[orientation])
 
         print "orientation: " + orientation
         sleep(0.1)
 
-        Bot.Stop()
         Bot.UpdateProperties()
+        #return Bot.position, Bot.angle
     @staticmethod
     def BackToTownhall(ListOfObstacles = None):
         Bot.UpdateProperties()
@@ -110,8 +114,8 @@ class Bot(object):
 
             while not Point.inRange(Bot.position, Bot.townHall.position):
                 print "Turning ######"
-                while Bot.angle >= angle + Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
-                    Bot.changeOrientation(orientation)
+                while Bot.angle >= angle - Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
+                    Bot.position,Bot.angle = Bot.changeOrientation(orientation)
                 print "Moving##########"
                 Bot.moveDirection(direction)
             Bot.Stop()      
@@ -132,9 +136,16 @@ class Bot(object):
 
                 while not Point.inRange(Bot.position, target.center):
                     print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                    while Bot.angle >= target.angle + Bot.AngleRange or Bot.angle <= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
-                        Bot.changeOrientation(orientation)
-                    Bot.moveDirection(direction)
+                    while Bot.angle >= target.angle - Bot.AngleRange or Bot.angle <= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
+                        print "Bot angle:" + str(Bot.angle)
+                        print "target angle:" + str(target.angle)
+                        if Bot.angle - target.angle < 0:
+                            Bot.changeOrientation(Orientation.CLOCKWISE) 
+                        else:
+                            Bot.changeOrientation(Orientation.ANTI_CLOCKWISE)
+
+                        #Bot.changeOrientation(orientation) 
+                    Bot.moveDirection(MovementFunctions.get_direction(angle_of_resource))
                 Bot.Stop()
                 Bot.Blink()
                 print 'Reached Destination  >>>>>>>>>> '
@@ -147,7 +158,7 @@ if __name__ == '__main__':
     botFront_green = CheckpointType('botFront', 'green',(0,255,0))
     botBack_red = CheckpointType('botBack', 'red',(0,0,255))
     resourceList = []
-    resourceList.append(Checkpoint(0,Point(275,0),0,0,0,0))
+    resourceList.append(Checkpoint(0,Point(275,0),0,0,0))
     Bot.UpdateProperties()
     townhall=Checkpoint(0,Bot.position,0,0,0,0)
     BluetoothController.connect()

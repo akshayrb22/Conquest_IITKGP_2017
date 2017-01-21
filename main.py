@@ -1,6 +1,5 @@
 from ImageProcess import Frame
 from time import sleep
-from BotController import Bot
 from BluetoothController import BluetoothController
 from Checkpoint import CheckpointType, Checkpoint
 from Area import Area
@@ -12,8 +11,8 @@ import cv2
 
 
 #connect Bluetooth
-BluetoothController.connect()
-Bot.Stop()
+#BluetoothController.connect()
+#Bot.Stop()
 
 
 Frame.connect(1)
@@ -48,7 +47,7 @@ while True:
     Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
   
     Bot.Traverse(resource_checkPoints)
-    
+
 
 #for resource in listOfResource
 

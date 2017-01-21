@@ -14,7 +14,15 @@ class Utils(object):
     def angleBetweenPoints(origin,position):
         deltaY = position.y - origin.y
         deltaX = position.x - origin.x
-        angleInDegrees = atan2(deltaY, deltaX) * float(180) / 3.14
+        angleInDegrees = round(atan2(deltaY, deltaX) * float(180) / 3.14)
+        if position.x > origin.x and position.y > origin.y:
+            angleInDegrees = 270 + angleInDegrees
+        elif position.x < origin.x and position.y > origin.y:
+            angleInDegrees =   angleInDegrees + 90
+        elif position.x < origin.x and position.y < origin.y:
+            angleInDegrees =270 +  angleInDegrees
+        elif position.x > origin.x  and position.y < origin.y:
+            angleInDegrees = 90 + angleInDegrees 
         return angleInDegrees,None
 
     @staticmethod
@@ -28,9 +36,19 @@ class Utils(object):
     
     
 if __name__ == '__main__':
-    value = -10
-    value = Utils.map(value,180,-180,0,360)
-    print value
+    angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(301,476))
+    #angle = Utils.map(-170,-180,0,180,360)
+    print angle
+    angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(240,233))
+    #angle = Utils.map(-170,-180,0,180,360)
+    print angle
+    angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(496,195))
+    #angle = Utils.map(-170,-180,0,180,360)
+    print angle
+    angle,_  = Utils.angleBetweenPoints(Point(200,200),Point(190,210))
+    #angle = Utils.map(-170,-180,0,180,360)
+    print angle
+    
 
 
 

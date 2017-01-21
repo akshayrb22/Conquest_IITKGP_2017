@@ -31,8 +31,8 @@ class Frame(object):
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
-        #Frame.camera.set(10,0.5)
-        Frame.camera.set(12,0.5)
+        Frame.camera.set(10,0.5)
+        Frame.camera.set(12,255)
 
     @staticmethod
     def disconnect():
@@ -141,7 +141,7 @@ class Frame(object):
                             x,y,w,h = cv2.boundingRect(c)
                             cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
 
-                            cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                            cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
                             cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
                             cyan = cyan - 1
                             if Frame.runTimeCounter <= 2: 
