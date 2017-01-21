@@ -16,22 +16,59 @@ from FindDirectionality import Direction, Orientation,MovementFunctions
 import FindDirectionality
 from Utils import  Utils
 from time import sleep
+import copy
 class Bot(object):
     AngleRange = 5
     position = Point(0, 0)
     angle = 0
+    botFront = None#CheckpointType('botFront', 'green',(0,255,0))
+    botBack = None #CheckpointType('botBack', 'red',(0,0,255))
+    resource = None
+    prevBack = None
+    prevFront = None
+    currentTarget = None
+    townHall = None
+    runOnce = True
     @staticmethod
     def UpdateProperties():
         #assume that you are calling Akshay's Image proccesing function
-        #Frame.capture_frame()
-        redCheckPoint = Checkpoint(0,Point(275,275),0,0,0,0) #Frame.processStream(botBack_red)[0]
-        greenCheckPoint = Checkpoint(0,Point(275,300),0,0,0,0) # Frame.processStream(botFront_green)[0]
+        Frame.capture_frame()
+        
+        backCheckPointList = Frame.processStream(Bot.botBack)
+        frontCheckPointList = Frame.processStream(Bot.botFront)
+        
+        #print str(Frame.isItMyFirstTime)
 
-        Bot.position.x = (redCheckPoint.center.x + greenCheckPoint.center.x) / 2
-        Bot.position.y = (redCheckPoint.center.y + greenCheckPoint.center.y) / 2
-        Bot.angle = Utils.angleBetweenPoints(redCheckPoint.center, greenCheckPoint.center)
+        #print "BOT Contours " + str(len(backCheckPointList))  + " , " + str(len(frontCheckPointList))
+        if(len(backCheckPointList) <=0 or len(frontCheckPointList)  <= 0):
+            print "Failed to Capture bot position !!! >>>>>>>>>>>>>> "
+        backCheckPoint = None
+        frontCheckPoint = None
+        if len(backCheckPointList) > 0 and len(frontCheckPointList) > 0:
+            Bot.prevBack = backCheckPointList[0]
+            Bot.prevFront = frontCheckPointList[0]
+        
+        #print "Counter is:" + str(Frame.runTimeCounter)
+
+        Bot.position.x = (Bot.prevBack.center.x + Bot.prevFront.center.x) / 2
+        Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
+        Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
         print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
-        sleep(1)
+        #sleep(1)
+        
+        if Bot.runOnce:#Frame.runTimeCounter == 6:
+            Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
+            Bot.runOnce = False
+            Frame.runOnce = False
+        else:
+            Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+            Frame.drawCircle(Frame.townHall.center,(0,255,255))
+            resource_checkPoints = Frame.processStream(Bot.resource)
+
+        #print "Townhall center is:" + str(Frame.townHall.center.toString())
+        Frame.drawCircle(Bot.position,(0,255,0))
+
+        Frame.show_frame()
         return Bot.position, Bot.angle
 
     @staticmethod
@@ -42,58 +79,69 @@ class Bot(object):
         BluetoothController.send_command("c")
     @staticmethod
     def Stop():
-        BluetoothController.send_command("Stop")
+        BluetoothController.send_command("s")
     @staticmethod
     def Blink():
-        BluetoothController.send_command("Blink")
+        BluetoothController.send_command("blink")
     @staticmethod
     def moveDirection(direction):
         BluetoothController.send_command(Direction.command[direction])
+
+        print "direction: " + direction
+        sleep(0.1)
+        Bot.Stop()
         Bot.UpdateProperties()
-        print "direction" + direction
     @staticmethod
     def changeOrientation(orientation):
         BluetoothController.send_command(Orientation.command[orientation])
-        Bot.UpdateProperties()
+
         print "orientation: " + orientation
+        sleep(0.1)
 
-
-    @staticmethod
-    def BackToTownhall(townhallPosition, ListOfObstacles = None):
+        Bot.Stop()
         Bot.UpdateProperties()
-        if Bot.position == townhallPosition:
+    @staticmethod
+    def BackToTownhall(ListOfObstacles = None):
+        Bot.UpdateProperties()
+        if Point.inRange(Bot.position, Bot.townHall.center):
             Bot.Stop()
-            ##TODO wait for some time
+            sleep(1)
         else:
-            angle, orientation, direction = get_direction(Townhall.angle)
+            angle, orientation, direction = get_direction((Bot.currentTarget.angle + 180) % 360)
 
-            while Bot.position != Townhall.position:#TODO make this a range function
+            while not Point.inRange(Bot.position, Bot.townHall.position):
+                print "Turning ######"
                 while Bot.angle >= angle + Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
                     Bot.changeOrientation(orientation)
+                print "Moving##########"
                 Bot.moveDirection(direction)
-                    ##TODO add the wait function
             Bot.Stop()      
     @staticmethod
-    def Traverse(ListOfResources, townhall, ListOfObstacles = None):
-        
+    def Traverse(ListOfResources, ListOfObstacles = None):
+        print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
+            Bot.currentTarget = target
+            print " | Target Angle: " + str(Bot.currentTarget.angle)
             Bot.UpdateProperties()
-            if Bot.position == target.center:
+            if Point.inRange(Bot.position, target.center):
                 Bot.Stop()
                 Bot.Blink()
-                ##TODO wait for some time
+                sleep(10)
+                Bot.Stop()
             else:
                 angle, orientation, direction = MovementFunctions.get_direction(target.angle)
-                
-                    
-                while Bot.position != target.center:#TODO make this a range function
-                    while Bot.angle >= angle + Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
+
+                while not Point.inRange(Bot.position, target.center):
+                    print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
+                    while Bot.angle >= target.angle + Bot.AngleRange or Bot.angle <= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
                         Bot.changeOrientation(orientation)
                     Bot.moveDirection(direction)
-                    ##TODO add the wait function
                 Bot.Stop()
                 Bot.Blink()
-            BackToTownhall(townhall, ListOfObstacles = None)
+                print 'Reached Destination  >>>>>>>>>> '
+                sleep(10)
+                BluetoothController.send_command("stop")
+            Bot.BackToTownhall(ListOfObstacles = None)
             
                 ##TODO wait for some time
 if __name__ == '__main__':
