@@ -8,9 +8,8 @@ class Point(object):
         self.y = y
 
 
-
     def get_coordinate(self):
-        return (int(self.x), int(self.y))
+        return (self.x, self.y)
     def toString(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"
     def __lt__(self, other):

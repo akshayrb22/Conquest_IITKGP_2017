@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 import PIL
 from PIL import Image
+from BotController import Bot
 from Point import Point
 from ImageProcess import Frame 
 from PathOptimizer import PathOptimizer
@@ -61,8 +62,7 @@ class AStar(object):
     graph = None
     position = Point(0,0)
     @staticmethod
-    def init(gridX, gridY, array_of_obst,origin):
-        AStar.position = origin
+    def init(gridX, gridY, array_of_obst):
         AStar.graph=Grid(gridX,gridY)
         AStar.graph.obstacles=array_of_obst
     @staticmethod  
@@ -112,8 +112,7 @@ class AStar(object):
         path=[]
 
         path.append(target)
-        while target != AStar.position.get_coordinate():
-            #print target
+        while target != Bot.position.get_coordinate():
             target = came_from[(target)]
             path.append(target)
         path.reverse()

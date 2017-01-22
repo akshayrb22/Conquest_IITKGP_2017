@@ -18,7 +18,6 @@ from Utils import  Utils
 from time import sleep
 import copy
 import cv2
-from AStar import AStar
 class Bot(object):
     AngleRange = 12
     position = Point(0, 0)
@@ -32,7 +31,7 @@ class Bot(object):
     currentNode = None
     townHall = None
     runOnce = True
-    pathToTarget = None
+    aStarPath = None
     @staticmethod
     def UpdateProperties():
         #assume that you are calling Akshay's Image proccesing function
@@ -67,20 +66,16 @@ class Bot(object):
                 Bot.runOnce = False
                 Frame.runOnce = False
             else:
-                Frame.botPosition = Bot.position
-                #TODO Move to ImageProcess
-                cv2.circle(Frame.resized,(int(Bot.currentTarget.center.x),int(Bot.currentTarget.center.y)),30,(255,150,0),2,8)
+                #TODO Move to ImageProess
+                cv2.circle(Frame.resized,Bot.currentTarget.center.get_coordinate(),30,(255,150,0),2,8)
                 #Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
-                if Bot.pathToTarget != None:
-                    for node in Bot.pathToTarget:
-                        cv2.circle(Frame.resized,(int(node.x),int(node.y)),30,(29,188,15),2,8)
                 if Bot.currentNode != None:
-                    cv2.circle(Frame.resized,(int(Bot.currentNode.x),int(Bot.currentNode.y)),20,(0,0,255),2,4)
+                    cv2.circle(Frame.resized,Bot.currentNode.get_coordinate(),20,(0,0,255),2,4)
                     #Frame.drawCircle(Bot.currentNode,(255,0,0))
                     cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
                 cv2.putText(Frame.resized, "   " + str(Utils.distance(Bot.position,Bot.currentTarget.center)), Utils.midPoint(Bot.position,Bot.currentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                 if Bot.currentNode != None:
-                    cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), (int(Bot.currentNode.x),int(Bot.currentNode.y)), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
+                    cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
                 cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
                 #cv2.arrowedLine(Frame.resized,Point(Bot.prevBack.center)- 5000, ), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
                 cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(),Utils.getPointFromAngle(Bot.prevBack.center, Bot.prevFront.center),(255,255,25), 1,0,0,1)
@@ -135,29 +130,18 @@ class Bot(object):
             print " | Target Angle: " + str(Bot.currentTarget.angle)
             Bot.UpdateProperties()
             #TODO call aStar algorithm
-
-            Bot.Stop()
-            
-
             #TODO take in a_star_search in generatePath function
-            if ListOfObstacles==None and (ListOfObstacles) <= 0:
+            ''''if ListOfObstacles == None:
                 path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             else:
-                AStar.init(600, 600, obstacles, Bot.position)
-                obstacles = []
-                for obstacle in ListOfObstacles:
-                    obstacles.append(obstacle.center.get_coordinate())
-                print obstacles
-                aStarPath =  AStar.search(target.center.get_coordinate())
-                path,Bot.pathToTarget = Utils.generatePath(Bot.position, Bot.currentTarget.center,aStarPath)
+                path = Utils.generatePath(Bot.position, Bot.currentTarget.center,a_star_search())'''
             #find list of PathPoints to traverse
-            #path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
+            path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
 
             for node in path:
-                print path
+                #print path
                 Bot.currentNode = node
-                #print node.x
-                angle, dist = Utils.angleBetweenPoints(Bot.position,Point(node[0],node[0]))
+                angle, dist = Utils.angleBetweenPoints(Bot.position,node)
                 Bot.currentTarget = Checkpoint(0,node,0,0,angle)
                 # if Point.inRange(Bot.position, node):
                 #     print 'Reached Destination  <<<<<<<<<<<<<<<< '
@@ -167,10 +151,10 @@ class Bot(object):
                 #     sleep(5)
                     
                 # else:
-                while not Point.inRange(Bot.position, Point(int(node.x), int(node.y))):
+                while not Point.inRange(Bot.position, node):
                     #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
                     while Bot.angle <= (Bot.currentTarget.angle - Bot.AngleRange)%360 or Bot.angle >= (Bot.currentTarget.angle + Bot.AngleRange)%360:##receive red_point & green_point parameters
-                        if Point.inRange(Bot.position, Point(int(node.x), int(node.y))):
+                        if Point.inRange(Bot.position, node):
                             Bot.Stop()
                             break
                         orientation = Utils.determineTurn3(Bot.angle, Bot.currentTarget.angle)
@@ -189,7 +173,7 @@ class Bot(object):
                 
                
             #Bot.BackToTownhall(ListOfObstacles = None)
-            Bot.pathToTarget = None              
+                            
                 ##TODO wait for some time
 
     @staticmethod
