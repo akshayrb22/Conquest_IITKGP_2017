@@ -17,16 +17,12 @@ class Point(object):
         return False
     @staticmethod
     def inRange(point1,point2):
-        if point1.x in range(point2.x - 50,point2.x + 50) and point1.y in range(point2.y - 50,point2.y + 50) :
+        if point1.x in range(point2.x - 40,point2.x + 40) and point1.y in range(point2.y - 40,point2.y + 40) :
             return True
         else:
             return False
 if __name__ == '__main__':
-    points = []
-    points.append(Point(30, 20))
-    points.append(Point(10, 25))
-    points.append(Point(20, 30))
-    points.sort()
-    for point in points:
-        print point.toString()
+    p1 = Point(0,0)
+    p2 = Point(10,10)
+    
     

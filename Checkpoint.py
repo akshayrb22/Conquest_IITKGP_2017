@@ -21,7 +21,7 @@ class Checkpoint(object):
         self.angle = angle
         
     def __lt__(self, other):
-         return self.distance < other.distance
+        return self.distance < other.distance
 
 class CheckpointType(object):
     def __init__(self,checkpoint_type,color,contour_color):

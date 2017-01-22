@@ -94,44 +94,44 @@ class MovementFunctions():
 
         if sector == 1:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.RIGHT
-            else:
                 direction = Direction.FORWARD_RIGHT
+            else:
+                direction = Direction.RIGHT
         elif sector == 2:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.FORWARD_RIGHT
-            else:
                 direction = Direction.FORWARD
+            else:
+                direction = Direction.FORWARD_RIGHT
         elif sector == 3:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.FORWARD
-            else:
                 direction = Direction.FORWARD_LEFT
+            else:
+                direction = Direction.FORWARD
         elif sector == 4:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.FORWARD_RIGHT  
+                direction = Direction.LEFT  
             else:
-                direction = Direction.LEFT
+                direction = Direction.FORWARD_LEFT
         elif sector == 5:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.LEFT
-            else:
                 direction = Direction.BACKWARD_LEFT
+            else:
+                direction = Direction.LEFT
         elif sector == 6:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.BACKWARD_LEFT
-            else:
                 direction = Direction.BACKWARD
+            else:
+                direction = Direction.BACKWARD_LEFT
         elif sector == 7:
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.BACKWARD
-            else:
                 direction = Direction.BACKWARD_RIGHT
+            else:
+                direction = Direction.BACKWARD
         else :
             if orientation == Orientation.ANTI_CLOCKWISE:
-                direction = Direction.BACKWARD_RIGHT
-            else:
                 direction = Direction.RIGHT
+            else:
+                direction = Direction.BACKWARD_RIGHT
 
         msg = "Resource is at {resource} degree. Turn the bot by {angle} degree {motion}, and move {direction}"
         msg = msg.format(resource = angle_of_resource, angle=angle, motion=orientation, direction=direction)
