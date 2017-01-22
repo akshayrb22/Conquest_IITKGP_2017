@@ -119,14 +119,17 @@ class Utils(object):
     def generatePath(botPosition, targetPosition, aStarPath=None):
         finalPath = []
 
-        #path for FirstPast
+        #path for FirstPass
         firstPass = []
         pathToTarget = []
-        pathToTarget.append(botPosition) #botPosition
         if aStarPath != None:
-            pathToTarget += aStarPath
-        pathToTarget.append(targetPosition) #target Position
-
+            for node in aStarPath:
+                pathToTarget.append(Point(node[0], node[1]))
+        else:
+            pathToTarget.append(botPosition) #botPosition
+            pathToTarget.append(targetPosition) #target Position
+        print pathToTarget
+        savedPathToTarget = copy.deepcopy(pathToTarget)
         firstPass += copy.deepcopy(pathToTarget) #from bot postion to target
         #delete target from reversed pathToTarget
         del pathToTarget[len(pathToTarget) - 1]
@@ -138,7 +141,7 @@ class Utils(object):
         finalPath += copy.deepcopy(firstPass)
 
         del finalPath[0]
-        return finalPath
+        return finalPath, savedPathToTarget
     
     
 if __name__ == '__main__':

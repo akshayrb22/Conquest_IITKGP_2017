@@ -79,7 +79,7 @@ class Frame(object):
         contour = cnts[0] if imutils.is_cv2() else cnts[1]
         
         #contour =  Frame.find_contour(checkpointType.lower_color.T)
-        if(checkpointType.type == "Resource"):
+        if(checkpointType.type == "Resource" or checkpointType.type == "Obstacle"):
             return Frame.processCheckpoints(contour, checkpointType)
         else:
             return Frame.get_center(contour,checkpointType)
@@ -126,7 +126,7 @@ class Frame(object):
                     shapeMessage = 'null'
                 if display_contour:
                     if(shape == 'circle' or shape == 'square' or shape == 'rectangle' or shape == 'triangle'):
-                        if area > 150 :
+                        if area > 100 :
                             angle = 0
                             
                             origin = Frame.townHall.center
