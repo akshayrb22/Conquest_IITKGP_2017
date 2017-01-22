@@ -11,9 +11,9 @@ import cv2
 
 
 #connect Bluetooth
-BluetoothController.connect()
-Bot.Stop()
-Bot.setBotSpeed(50)
+#BluetoothController.connect()
+#Bot.Stop()
+Bot.setBotSpeed(40)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))

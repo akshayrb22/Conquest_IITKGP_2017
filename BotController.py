@@ -118,34 +118,37 @@ class Bot(object):
         for target in ListOfResources:
             Bot.currentTarget = target
             print " | Target Angle: " + str(Bot.currentTarget.angle)
-            #TODO call aStar algorithm
             Bot.UpdateProperties()
+            #TODO call aStar algorithm
+            #TODO take in a_star_search in generatePath function
+            ''''if ListOfObstacles == None:
+                path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
+            else:
+                path = Utils.generatePath(Bot.position, Bot.currentTarget.center,a_star_search())'''
             #find list of PathPoints to traverse
-            path = Utils.generatePath(Bot.position, Bot.currentTarget.center,Bot.aStarPath)
+            path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             for node in path:
 
                 if Point.inRange(Bot.position, node):
                     Bot.Stop()
                     Bot.Blink()
-                    sleep(10)
+                    sleep(5)
                     Bot.Stop()
                 else:
-                    #angle, orientation, direction = MovementFunctions.get_direction(target.angle)
-
                     while not Point.inRange(Bot.position, node):
                         #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
                         while Bot.angle <= Bot.currentTarget.angle - Bot.AngleRange or Bot.angle >= Bot.currentTarget.angle + Bot.AngleRange:##receive red_point & green_point parameters
                             
-                            orientation = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle)
-                            BluetoothController.send_command(str(orientation))
+                            orientation = Utils.determineTurn3(Bot.angle, Bot.currentTarget.angle)
+                            Bot.changeOrientation(orientation)
                         print "##############################################################################"
-                        #sleep(3)
+                        
                             
                         Bot.moveDirection(Direction.FORWARD)
                     Bot.Stop()
                     Bot.Blink()
                     print 'Reached Destination  >>>>>>>>>> '
-                    sleep(10)
+                    sleep(5)
                 
                
             #Bot.BackToTownhall(ListOfObstacles = None)
