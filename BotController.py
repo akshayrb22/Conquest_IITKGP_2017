@@ -19,7 +19,7 @@ from time import sleep
 import copy
 import cv2
 class Bot(object):
-    AngleRange = 5
+    AngleRange = 12
     position = Point(0, 0)
     angle = 0
     botFront = None#CheckpointType('botFront', 'green',(0,255,0))
@@ -28,6 +28,7 @@ class Bot(object):
     prevBack = None
     prevFront = None
     currentTarget = None
+    currentNode = None
     townHall = None
     runOnce = True
     aStarPath = None
@@ -66,11 +67,18 @@ class Bot(object):
                 Frame.runOnce = False
             else:
                 #TODO Move to ImageProess
-                Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
-                cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+                cv2.circle(Frame.resized,Bot.currentTarget.center.get_coordinate(),30,(255,150,0),2,8)
+                #Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+                if Bot.currentNode != None:
+                    cv2.circle(Frame.resized,Bot.currentNode.get_coordinate(),20,(0,0,255),2,4)
+                    #Frame.drawCircle(Bot.currentNode,(255,0,0))
+                    cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
                 cv2.putText(Frame.resized, "   " + str(Utils.distance(Bot.position,Bot.currentTarget.center)), Utils.midPoint(Bot.position,Bot.currentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentTarget.center.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
+                if Bot.currentNode != None:
+                    cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
                 cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
+                #cv2.arrowedLine(Frame.resized,Point(Bot.prevBack.center)- 5000, ), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
+                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(),Utils.getPointFromAngle(Bot.prevBack.center, Bot.prevFront.center),(255,255,25), 1,0,0,1)
                 Frame.drawCircle(Frame.townHall.center,(0,255,255))
                 resource_checkPoints = Frame.processStream(Bot.resource)
              
@@ -97,6 +105,7 @@ class Bot(object):
         BluetoothController.send_command("blink")
     @staticmethod
     def moveDirection(direction):
+        Bot.setBotSpeed(100)
         BluetoothController.send_command(Direction.command[direction])
 
         print "direction: " + direction
@@ -105,6 +114,7 @@ class Bot(object):
         Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
+        Bot.setBotSpeed(100)
         BluetoothController.send_command(Orientation.command[orientation])
 
         print "orientation: " + orientation
@@ -127,28 +137,39 @@ class Bot(object):
                 path = Utils.generatePath(Bot.position, Bot.currentTarget.center,a_star_search())'''
             #find list of PathPoints to traverse
             path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
-            for node in path:
 
-                if Point.inRange(Bot.position, node):
-                    Bot.Stop()
-                    Bot.Blink()
-                    sleep(5)
-                    Bot.Stop()
-                else:
-                    while not Point.inRange(Bot.position, node):
-                        #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                        while Bot.angle <= Bot.currentTarget.angle - Bot.AngleRange or Bot.angle >= Bot.currentTarget.angle + Bot.AngleRange:##receive red_point & green_point parameters
-                            
-                            orientation = Utils.determineTurn3(Bot.angle, Bot.currentTarget.angle)
-                            Bot.changeOrientation(orientation)
-                        print "##############################################################################"
+            for node in path:
+                #print path
+                Bot.currentNode = node
+                angle, dist = Utils.angleBetweenPoints(Bot.position,node)
+                Bot.currentTarget = Checkpoint(0,node,0,0,angle)
+                # if Point.inRange(Bot.position, node):
+                #     print 'Reached Destination  <<<<<<<<<<<<<<<< '
+                #     # Bot.Stop()
+                #     # Bot.Blink()
+                #     BluetoothController.send_command(Orientation.SPOT_RIGHT)
+                #     sleep(5)
+                    
+                # else:
+                while not Point.inRange(Bot.position, node):
+                    #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
+                    while Bot.angle <= (Bot.currentTarget.angle - Bot.AngleRange)%360 or Bot.angle >= (Bot.currentTarget.angle + Bot.AngleRange)%360:##receive red_point & green_point parameters
+                        if Point.inRange(Bot.position, node):
+                            Bot.Stop()
+                            break
+                        orientation = Utils.determineTurn3(Bot.angle, Bot.currentTarget.angle)
+                        Bot.changeOrientation(orientation)
+                    print "##############################################################################"
+                    
                         
-                            
-                        Bot.moveDirection(Direction.FORWARD)
-                    Bot.Stop()
-                    Bot.Blink()
-                    print 'Reached Destination  >>>>>>>>>> '
-                    sleep(5)
+                    Bot.moveDirection(Direction.FORWARD)
+                #Bot.Stop()
+                # Bot.Blink()
+                print 'Reached Destination  >>>>>>>>>> '
+                BluetoothController.send_command(Orientation.SPOT_RIGHT)
+                #print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                # Bot.Stop()
+                # sleep(5)
                 
                
             #Bot.BackToTownhall(ListOfObstacles = None)

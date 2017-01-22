@@ -10,6 +10,7 @@ from Color import Color
 
 
 
+
 colorName =raw_input("Enter the color : ")
 upperColor = Color(colorName,1)
 lowerColor = Color(colorName,0)

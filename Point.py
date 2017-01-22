@@ -2,7 +2,7 @@
 ##It can also return the x & y coordinates separately
 
 class Point(object):
-    value = 60
+    value = 50
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y

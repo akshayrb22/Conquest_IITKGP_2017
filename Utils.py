@@ -8,6 +8,7 @@
 from math import *
 import numpy as np
 from Point import Point
+import copy
 from FindDirectionality import *
 class Utils(object):
 
@@ -63,6 +64,19 @@ class Utils(object):
                 else:
                     orientation = Orientation.ARC_RIGHT 
         return orientation    
+
+    @staticmethod
+    def getPointFromAngle(p1,p2):
+        x=(101*p2.x)-(p1.x*100)
+        y=(101*p2.y)-(p1.y*100)
+        return (x,y)
+
+
+
+
+        
+
+
     @staticmethod
     def determineTurn2(botAngle,targetAngle):
         bigAngle = None
@@ -113,30 +127,24 @@ class Utils(object):
             pathToTarget += aStarPath
         pathToTarget.append(targetPosition) #target Position
 
-        firstPass += pathToTarget #from bot postion to target
+        firstPass += copy.deepcopy(pathToTarget) #from bot postion to target
         #delete target from reversed pathToTarget
         del pathToTarget[len(pathToTarget) - 1]
         pathToTarget.reverse()
-        firstPass += pathToTarget
+        firstPass += copy.deepcopy(pathToTarget)
 
-        finalPath += firstPass        
+        finalPath += copy.deepcopy(firstPass)       
         del firstPass[0]
-        finalPath += firstPass
+        finalPath += copy.deepcopy(firstPass)
 
         del finalPath[0]
         return finalPath
     
     
 if __name__ == '__main__':
-    aStarpath = []
-    aStarpath.append(Point(5,5))
-    path = Utils.generatePath(Point(0, 0),Point(10, 10), aStarpath)
-    for point in path:
-        print point.toString()
-    
-    
-    turn = Utils.determineTurn3(221,230)
-    print turn 
+
+    turn = Utils.determineTurn3(180, 0)    
+    print turn
 
 
 '''

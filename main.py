@@ -7,17 +7,18 @@ from Point import Point
 import math
 from BotController import Bot
 import cv2
+from AStar import*
 #from FindDirectionality import Direction, Orientation,MovementFunctions
 
 
 #connect Bluetooth
-#BluetoothController.connect()
-#Bot.Stop()
-Bot.setBotSpeed(40)
+BluetoothController.connect()
+Bot.Stop()
+Bot.setBotSpeed(100)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
-Bot.obstacle = CheckpointType("Obstacle", "blue",(255,0,0))
+#Bot.obstacle = CheckpointType("Obstacle", "blue",(255,0,0))
 Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
 Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 # while True:
@@ -41,13 +42,9 @@ while True:
 
     resource_checkPoints = Frame.processStream(Bot.resource)
 
-    obstacle_checkPoints = Frame.processStream(Bot.obstacle)
+    #obstacle_checkPoints = Frame.processStream(Bot.obstacle)
     #cv2.imshow("init",Frame.resized)
-    AStar.calculate(resource_checkPoints,obstacle_checkPoints)
+    #AStar.calculate(resource_checkPoints,obstacle_checkPoints)
     Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
   
     Bot.Traverse(resource_checkPoints )
-
-
-#for resource in listOfResource
-
