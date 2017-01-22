@@ -13,7 +13,7 @@ import cv2
 #connect Bluetooth
 BluetoothController.connect()
 Bot.Stop()
-
+Bot.setBotSpeed(50)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
@@ -46,7 +46,7 @@ while True:
 
     Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
   
-    Bot.Traverse(resource_checkPoints)
+    Bot.Traverse(resource_checkPoints )
 
 
 #for resource in listOfResource

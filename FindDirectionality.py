@@ -27,9 +27,12 @@ class Direction(object):
 
 
 class Orientation(object):
-    CLOCKWISE = 'CLOCKWISE'
-    ANTI_CLOCKWISE = 'ANTI_CLOCKWISE'
-    command = {CLOCKWISE:'c', ANTI_CLOCKWISE:'a'}
+    SPOT_RIGHT = 'SPOT_RIGHT'
+    SPOT_LEFT = 'SPOT_LEFT'
+    ARC_RIGHT = 'ARC_RIGHT'
+    ARC_LEFT = 'ARC_LEFT'
+
+    command = {SPOT_RIGHT:'sr', SPOT_LEFT:'sl', ARC_RIGHT:'ar', ARC_LEFT :'al'}
 
 
 class MovementFunctions():
@@ -59,7 +62,7 @@ class MovementFunctions():
         """
 
         sector = MovementFunctions.get_sector(angle_of_resource)
-
+        
         # Calculate whether to turn clockwise or anti clock wise.
 
         min_angle_of_sector = (sector - 1) * 45
@@ -70,16 +73,18 @@ class MovementFunctions():
         mid_angle = (max_angle_of_sector + min_angle_of_sector) / float(2)
 
         if angle_of_resource < mid_angle:
-            orientation = Orientation.ANTI_CLOCKWISE
+            orientation = Orientation.SPOT_LEFT
             degree_to_turn = angle_of_resource - min_angle_of_sector
         else:
-            orientation = Orientation.CLOCKWISE
+            orientation = Orientation.SPOT_RIGHT
             degree_to_turn = max_angle_of_sector - angle_of_resource
 
         # print 'orientation', degree_to_turn
 
 
         return degree_to_turn, orientation
+        
+        
 
     @staticmethod
     def get_direction(angle_of_resource):
@@ -93,42 +98,42 @@ class MovementFunctions():
         (angle, orientation) = MovementFunctions.get_orientation(angle_of_resource)
 
         if sector == 1:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.FORWARD_RIGHT
             else:
                 direction = Direction.RIGHT
         elif sector == 2:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.FORWARD
             else:
                 direction = Direction.FORWARD_RIGHT
         elif sector == 3:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.FORWARD_LEFT
             else:
                 direction = Direction.FORWARD
         elif sector == 4:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.LEFT  
             else:
                 direction = Direction.FORWARD_LEFT
         elif sector == 5:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.BACKWARD_LEFT
             else:
                 direction = Direction.LEFT
         elif sector == 6:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.BACKWARD
             else:
                 direction = Direction.BACKWARD_LEFT
         elif sector == 7:
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.BACKWARD_RIGHT
             else:
                 direction = Direction.BACKWARD
         else :
-            if orientation == Orientation.ANTI_CLOCKWISE:
+            if orientation == Orientation.SPOT_LEFT:
                 direction = Direction.RIGHT
             else:
                 direction = Direction.BACKWARD_RIGHT
@@ -140,6 +145,6 @@ class MovementFunctions():
         return angle, orientation, direction
 
 
-    if __name__ == '__main__':
-        print get_direction(285)
+if __name__ == '__main__':
+    print MovementFunctions.get_direction(-230)
     

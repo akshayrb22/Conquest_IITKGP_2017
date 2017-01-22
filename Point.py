@@ -2,6 +2,7 @@
 ##It can also return the x & y coordinates separately
 
 class Point(object):
+    value = 60
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
@@ -17,7 +18,7 @@ class Point(object):
         return False
     @staticmethod
     def inRange(point1,point2):
-        if point1.x in range(point2.x - 40,point2.x + 40) and point1.y in range(point2.y - 40,point2.y + 40) :
+        if point1.x in range(point2.x - Point.value,point2.x + Point.value) and point1.y in range(point2.y - Point.value,point2.y + Point.value) :
             return True
         else:
             return False

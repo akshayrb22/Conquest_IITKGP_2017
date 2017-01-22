@@ -17,6 +17,7 @@ from pyimagesearch.shapedetector import ShapeDetector
 from Checkpoint import Checkpoint
 import math
 
+
 class Frame(object):
     elements = []
     camera = None
@@ -28,6 +29,7 @@ class Frame(object):
     townHall = None  #is of type Checkpoints
     runTimeCounter = 1
     runOnce = True
+    botPosition = None
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)

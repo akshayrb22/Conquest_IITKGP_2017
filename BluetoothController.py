@@ -42,11 +42,13 @@ class BluetoothController(object):
         BluetoothController.sock.close()
     @staticmethod
     def send_command(command):
-        BluetoothController.sock.send(command)
+        if BluetoothController.is_connected == True:
+            BluetoothController.sock.send(command)
+        else:print "Failed to send command... Bluetooth is not connected."
         return
         
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
-    BluetoothController.connect()
+    #BluetoothController.connect()
     BluetoothController.send_command("s")
     raw_input("Press to close")

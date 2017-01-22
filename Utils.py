@@ -8,6 +8,7 @@
 from math import *
 import numpy as np
 from Point import Point
+from FindDirectionality import *
 class Utils(object):
 
     @staticmethod
@@ -35,46 +36,107 @@ class Utils(object):
     @staticmethod
     def midPoint(point1,point2):
         return Point((point1.x + point2.x)/2,(point1.y + point2.y)/2)
+    @staticmethod
+    def getQuadrant(angle):
+        if angle in range(0, 91): return 1
+        if angle in range(91, 181): return 2
+        if angle in range(181, 271): return 3
+        if angle in range(271, 360): return 4
+    @staticmethod
+    def determineTurn(botAngle,targetAngle):
+        deltaAngle = botAngle - targetAngle
+        if Utils.getQuadrant(botAngle) == Utils.getQuadrant(targetAngle):
+            if deltaAngle > 0:
+                orientation = Orientation.ARC_RIGHT
+            else:
+                orientation = Orientation.ARC_LEFT
+        else:
+            if abs(deltaAngle) > 90:
+                if deltaAngle < 0:
+                    orientation = Orientation.SPOT_LEFT
+                else:
+                    orientation = Orientation.SPOT_RIGHT
+
+            else:
+                if deltaAngle < 0:
+                    orientation = Orientation.ARC_LEFT
+                else:
+                    orientation = Orientation.ARC_RIGHT 
+        return orientation    
+    @staticmethod
+    def determineTurn2(botAngle,targetAngle):
+        bigAngle = None
+        deltaAngle = (botAngle - targetAngle)
+        if botAngle < targetAngle :
+            bigAngle = 0
+        else:
+            bigAngle = 0
+        if deltaAngle <= 0 :
+            if abs(deltaAngle) > 30:
+                return Orientation.SPOT_RIGHT
+            else:
+                return Orientation.ARC_LEFT
+        elif deltaAngle > 0:
+            if deltaAngle > 30:
+                return Orientation.SPOT_LEFT 
+            else:
+                return Orientation.ARC_RIGHT
+        else:
+            return None
+    @staticmethod
+    def determineTurn3(botAngle, targetAngle):
+        deltaAngle = botAngle - targetAngle
+        absDeltaAngle = abs(deltaAngle)
+        if deltaAngle >= 180:
+            deltaAngle -= 360
+        deltaAngle %= 360
+        if deltaAngle >= 180:
+            if absDeltaAngle > 30:
+                return Orientation.SPOT_LEFT
+            else:
+                return Orientation.ARC_LEFT
+        else:
+            if absDeltaAngle > 30:
+                return Orientation.SPOT_RIGHT
+            else:
+                return Orientation.SPOT_RIGHT
+        
+    @staticmethod
+    def generatePath(botPosition, targetPosition, aStarPath=None):
+        finalPath = []
+
+        #path for FirstPast
+        firstPass = []
+        pathToTarget = []
+        pathToTarget.append(botPosition) #botPosition
+        if aStarPath != None:
+            pathToTarget += aStarPath
+        pathToTarget.append(targetPosition) #target Position
+
+        firstPass += pathToTarget #from bot postion to target
+        #delete target from reversed pathToTarget
+        del pathToTarget[len(pathToTarget) - 1]
+        pathToTarget.reverse()
+        firstPass += pathToTarget
+
+        finalPath += firstPass        
+        del firstPass[0]
+        finalPath += firstPass
+
+        del finalPath[0]
+        return finalPath
     
     
 if __name__ == '__main__':
-    angle, dist= Utils.angleBetweenPoints(Point(0,0),Point(5,0))
-    print angle,dist
-    angle, dist = Utils.angleBetweenPoints(Point(200,200),Point(190,190))
-    print angle, dist
-    angle, dist = Utils.angleBetweenPoints(Point(200,200),Point(190,210))
-    print angle, dist
-    angle, dist =  Utils.angleBetweenPoints(Point(200,200),Point(210,210))
-    print angle, dist
-        
+    aStarpath = []
+    aStarpath.append(Point(5,5))
+    path = Utils.generatePath(Point(0, 0),Point(10, 10), aStarpath)
+    for point in path:
+        print point.toString()
     
     
-    
-    
-    
-    
-    
-    
-    
-    # angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(301,476))
-    # #angle = Utils.map(-170,-180,0,180,360)
-    # print angle
-    # angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(240,233))
-    # #angle = Utils.map(-170,-180,0,180,360)
-    # print angle
-    # angle,_  = Utils.angleBetweenPoints(Point(388,333),Point(496,195))
-    # #angle = Utils.map(-170,-180,0,180,360)
-    # print angle
-    # angle,_  = Utils.angleBetweenPoints(Point(200,200),Point(190,210))
-    # #angle = Utils.map(-170,-180,0,180,360)
-
-
-
- 
-
-    
-
-
+    turn = Utils.determineTurn3(221,230)
+    print turn 
 
 
 '''

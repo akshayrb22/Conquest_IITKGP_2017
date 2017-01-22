@@ -30,6 +30,7 @@ class Bot(object):
     currentTarget = None
     townHall = None
     runOnce = True
+    aStarPath = None
     @staticmethod
     def UpdateProperties():
         #assume that you are calling Akshay's Image proccesing function
@@ -57,6 +58,7 @@ class Bot(object):
             Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
             #print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
             #sleep(1)
+            #Frame.botPosition = 
             
             if Bot.runOnce:#Frame.runTimeCounter == 6:
                 Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
@@ -109,59 +111,54 @@ class Bot(object):
         #sleep(0.1)
 
         Bot.UpdateProperties()
-        #return Bot.position, Bot.angle
-    @staticmethod
-    def BackToTownhall(ListOfObstacles = None):
-        Bot.UpdateProperties()
-        if Point.inRange(Bot.position, Bot.townHall.center):
-            Bot.Stop()
-            sleep(1)
-        else:
-            angle, orientation, direction = get_direction((Bot.currentTarget.angle + 180) % 360)
-
-            while not Point.inRange(Bot.position, Bot.townHall.position):
-                print "Turning ######"
-                while Bot.angle >= angle - Bot.AngleRange or Bot.angle <= angle + Bot.AngleRange:##receive red_point & green_point parameters
-                    Bot.position,Bot.angle = Bot.changeOrientation(orientation)
-                print "Moving##########"
-                Bot.moveDirection(direction)
-            Bot.Stop()      
+        #return Bot.position, Bot.angle    
     @staticmethod
     def Traverse(ListOfResources, ListOfObstacles = None):
         print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
             Bot.currentTarget = target
             print " | Target Angle: " + str(Bot.currentTarget.angle)
+            #TODO call aStar algorithm
             Bot.UpdateProperties()
-            if Point.inRange(Bot.position, target.center):
-                Bot.Stop()
-                Bot.Blink()
-                sleep(10)
-                Bot.Stop()
-            else:
-                angle, orientation, direction = MovementFunctions.get_direction(target.angle)
+            #find list of PathPoints to traverse
+            path = Utils.generatePath(Bot.position, Bot.currentTarget.center,Bot.aStarPath)
+            for node in path:
 
-                while not Point.inRange(Bot.position, target.center):
-                    print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                    while Bot.angle <= target.angle - Bot.AngleRange or Bot.angle >= target.angle + Bot.AngleRange:##receive red_point & green_point parameters
-                        
-                        if Bot.angle - target.angle < 0:
-                            Bot.changeOrientation(Orientation.ANTI_CLOCKWISE) 
-                        else:
-                            Bot.changeOrientation(Orientation.CLOCKWISE)
-                    print "##############################################################################"
-                    #sleep(3)
-                        
-                    Bot.moveDirection(Direction.FORWARD)
-                Bot.Stop()
-                Bot.Blink()
-                print 'Reached Destination  >>>>>>>>>> '
-                sleep(10)
+                if Point.inRange(Bot.position, node):
+                    Bot.Stop()
+                    Bot.Blink()
+                    sleep(10)
+                    Bot.Stop()
+                else:
+                    #angle, orientation, direction = MovementFunctions.get_direction(target.angle)
+
+                    while not Point.inRange(Bot.position, node):
+                        #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
+                        while Bot.angle <= Bot.currentTarget.angle - Bot.AngleRange or Bot.angle >= Bot.currentTarget.angle + Bot.AngleRange:##receive red_point & green_point parameters
+                            
+                            orientation = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle)
+                            BluetoothController.send_command(str(orientation))
+                        print "##############################################################################"
+                        #sleep(3)
+                            
+                        Bot.moveDirection(Direction.FORWARD)
+                    Bot.Stop()
+                    Bot.Blink()
+                    print 'Reached Destination  >>>>>>>>>> '
+                    sleep(10)
                 
-                BluetoothController.send_command("stop")
+               
             #Bot.BackToTownhall(ListOfObstacles = None)
-            
+                            
                 ##TODO wait for some time
+
+    @staticmethod
+    def setBotSpeed(speed):
+        if speed in range(0,100):
+            BluetoothController.send_command("X" + str(speed))
+
+
+
 if __name__ == '__main__':
     botFront_green = CheckpointType('botFront', 'green',(0,255,0))
     botBack_red = CheckpointType('botBack', 'red',(0,0,255))
