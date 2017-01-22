@@ -79,7 +79,7 @@ class Frame(object):
         contour = cnts[0] if imutils.is_cv2() else cnts[1]
         
         #contour =  Frame.find_contour(checkpointType.lower_color.T)
-        if(checkpointType.type == "Resource"):
+        if(checkpointType.type == "Resource" or checkpointType == "Obstacle"):
             return Frame.processCheckpoints(contour, checkpointType)
         else:
             return Frame.get_center(contour,checkpointType)
@@ -132,6 +132,7 @@ class Frame(object):
                             origin = Frame.townHall.center
                             #print origin.toString()
                             angle, dist = Utils.angleBetweenPoints(origin,position)
+
                             Frame.runTimeCounter += 1    
                             
                             checkPointList.append(Checkpoint(area, position, dist, cyan, angle))
@@ -144,8 +145,9 @@ class Frame(object):
                             cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
 
                             cv2.putText(Frame.resized, shapeMessage , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-                            cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
-                            cyan = cyan - 1
+                            if (checkpointType.type == "Resource"):
+                                cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
+                                cyan = cyan - 1
                             if Frame.runTimeCounter <= 2: 
                                 return checkPointList
         #sort checkpoints

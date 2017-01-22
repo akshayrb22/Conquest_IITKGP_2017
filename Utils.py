@@ -30,7 +30,7 @@ class Utils(object):
     
     
 if __name__ == '__main__':
-    angle,_  = Utils.angleBetweenPoints(Point(0,0),Point(10,10))
+    angle,_  = Utils.angleBetweenPoints(Point(0,0),Point(10, 10))
     print angle
 
 

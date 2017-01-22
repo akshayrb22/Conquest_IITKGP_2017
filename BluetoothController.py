@@ -28,8 +28,9 @@ class BluetoothController(object):
                 if target_address is not None:
                     print "Blutooth Controller  found target with address ", target_address
                     BluetoothController.connect_to_slave()
+                                      
                 else:
-                    print "could not find target bluetooth device nearby"
+                    print "could not find target bluetooth device nearby"                  
                 break
     @staticmethod
     def connect_to_slave():
