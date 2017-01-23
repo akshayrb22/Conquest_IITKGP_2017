@@ -137,14 +137,16 @@ class Bot(object):
             Bot.currentResource = target
             print " | Target Angle: " + str(Bot.currentTarget.angle)
             Bot.UpdateProperties()
+            blinkFlag = 0
+            noOfSkips = len(ListOfResources)
             #TODO call aStar algorithm
             #TODO take in a_star_search in generatePath function
-            ''''if ListOfObstacles == None:
+            if ListOfObstacles == None:
                 path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             else:
-                path = Utils.generatePath(Bot.position, Bot.currentTarget.center,a_star_search())'''
+                path = Utils.generatePath(Bot.position, Bot.currentTarget.center,AStar.search(Bot.position, target.center,600, 570, ListOfObstacles))
             #find list of PathPoints to traverse
-            path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
+            # path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             tempCounter =0
             for node in path:
                 #print path
@@ -154,8 +156,9 @@ class Bot(object):
                 if Point.inRange(Bot.position, node):
                     print 'Reached Destination  <<<<<<<<<<<<<<<< '
                     Bot.Stop()
-                    Bot.Blink()
-                    sleep(5)
+                    if (blinkFlag%noOfSkips) == (noOfSkips-1) & blinkFlag == 1:
+                        Bot.Blink()
+                    sleep(2)
                     
                 else:
                     while not Point.inRange(Bot.position, node):
@@ -170,11 +173,13 @@ class Bot(object):
                             Bot.Stop()
                             orientation = Utils.determineTurn3(Bot.angle, Bot.currentTarget.angle)
                             Bot.changeOrientation(orientation)
-
+                            
+                
                 #found the target
                 print 'Reached Destination  >>>>>>>>>> '
+                if noOfSkips == 1 or (blinkFlag % noOfSkips) == noOfSkips - 1:
+                    Bot.Blink()
                 Bot.Stop()
-                Bot.Blink()
                 sleep(5)
         print "REACHED ALL DESTINATIONS!!!!!!!!!!!!!!!!!"
         Bot.Stop()

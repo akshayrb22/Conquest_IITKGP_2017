@@ -18,7 +18,7 @@ Bot.setBotSpeed(100)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
-#Bot.obstacle = CheckpointType("Obstacle", "blue",(255,0,0))
+#Bot.obstacle = CheckpointType("Obstacle", "purple",(255,0,0))
 Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
 Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 # while True:
