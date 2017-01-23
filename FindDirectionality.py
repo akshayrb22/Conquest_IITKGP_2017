@@ -23,7 +23,7 @@ class Direction(object):
     FORWARD_RIGHT = 'FORWARD_RIGHT'  # 45 deg
     BACKWARD_LEFT = 'BACKWARD_LEFT'  # 225 deg
     BACKWARD_RIGHT = 'BACKWARD_RIGHT'  # 315 deg
-    command = {FORWARD:'f',BACKWARD:'b',LEFT:'l',RIGHT:'r',BACKWARD_LEFT:'lb',BACKWARD_RIGHT:'rb',FORWARD_LEFT:'lfd',FORWARD_RIGHT:'rfd'}
+    command = {FORWARD:'f',BACKWARD:'b',LEFT:'left',RIGHT:'right',BACKWARD_LEFT:'lb',BACKWARD_RIGHT:'rb',FORWARD_LEFT:'lfd',FORWARD_RIGHT:'rfd'}
 
 
 class Orientation(object):
@@ -32,7 +32,7 @@ class Orientation(object):
     ARC_RIGHT = 'ARC_RIGHT'
     ARC_LEFT = 'ARC_LEFT'
 
-    command = {SPOT_RIGHT:'sr', SPOT_LEFT:'sl', ARC_RIGHT:'ar', ARC_LEFT :'al'}
+    command = {SPOT_RIGHT:'c', SPOT_LEFT:'a', ARC_RIGHT:'r', ARC_LEFT :'l'}
 
 
 class MovementFunctions():

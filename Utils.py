@@ -124,7 +124,7 @@ class Utils(object):
         pathToTarget = []
         pathToTarget.append(botPosition) #botPosition
         if aStarPath != None:
-            pathToTarget += aStarPath
+            pathToTarget += copy.deepcopy(aStarPath)
         pathToTarget.append(targetPosition) #target Position
 
         firstPass += copy.deepcopy(pathToTarget) #from bot postion to target

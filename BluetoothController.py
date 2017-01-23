@@ -5,6 +5,7 @@
 ##  send commands to slave( ie pi)
 ##  disconnect
 import bluetooth
+from FindDirectionality import Orientation,MovementFunctions,Direction
 class BluetoothController(object):
     target_name = "KAIZEN"
     target_address = "B8:27:EB:26:F6:A4"
@@ -19,7 +20,7 @@ class BluetoothController(object):
 
     @staticmethod
     def connect():
-        print 'Blutooth Controller Searching for devices... '
+        print 'Bluetooth Controller Searching for devices... '
         nearby_devices = bluetooth.discover_devices()
         for bluetooth_address in nearby_devices:
             if BluetoothController.target_name == bluetooth.lookup_name(bluetooth_address):
@@ -51,5 +52,5 @@ class BluetoothController(object):
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
     BluetoothController.connect()
-    BluetoothController.send_command("s")
+    BluetoothController.send_command("k")
     raw_input("Press to close")

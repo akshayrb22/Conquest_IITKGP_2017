@@ -7,7 +7,7 @@ from Point import Point
 import math
 from BotController import Bot
 import cv2
-from AStar import*
+from AStar import *
 #from FindDirectionality import Direction, Orientation,MovementFunctions
 
 
@@ -28,23 +28,23 @@ Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 #     if k == 27:
 #         break
 
-while True:
+#while True:
 
-    Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
-    #Frame.capture_frame()
-    #resource_checkPoints = Frame.processStream(Bot.resource)
-    #initially find center of townhall by finding bot center
-    Bot.UpdateProperties()
+Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
+#Frame.capture_frame()
+#resource_checkPoints = Frame.processStream(Bot.resource)
+#initially find center of townhall by finding bot center
+Bot.UpdateProperties()
 
-    #save value to townHallPosition
-    #Bot.townHall = Checkpoint(0,Bot.position,0,0,0,0)
-    #Frame.townHall = Checkpoint(0,Bot.position,0,0,0,0)
+#save value to townHallPosition
+#Bot.townHall = Checkpoint(0,Bot.position,0,0,0,0)
+#Frame.townHall = Checkpoint(0,Bot.position,0,0,0,0)
 
-    resource_checkPoints = Frame.processStream(Bot.resource)
+resource_checkPoints = Frame.processStream(Bot.resource)
 
-    #obstacle_checkPoints = Frame.processStream(Bot.obstacle)
-    #cv2.imshow("init",Frame.resized)
-    #AStar.calculate(resource_checkPoints,obstacle_checkPoints)
-    Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
-  
-    Bot.Traverse(resource_checkPoints )
+#obstacle_checkPoints = Frame.processStream(Bot.obstacle)
+#cv2.imshow("init",Frame.resized)
+#AStar.calculate(resource_checkPoints,obstacle_checkPoints)
+Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
+
+Bot.Traverse(resource_checkPoints )
