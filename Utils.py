@@ -10,7 +10,43 @@ import numpy as np
 from Point import Point
 import copy
 from FindDirectionality import *
+from Checkpoint import Checkpoint
 class Utils(object):
+    @staticmethod
+    def arena_one_sort(checkPointList):
+        for j in range(0,len(checkPointList)-1):
+            if ((checkPointList[j].distance > (checkPointList[j+1].distance)/2) and (checkPointList[j].shape == "square" and checkPointList[j+1].shape == "triangle")):
+                checkPointList[j],checkPointList[j+1]=checkPointList[j+1],checkPointList[j]
+        return checkPointList
+
+    @staticmethod
+    def arena_two_sort(checkPointList):
+        if (checkPointList[0].shape == checkPointList[1].shape):
+            if checkPointList[0].shape=="square":
+                for i in range(len(checkPointList)):
+                    if checkPointList[i].shape=="triangle":
+                        deleted_element = checkPointList.pop(i)
+                        checkPointList.reverse()
+                        checkPointList.append(deleted_element)                  
+                        checkPointList.reverse()
+                        break
+            elif checkPointList[0].shape=="triangle":
+                for i in range(len(checkPointList)):
+                    if checkPointList[i].shape=="square":
+                        deleted_element = checkPointList.pop(i)
+                        checkPointList.reverse()
+                        checkPointList.append(deleted_element)                  
+                        checkPointList.reverse()
+                        break
+        return checkPointList
+            
+
+                        
+
+                    
+
+
+
 
     @staticmethod
     def angleBetweenPoints(origin,position):
@@ -142,9 +178,18 @@ class Utils(object):
     
     
 if __name__ == '__main__':
-
-    turn = Utils.determineTurn3(180, 0)    
-    print turn
+    checkPointList = []
+    checkPointList.append(Checkpoint(800,Point(10,10),100,0,"square"))
+    checkPointList.append(Checkpoint(800,Point(10,10),190,0,"square"))
+    checkPointList.append(Checkpoint(960,Point(400,200),370,0,"triangle"))
+    checkPointList.append(Checkpoint(1000,Point(100,60),4566,0,"triangle"))
+    checkPointList.append(Checkpoint(800,Point(10,10),5000,0,"square"))
+    checkPointList.append(Checkpoint(960,Point(400,200),9000,0,"triangle"))
+    checkPointList = Utils.arena_two_sort(checkPointList)
+    for i in checkPointList:
+        print i.shape,i.distance
+    # turn = Utils.determineTurn3(180, 0)    
+    # print turn
 
 
 '''
