@@ -19,7 +19,7 @@ from time import sleep
 import copy
 import cv2
 class Bot(object):
-    AngleRange = 12
+    AngleRange = 5
     position = Point(0, 0)
     angle = 0
     botFront = None#CheckpointType('botFront', 'green',(0,255,0))
@@ -34,7 +34,6 @@ class Bot(object):
     runOnce = True
     aStarPath = None
     currentSpeed = 0
-    requiredSpeed = 50
     currentCommand = ''
     @staticmethod
     def UpdateProperties():
@@ -50,7 +49,7 @@ class Bot(object):
         if(len(backCheckPointList) <=0 or len(frontCheckPointList)  <= 0):
             print "Failed to Capture bot position !!! >>>>>>>>>>>>>> "
             #Bot.moveDirection(Direction.BACKWARD,False)
-            #sleep(2)
+            sleep(2)
             Bot.Stop()
         else:
             backCheckPoint = None
@@ -114,7 +113,7 @@ class Bot(object):
     
     @staticmethod
     def moveDirection(direction,updateProperties = True):
-        Bot.setBotSpeed(35)
+        Bot.setBotSpeed(30)
         
         if direction == Direction.FORWARD:
             BluetoothController.send_command(Direction.command[direction],"Forward : ^^^^^^^^^^^^^^^^^ ")
@@ -124,15 +123,12 @@ class Bot(object):
             Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
-        
+        Bot.setBotSpeed(50)
         if orientation == Orientation.SPOT_LEFT:
-            Bot.setBotSpeed(50)
             BluetoothController.send_command(Orientation.command[orientation],"Left    : <<<<<<<<<<<<<<<<<") 
         elif orientation == Orientation.SPOT_RIGHT:
-            Bot.setBotSpeed(50)
             BluetoothController.send_command(Orientation.command[orientation],"Right   : >>>>>>>>>>>>>>>>>")
         else:
-            Bot.setBotSpeed(60)
             BluetoothController.send_command(Orientation.command[orientation],"orientation: " + orientation)
         Bot.UpdateProperties()
 
@@ -140,8 +136,8 @@ class Bot(object):
     def Traverse(ListOfResources, ListOfObstacles = None):
         print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
-            Bot.currentResource = target
             Bot.currentTarget = target
+            Bot.currentResource = target
             print " | Target Angle: " + str(Bot.currentTarget.angle)
             Bot.UpdateProperties()
             blinkFlag = 0
@@ -152,7 +148,7 @@ class Bot(object):
             else:
                 path, noOfSkips = Utils.generatePath(Bot.position, Bot.currentTarget.center,AStar.search(Bot.position, target.center,600, 570, ListOfObstacles))
             #find list of PathPoints to traverse
-            
+            # path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             tempCounter =0
             for node in path:
                 #print path
@@ -160,37 +156,33 @@ class Bot(object):
                 angle, dist = Utils.angleBetweenPoints(Bot.position,node)
                 Bot.currentTarget = Checkpoint(0,node,0,0,angle)
 
+                firstAdjustLoop = False
+
                 if Point.inRange(Bot.position, node):
                     print 'Reached Destination  <<<<<<<<<<<<<<<< '
                     Bot.Stop()
                     if (blinkFlag%noOfSkips) == (noOfSkips-1) & blinkFlag == 1:
-                        Bot.setBotSpeed(30)
                         sleep(0.1)
                         Bot.changeOrientation(Orientation.SPOT_LEFT)
                         print 'BLINKING LED !!!!!!!!!!!!!! '
                         sleep(0.1)
                         Bot.Blink()
-                        sleep(2.3)
+                        sleep(4.6)
+                        firstAdjustLoop = True
 
                     
                 else:
                     while not Point.inRange(Bot.position, node):
-                        Bot.moveDirection(Direction.FORWARD)
+                        if firstAdjustLoop != True:
+                            Bot.moveDirection(Direction.FORWARD)
+                            firstAdjustLoop = False
                         tempCounter += 1
-                        #lowerLimit = round(Bot.currentTarget.angle) - Bot.AngleRange
-                        #upperLimit = round(Bot.currentTarget.angle) + Bot.AngleRange
-                        print "Distance from center is:" + str(Utils.distance(Bot.position,target.center)) 
-                        # Bot.angle <= lowerLimit or Bot.angle >= upperLimit : 
-                        while (Bot.currentTarget.angle - Bot.AngleRange)%360 or Bot.angle >= (Bot.currentTarget.angle + Bot.AngleRange)%360:##receive red_point & green_point parameters
+                        #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
+                        while Bot.angle <= (Bot.currentTarget.angle - Bot.AngleRange)%360 or Bot.angle >= (Bot.currentTarget.angle + Bot.AngleRange)%360:##receive red_point & green_point parameters
                             if Point.inRange(Bot.position, node):
                                 Bot.Stop()
                                 break
-                            orientation, mappedAngle, positiveAngle = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
-                            '''if not positiveAngle:
-                                lowerLimit = (Bot.currentTarget.angle - mappedAngle)
-                            else:
-                                lowerLimit = Bot.currentTarget.angle - mappedAngle
-                            upperLimit = Bot.currentTarget.angle + mappedAngle'''
+                            orientation = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
                             Bot.changeOrientation(orientation)
                             
                 
@@ -198,13 +190,12 @@ class Bot(object):
                 print 'Reached Destination  >>>>>>>>>> '
                 Bot.Stop()
                 if noOfSkips == 1 or (blinkFlag % noOfSkips) == noOfSkips - 1:
-                    Bot.setBotSpeed(30)
                     sleep(0.1)
                     Bot.changeOrientation(Orientation.SPOT_LEFT)
                     print 'BLINKING LED !!!!!!!!!!!!!! '
                     sleep(0.1)
                     Bot.Blink()
-                    sleep(2.3)
+                    sleep(4.6)
         print "REACHED ALL DESTINATIONS!!!!!!!!!!!!!!!!!"
         Bot.Stop()
         sleep(100)

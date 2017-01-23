@@ -53,36 +53,25 @@ class Utils(object):
     @staticmethod
     def determineTurn(botAngle, targetAngle,distance): #TODO fix it !
         deltaAngle = botAngle - targetAngle
-        # find positive/negative of angle
-        deltaAngleDirection = None
-        if deltaAngle < 0 :
-            deltaAngleDirection = False
-        else:
-            deltaAngleDirection = True
+
         if deltaAngle >= 180:
             deltaAngle -= 360
         deltaAngle %= 360
         absDeltaAngle = abs(deltaAngle)
 
-        mappedAngle = absDeltaAngle /2 #round(Utils.map(absDeltaAngle,0,360,0,15))
-        #print " angle " + str(deltaAngle) + " distance " + str(distance) + " mappedAngle " + str(mappedAngle) + " absDeltaAngle " + str(absDeltaAngle)
-        
+        mappedAngle = Utils.map(distance,0,500,0,25)
+        #print " angle " + str(deltaAngle) + " distance " + str(distance) + " mappedAngle " + str(mappedAngle)
+
         if deltaAngle >= 180:
-            #if absDeltaAngle >= 240:
-            #    return Orientation.SPOT_LEFT, mappedAngle, deltaAngleDirection
-            #el
-            if absDeltaAngle > mappedAngle:# and distance > 180:
-                return Orientation.SPOT_LEFT, mappedAngle, deltaAngleDirection
+            if absDeltaAngle > mappedAngle and distance > 180:
+                return Orientation.SPOT_LEFT
             else:
-                return Orientation.SPOT_LEFT, mappedAngle, deltaAngleDirection
+                return Orientation.ARC_LEFT
         else:
-            #if absDeltaAngle >= 60:
-            #    return Orientation.SPOT_RIGHT, mappedAngle, deltaAngleDirection
-            #el
-            if absDeltaAngle > mappedAngle:#  and distance > 180:
-                return Orientation.SPOT_LEFT, mappedAngle, deltaAngleDirection
+            if absDeltaAngle > mappedAngle  and distance > 180:
+                return Orientation.SPOT_RIGHT
             else:
-                return Orientation.SPOT_RIGHT, mappedAngle, deltaAngleDirection
+                return Orientation.ARC_RIGHT
         
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):

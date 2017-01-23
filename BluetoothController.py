@@ -60,5 +60,5 @@ class BluetoothController(object):
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
     BluetoothController.connect()
-    BluetoothController.send_command("k")
+    BluetoothController.send_command("X50")
     raw_input("Press to close")
