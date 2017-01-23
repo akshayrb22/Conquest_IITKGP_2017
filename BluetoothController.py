@@ -13,6 +13,7 @@ class BluetoothController(object):
     is_connected = False
     port = 1
     sock = None
+    prevCommand = ""
     #def __init__(se, target_name, target_address,target_port):
     #    target_name = "KAIZEN""
     #    target_address = target_address
@@ -27,7 +28,7 @@ class BluetoothController(object):
                 BluetoothController.is_connected = True
                 target_address = bluetooth_address
                 if target_address is not None:
-                    print "Blutooth Controller  found target with address ", target_address
+                    print "Bluetooth Controller  found target with address ", target_address
                     BluetoothController.connect_to_slave()
                                       
                 else:
@@ -43,11 +44,18 @@ class BluetoothController(object):
     def disconnect():
         BluetoothController.sock.close()
     @staticmethod
-    def send_command(command):
-        if BluetoothController.is_connected == True:
+    def send_command(command,message = None):
+
+        if command != BluetoothController.prevCommand and BluetoothController.is_connected == True:
+            BluetoothController.prevCommand = command
             BluetoothController.sock.send(command)
-        else:print "Failed to send command... Bluetooth is not connected."
-        return
+            if message == None:
+                print "Sent command " + command
+            else:
+                print message
+        
+        
+        return 
         
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)

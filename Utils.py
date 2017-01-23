@@ -28,7 +28,7 @@ class Utils(object):
 
     @staticmethod
     def distance(pt1,pt2):
-        dist = sqrt(((pt1.x-pt2.x)*(pt1.x-pt2.x))+((pt1.y-pt2.y)*(pt1.y-pt2.y)))
+        dist = round(sqrt(((pt1.x-pt2.x)*(pt1.x-pt2.x))+((pt1.y-pt2.y)*(pt1.y-pt2.y))))
         return dist
     @staticmethod
     def map(value, in_min, in_max, out_min, out_max):
@@ -42,28 +42,7 @@ class Utils(object):
         if angle in range(0, 91): return 1
         if angle in range(91, 181): return 2
         if angle in range(181, 271): return 3
-        if angle in range(271, 360): return 4
-    @staticmethod
-    def determineTurn(botAngle,targetAngle):
-        deltaAngle = botAngle - targetAngle
-        if Utils.getQuadrant(botAngle) == Utils.getQuadrant(targetAngle):
-            if deltaAngle > 0:
-                orientation = Orientation.ARC_RIGHT
-            else:
-                orientation = Orientation.ARC_LEFT
-        else:
-            if abs(deltaAngle) > 90:
-                if deltaAngle < 0:
-                    orientation = Orientation.SPOT_LEFT
-                else:
-                    orientation = Orientation.SPOT_RIGHT
-
-            else:
-                if deltaAngle < 0:
-                    orientation = Orientation.ARC_LEFT
-                else:
-                    orientation = Orientation.ARC_RIGHT 
-        return orientation    
+        if angle in range(271, 360): return 4    
 
     @staticmethod
     def getPointFromAngle(p1,p2):
@@ -71,49 +50,28 @@ class Utils(object):
         y=(101*p2.y)-(p1.y*100)
         return (x,y)
 
-
-
-
-        
-
-
     @staticmethod
-    def determineTurn2(botAngle,targetAngle):
-        bigAngle = None
-        deltaAngle = (botAngle - targetAngle)
-        if botAngle < targetAngle :
-            bigAngle = 0
-        else:
-            bigAngle = 0
-        if deltaAngle <= 0 :
-            if abs(deltaAngle) > 30:
-                return Orientation.SPOT_RIGHT
-            else:
-                return Orientation.ARC_LEFT
-        elif deltaAngle > 0:
-            if deltaAngle > 30:
-                return Orientation.SPOT_LEFT 
-            else:
-                return Orientation.ARC_RIGHT
-        else:
-            return None
-    @staticmethod
-    def determineTurn3(botAngle, targetAngle):
+    def determineTurn(botAngle, targetAngle,distance): #TODO fix it !
         deltaAngle = botAngle - targetAngle
-        absDeltaAngle = abs(deltaAngle)
+
         if deltaAngle >= 180:
             deltaAngle -= 360
         deltaAngle %= 360
+        absDeltaAngle = abs(deltaAngle)
+
+        mappedAngle = Utils.map(distance,0,500,0,25)
+        print " angle " + str(deltaAngle) + " distance " + str(distance) + " mappedAngle " + str(mappedAngle)
+
         if deltaAngle >= 180:
-            if absDeltaAngle > 30:
+            if absDeltaAngle > mappedAngle and distance > 180:
                 return Orientation.SPOT_LEFT
             else:
                 return Orientation.ARC_LEFT
         else:
-            if absDeltaAngle > 30:
+            if absDeltaAngle > mappedAngle  and distance > 180:
                 return Orientation.SPOT_RIGHT
             else:
-                return Orientation.SPOT_RIGHT
+                return Orientation.ARC_RIGHT
         
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):
@@ -126,7 +84,7 @@ class Utils(object):
         if aStarPath != None:
             pathToTarget += copy.deepcopy(aStarPath)
         pathToTarget.append(targetPosition) #target Position
-
+        noOfSkips = len(pathToTarget) - 1
         firstPass += copy.deepcopy(pathToTarget) #from bot postion to target
         #delete target from reversed pathToTarget
         del pathToTarget[len(pathToTarget) - 1]
@@ -138,7 +96,7 @@ class Utils(object):
         finalPath += copy.deepcopy(firstPass)
 
         del finalPath[0]
-        return finalPath
+        return finalPath, noOfSkips
     
     
 if __name__ == '__main__':

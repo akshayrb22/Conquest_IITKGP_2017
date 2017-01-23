@@ -13,6 +13,7 @@ from Point import Point
 from ImageProcess import Frame 
 from PathOptimizer import PathOptimizer
 import copy
+from Checkpoint import Checkpoint
 
 
 class PriorityQueue(object):
@@ -58,7 +59,7 @@ class Grid(object):
                 for q in range(currentPoint.center.x - obstacle_constant,currentPoint.center.x + obstacle_constant):
                     all_obstacles.append((p,q))
                     all_obstacles = list(set(all_obstacles))
-        return allObstacles
+        return all_obstacles
 
 
 class AStar(object):
@@ -89,7 +90,7 @@ class AStar(object):
     @staticmethod
     def search(start, goal,gridX, gridY, array_of_obst):
         AStar.graph=Grid(gridX,gridY)
-        AStar.graph.obstacles=array_of_obst
+        AStar.graph.obstacles=Grid.find_obstacles(array_of_obst)
         frontier = PriorityQueue()
         frontier.put(AStar.position.get_coordinate(), 0)
         came_from = {}
@@ -108,7 +109,6 @@ class AStar(object):
                     frontier.put(next, priority)
                     came_from[next] = current
         path = AStar.FindPath(came_from,goal)
-        path += copy.deepcopy(Grid.find_obstacles(AStar.graph.obstacles))
         AStar.writeToFile(path)
         return PathOptimizer.Optimize()
 
@@ -142,11 +142,9 @@ if __name__ == '__main__':
     obs.append(Checkpoint(0,Point(6,5),0,0,0))
     obs.append(Checkpoint(0,Point(7,5),0,0,0))
     AStar.init(690,690,obs)
-    optimizedPath =  AStar.search((649,649))
+    optimizedPath =  AStar.search((0,0),(9,9),10,10,obs)
     print optimizedPath
     
     
-    print optimizedPath
-    cv2.waitKey(0)
 
 
