@@ -7,7 +7,7 @@
 import bluetooth
 from FindDirectionality import Orientation,MovementFunctions,Direction
 class BluetoothController(object):
-    target_name = "KAIZEN"
+    target_name = "raspberrypi"
     target_address = "B8:27:EB:26:F6:A4"
     nearby_devices = None
     is_connected = False
