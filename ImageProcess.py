@@ -118,10 +118,10 @@ class Frame(object):
 
                 display_contour = False
                 if area > 1000: 
-                    shapeMessage = 'sqr'
+                    shapeMessage = 'square'
                     display_contour = True
                 elif  area > 800:
-                    shapeMessage = 'trng'
+                    shapeMessage = 'triangle'
                     display_contour = True
                 else:
                     shapeMessage = 'null'
@@ -135,7 +135,7 @@ class Frame(object):
                             angle, dist = Utils.angleBetweenPoints(origin,position)
                             Frame.runTimeCounter += 1    
                             
-                            checkPointList.append(Checkpoint(area, position, dist, cyan, angle))
+                            checkPointList.append(Checkpoint(area, shapeMessage, position, dist, cyan, angle))
                             
                             cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
@@ -205,7 +205,7 @@ class Frame(object):
                 area=cv2.contourArea(c)
                 if area > 200:
                     Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
-                    checkPointList.append(Checkpoint(area,point,dist,0,0))
+                    checkPointList.append(Checkpoint(area,shape,point,dist,0,0))
                 
         return checkPointList
 

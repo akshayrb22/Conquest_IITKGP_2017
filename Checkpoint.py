@@ -13,11 +13,11 @@ import cv2
 
 class Checkpoint(object):
     
-    def __init__(self,area,position,distance,color,angle):
+    def __init__(self,area,position,distance,angle,shape):
+        self.shape = shape
         self.area = area
         self.center = position
         self.distance = distance #distance from origin to resource
-        self.color = color
         self.angle = angle
         
     def __lt__(self, other):
