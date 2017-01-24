@@ -116,10 +116,13 @@ class Utils(object):
         #path for FirstPast
         firstPass = []
         pathToTarget = []
-        pathToTarget.append(botPosition) #botPosition
         if aStarPath != None:
-            pathToTarget += copy.deepcopy(aStarPath)
-        pathToTarget.append(targetPosition) #target Position
+            for point in aStarPath:
+                pathToTarget.append(Point(int(point[0]),int(point[1])))#+= copy.deepcopy(aStarPath)
+        else:
+            pathToTarget = []
+            pathToTarget.append(botPosition) #botPosition
+            pathToTarget.append(targetPosition) #target Position
         noOfSkips = len(pathToTarget) - 1
         firstPass += copy.deepcopy(pathToTarget) #from bot postion to target
         #delete target from reversed pathToTarget

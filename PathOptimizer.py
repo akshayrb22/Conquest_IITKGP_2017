@@ -6,7 +6,7 @@ import rdp
 class PathOptimizer:
     @staticmethod
     def Optimize():
-        tolerance = 0.001 # Decrease tolerance to get a more defined path with more points  
+        tolerance = 1.3 # Decrease tolerance to get a more defined path with more points  
         min_angle = np.pi*1
         filename = os.path.expanduser('path.txt')# Opening file
         points = np.genfromtxt(filename)# Reading file

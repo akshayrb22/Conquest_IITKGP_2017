@@ -10,6 +10,10 @@ from HSV import Color
 from Area import Area
 import cv2
 
+class CheckpointShape(object):
+    RECTANGLE = 'RECTANGLE'
+    TRIANGLE = 'TRIANGLE'
+
 
 class Checkpoint(object):
     

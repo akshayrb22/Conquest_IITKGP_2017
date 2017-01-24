@@ -8,12 +8,13 @@ import cv2
 import numpy as np
 import PIL
 from PIL import Image
-from BotController import Bot
 from Point import Point
 from ImageProcess import Frame 
 from PathOptimizer import PathOptimizer
 import copy
 from Checkpoint import Checkpoint
+from time import sleep
+from Draw import Draw
 
 
 class PriorityQueue(object):
@@ -53,13 +54,53 @@ class Grid(object):
     @staticmethod
     def find_obstacles(obstacle_checkPoints):
         all_obstacles=[]
-        obstacle_constant = 50
-        for currentPoint in obstacle_checkPoints:
-            for p in range(currentPoint.center.y - obstacle_constant,currentPoint.center.y+obstacle_constant):
-                for q in range(currentPoint.center.x - obstacle_constant,currentPoint.center.x + obstacle_constant):
+    
+        totalObstaclePoints = 0
+        obstacle_range = 50
+        Frame.obsBoxList = []
+        for currentPoint in obstacle_checkPoints: #takes Checkpoint as input
+            corner_points = [(currentPoint.center.x - obstacle_range, currentPoint.center.y - obstacle_range),
+                (currentPoint.center.x + obstacle_range, currentPoint.center.y - obstacle_range),
+                (currentPoint.center.x - obstacle_range, currentPoint.center.y + obstacle_range),
+                (currentPoint.center.x + obstacle_range, currentPoint.center.y + obstacle_range)
+            ]
+
+            Frame.obsBoxList.append(corner_points)
+            for p in range(corner_points[0][0], corner_points[1][0]): #take X coordinate
+                    q = corner_points[0][1] #Y is constant
                     all_obstacles.append((p,q))
-                    all_obstacles = list(set(all_obstacles))
+                    totalObstaclePoints += 1
+                    #Frame.resized[p,q]=(255,255,255)
+            for p in range(corner_points[2][0], corner_points[3][0]): #take X coordinate
+                    q = corner_points[2][1]#Y is constant
+                    all_obstacles.append((p,q))
+                    totalObstaclePoints += 1
+                    #Frame.resized[p,q]=(255,255,255)
+            for p in range(corner_points[0][1], corner_points[2][1]): #take X coordinate
+                    q = corner_points[0][0]  #X is contant
+                    all_obstacles.append((q,p))
+                    totalObstaclePoints += 1
+                    #Frame.resized[q,p]=(255,255,255)
+            for p in range(corner_points[1][1], corner_points[3][1]): #take X coordinate
+                    q = corner_points[1][0] #X is contant
+                    all_obstacles.append((q,p))
+                    totalObstaclePoints += 1
+                    #Frame.resized[q,p]=(255,255,255)
+
+            lenWithDuplicates = len(all_obstacles)
+            #all_obstacles = list(set(all_obstacles))
+            lenWithoutDuplicates = len(all_obstacles)
         return all_obstacles
+'''
+        obstacle_constant = 100
+        totalObstaclePoints = 0
+        for currentPoint in obstacle_checkPoints:
+            for p in range(currentPoint.center.y - obstacle_constant, currentPoint.center.y + obstacle_constant):
+                for q in range(currentPoint.center.x - obstacle_constant, currentPoint.center.x + obstacle_constant):
+                    all_obstacles.append((p,q))
+                    totalObstaclePoints += 1
+                    all_obstacles = list(set(all_obstacles)) '''
+        
 
 
 class AStar(object):
@@ -90,15 +131,21 @@ class AStar(object):
     @staticmethod
     def search(start, goal,gridX, gridY, array_of_obst):
         AStar.graph=Grid(gridX,gridY)
-        AStar.graph.obstacles=Grid.find_obstacles(array_of_obst)
+        AStar.graph.obstacles = Grid.find_obstacles(array_of_obst)
+        AStar.position = start
+
         frontier = PriorityQueue()
-        frontier.put(AStar.position.get_coordinate(), 0)
+        frontier.put(AStar.position, 0)
         came_from = {}
         cost_so_far = {}
-        came_from[AStar.position.get_coordinate()] = None
-        cost_so_far[AStar.position.get_coordinate()] = 0
+        came_from[AStar.position] = None
+        cost_so_far[AStar.position] = 0
+
+
+        counter = 0
         while not frontier.empty():
             current = frontier.get()
+            
             if current == (goal):
                 break
             for next in AStar.graph.neighbors(current):
@@ -108,24 +155,43 @@ class AStar(object):
                     priority = new_cost + AStar.heuristic(goal,next)
                     frontier.put(next, priority)
                     came_from[next] = current
+                    
+                    print priority
+            sleep(0.001)
+            cv2.circle(Frame.resized,next,5,(0,0,255),2,4)
+            if Frame.obsBoxList != None:
+                for boundingBox in Frame.obsBoxList:
+                    Draw.line(boundingBox)
+            Frame.show_frame()
+            counter += 1
+            #if counter > 10000:
+                #return None
         path = AStar.FindPath(came_from,goal)
         AStar.writeToFile(path)
-        return PathOptimizer.Optimize()
+        optimizedPathArray = (PathOptimizer.Optimize())
+        optimizedPathList = []
+        for node in optimizedPathArray:
+            optimizedPathList.append((int(node[0]),int(node[1])))
+        print "Optimized Path is "
+        print optimizedPathList
+        return optimizedPathList
 
     @staticmethod
     def FindPath(came_from,goal):
-        target=goal
+        target = goal
         path=[]
-
+        print came_from
         path.append(target)
-        while target != Bot.position.get_coordinate():
-            target = came_from[(target)]
-            path.append(target)
+        while target != AStar.position:
+            print came_from[target]
+            if came_from[target] != None:
+                target = came_from[target]
+                path.append(target)
         path.reverse()
         return path
 
     @staticmethod
-    def PrintInImage(Image,gridX,gridY,path):
+    def PrintInImage(gridX,gridY,path):
         img = np.zeros((gridX,gridY,3), np.uint8)
         a=np.zeros(shape=(gridX,gridY))
         for i in range(0,gridX):
@@ -138,12 +204,15 @@ class AStar(object):
 
 if __name__ == '__main__':
     obs = []
+    obs.append(Checkpoint(0,Point(4,5),0,0,0))
     obs.append(Checkpoint(0,Point(5,5),0,0,0))
     obs.append(Checkpoint(0,Point(6,5),0,0,0))
     obs.append(Checkpoint(0,Point(7,5),0,0,0))
     AStar.init(690,690,obs)
     optimizedPath =  AStar.search((0,0),(9,9),10,10,obs)
     print optimizedPath
+    AStar.PrintInImage(10,10,optimizedPath)
+    raw_input()
     
     
 

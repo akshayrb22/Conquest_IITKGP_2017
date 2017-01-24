@@ -36,4 +36,4 @@ obstacle_checkPoints = Frame.processStream(Bot.obstacle)
 
 Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
 
-Bot.Traverse(resource_checkPoints)
+Bot.Traverse(resource_checkPoints,obstacle_checkPoints)

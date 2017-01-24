@@ -14,11 +14,13 @@ from Utils import Utils
 from Point import Point
 from HSV import Color
 from pyimagesearch.shapedetector import ShapeDetector
-from Checkpoint import Checkpoint
+from Checkpoint import Checkpoint,CheckpointShape
 import math
 
 
 class Frame(object):
+    width = None
+    height = None
     elements = []
     camera = None
     image = None
@@ -30,6 +32,7 @@ class Frame(object):
     runTimeCounter = 1
     runOnce = True
     botPosition = None
+    obsBoxList = None
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
@@ -58,6 +61,8 @@ class Frame(object):
     def find_ratio():
         Frame.resized = imutils.resize(Frame.image, height=600)
         Frame.ratio = Frame.image.shape[0] / float(Frame.resized.shape[0])
+        Frame.width = Frame.image.shape[1]
+        Frame.height = Frame.image.shape[0]
         return Frame.image, Frame.resized, Frame.ratio
 
     @staticmethod
@@ -119,14 +124,16 @@ class Frame(object):
                 display_contour = False
                 if area > 1000: 
                     shapeMessage = 'square'
+                    shape = CheckpointShape.RECTANGLE
                     display_contour = True
                 elif  area > 800:
                     shapeMessage = 'triangle'
+                    shape = CheckpointShape.TRIANGLE
                     display_contour = True
                 else:
                     shapeMessage = 'null'
                 if display_contour:
-                    if(shape == 'circle' or shape == 'square' or shape == 'rectangle' or shape == 'triangle'):
+                    if(shape == CheckpointShape.RECTANGLE or shape == CheckpointShape.TRIANGLE):
                         if area > 150 :
                             angle = 0
                             
@@ -135,7 +142,7 @@ class Frame(object):
                             angle, dist = Utils.angleBetweenPoints(origin,position)
                             Frame.runTimeCounter += 1    
                             
-                            checkPointList.append(Checkpoint(area, shapeMessage, position, dist, cyan, angle))
+                            checkPointList.append(Checkpoint(area, position, dist, angle, CheckpointShape.RECTANGLE))
                             
                             cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
@@ -191,7 +198,9 @@ class Frame(object):
                     origin = Point(0,0)
                 Frame.runTimeCounter += 1
                 shapeDetector = ShapeDetector()
-                shape = shapeDetector.detect(c)
+                #shape = shapeDetector.detect(c)
+                shape = CheckpointShape.RECTANGLE
+                #print "DEtected Shape " + shape
                 point = Point()
                 point.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio)#uses moment of inertia concept
                 point.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
@@ -205,7 +214,7 @@ class Frame(object):
                 area=cv2.contourArea(c)
                 if area > 200:
                     Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
-                    checkPointList.append(Checkpoint(area,shape,point,dist,0,0))
+                    checkPointList.append(Checkpoint(area,point,dist,0,shape))
                 
         return checkPointList
 
