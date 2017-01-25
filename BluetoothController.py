@@ -26,9 +26,9 @@ class BluetoothController(object):
         for bluetooth_address in nearby_devices:
             if BluetoothController.target_name == bluetooth.lookup_name(bluetooth_address):
                 BluetoothController.is_connected = True
-                target_address = bluetooth_address
-                if target_address is not None:
-                    print "Bluetooth Controller  found target with address ", target_address
+                BluetoothController.target_address = bluetooth_address
+                if BluetoothController.target_address is not None:
+                    print "Bluetooth Controller  found target with address ", BluetoothController.target_address
                     BluetoothController.connect_to_slave()
                                       
                 else:
@@ -46,19 +46,20 @@ class BluetoothController(object):
     @staticmethod
     def send_command(command,message = None):
 
-        if command != BluetoothController.prevCommand and BluetoothController.is_connected == True:
-            BluetoothController.prevCommand = command
-            BluetoothController.sock.send(command)
+        if command != BluetoothController.prevCommand:
             if message == None:
                 print "Sent command " + command
             else:
                 print message
-        
-        
+            if BluetoothController.is_connected == True:
+                BluetoothController.prevCommand = command
+                BluetoothController.sock.send(command)
         return 
         
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
     BluetoothController.connect()
-    BluetoothController.send_command("X50")
-    raw_input("Press to close")
+    while True:
+        command = raw_input("Enter command: ")
+        BluetoothController.send_command(command)
+        

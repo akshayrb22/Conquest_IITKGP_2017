@@ -59,15 +59,21 @@ class Grid(object):
     
         totalObstaclePoints = 0
         obstacle_range = Config.obstacleRange #round(5 * Config.mapRatio)
-        Frame.obsBoxList = []
+        
         for currentPoint in obstacle_checkPoints: #takes Checkpoint as input
-            corner_points = [(currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y - obstacle_range),
-                (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y - obstacle_range),
-                (currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y + obstacle_range),
-                (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y + obstacle_range)
-            ]
 
-            Frame.obsBoxList.append(corner_points)
+            point1 = (currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y - obstacle_range)
+            point2 = (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y - obstacle_range)
+            point3 = (currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y + obstacle_range)
+            point4 = (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y + obstacle_range)
+
+            Config.obstacleBoundingPointList.append((point2, point1))
+            Config.obstacleBoundingPointList.append((point3, point1))
+            Config.obstacleBoundingPointList.append((point3, point4))
+            Config.obstacleBoundingPointList.append((point2, point4))
+
+            corner_points = [point1, point2, point3, point4]
+
             for p in range(corner_points[0][0], corner_points[1][0] + 1): #take X coordinate
                     q = corner_points[0][1] #Y is constant
                     all_obstacles.append((p,q))
@@ -93,17 +99,6 @@ class Grid(object):
             #all_obstacles = list(set(all_obstacles))
             lenWithoutDuplicates = len(all_obstacles)
         return all_obstacles
-'''
-        obstacle_constant = 100
-        totalObstaclePoints = 0
-        for currentPoint in obstacle_checkPoints:
-            for p in range(currentPoint.center.y - obstacle_constant, currentPoint.center.y + obstacle_constant):
-                for q in range(currentPoint.center.x - obstacle_constant, currentPoint.center.x + obstacle_constant):
-                    all_obstacles.append((p,q))
-                    totalObstaclePoints += 1
-                    all_obstacles = list(set(all_obstacles)) '''
-        
-
 
 class AStar(object):
     graph = None
@@ -162,9 +157,8 @@ class AStar(object):
                     came_from[next] = current
             #sleep(0.001)
             cv2.circle(Frame.resized,Utils.remapPoint(Point(next[0],next[1])).get_coordinate(),5,(0,0,255),2,4)
-            if Frame.obsBoxList != None:
-                for boundingBox in Frame.obsBoxList:
-                    Draw.line(boundingBox)
+            if Config.obstacleBoundingPointList != None:
+                    Draw.boundingBox(Config.obstacleBoundingPointList)
             Frame.show_frame()
             counter += 1
             #if counter > 10000:
@@ -188,7 +182,7 @@ class AStar(object):
     def FindPath(came_from,goal):
         target = goal
         path=[]
-        print came_from
+        #print came_from
         path.append(target)
         while target != AStar.position:
             print came_from[target]

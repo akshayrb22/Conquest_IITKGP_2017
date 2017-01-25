@@ -1,5 +1,6 @@
 ##This is a file to define a class point which will return the coordinate
 ##It can also return the x & y coordinates separately
+from Config import Config
 
 class Point(object):
     value = 40
@@ -18,7 +19,7 @@ class Point(object):
         return False
     @staticmethod
     def inRange(point1,point2):
-        if point1.x in range(point2.x - Point.value,point2.x + Point.value) and point1.y in range(point2.y - Point.value,point2.y + Point.value) :
+        if point1.x in range(point2.x - Config.resourcePositionRange ,point2.x + Config.resourcePositionRange) and point1.y in range(point2.y - Config.resourcePositionRange ,point2.y + Config.resourcePositionRange) :
             return True
         else:
             return False

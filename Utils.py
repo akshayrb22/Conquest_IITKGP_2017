@@ -101,19 +101,19 @@ class Utils(object):
         deltaAngle %= 360
         absDeltaAngle = abs(deltaAngle)
 
-        mappedAngle = Utils.map(distance,0,500,0,25)
+        mappedAngle = 25 #Utils.map(distance,0,500,0,25)
         #print " angle " + str(deltaAngle) + " distance " + str(distance) + " mappedAngle " + str(mappedAngle)
 
         if deltaAngle >= 180:
-            if absDeltaAngle > mappedAngle and distance > 180:
-                return Orientation.SPOT_LEFT
-            else:
+            if absDeltaAngle > mappedAngle and distance < 50:
                 return Orientation.ARC_LEFT
-        else:
-            if absDeltaAngle > mappedAngle  and distance > 180:
-                return Orientation.SPOT_RIGHT
             else:
+                return Orientation.SPOT_LEFT
+        else:
+            if absDeltaAngle > mappedAngle  and distance < 50:
                 return Orientation.ARC_RIGHT
+            else:
+                return Orientation.SPOT_RIGHT
         
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):
@@ -158,35 +158,3 @@ if __name__ == '__main__':
         print i.shape,i.distance
     # turn = Utils.determineTurn3(180, 0)    
     # print turn
-
-
-'''
-    @staticmethod
-    def angleBetweenPoints(origin,position):
-        # adj=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p1.y)*(p1.y-p1.y)))^(1/2))
-        # print adj
-        # hyp=float((((p1.x-p2.x)*(p1.x-p2.x))+((p1.y-p2.y)*(p1.y-p2.y)))^(1/2))
-        # print hyp
-        # cos=float(adj/hyp)
-        # print cos
-        # angle = math.acos(float(cos))
-        # ang=round(math.degrees(angle),2)
-        dist2 = math.sqrt(float(abs((origin.y - position.y )*(origin.y - position.y ))))
-        dist = math.sqrt(float(abs(((origin.x - position.x)*(origin.x - position.x))+((origin.y - position.y )*(origin.x - position.y)))))
-        sinn = float(dist2/dist)
-        
-        if sinn > 1:
-            sinn = 1
-        if sinn < 0:
-            sinn = 0        angle = math.asin(float(sinn))
-        angle = round(math.degrees(angle), 2)
-        if position.x > origin.x and position.y > origin.y:
-            angle = 270 + angle
-        elif position.x < origin.x and position.y > origin.y:
-            angle = 270 - angle
-        elif position.x < origin.x and position.y < origin.y:
-            angle = angle + 90
-        elif origin.x < position.x and origin.y > position.y:
-            angle = 90 - angle
-        return angle,dist
-'''

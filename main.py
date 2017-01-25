@@ -1,18 +1,17 @@
-from ImageProcess import Frame
-from time import sleep
-from BluetoothController import BluetoothController
-from Checkpoint import CheckpointType, Checkpoint
-from Area import Area
-from Point import Point
 import math
-from BotController import Bot
+from time import sleep
+
 import cv2
+from Area import Area
 from AStar import *
-
-
+from BluetoothController import BluetoothController
+from BotController import Bot
+from Checkpoint import Checkpoint, CheckpointType
+from ImageProcess import Frame
+from Point import Point
 
 #connect Bluetooth
-#BluetoothController.connect()
+BluetoothController.connect()
 Bot.Stop()
 sleep(1)
 Bot.setBotSpeed(40)
@@ -31,9 +30,33 @@ Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
 #initially find center of townhall by finding bot center
 Bot.UpdateProperties()
 
-resource_checkPoints = Frame.processStream(Bot.resource)
 
 obstacle_checkPoints = Frame.processStream(Bot.obstacle)
+Config.obstacleCount = len(obstacle_checkPoints)
+
+#do Astar Search in the beggining
+#
+resource_checkPoints = Frame.processStream(Bot.resource)
+if(Config.obstacleCount > 0):
+    for resource in resource_checkPoints:
+        optimizedAStarPath = AStar.search(Utils.mapPoint(Frame.townHall.center).get_coordinate(), Utils.mapPoint(resource.center).get_coordinate(), Config.mappedWidth, Config.mappedHeight, obstacle_checkPoints)
+        distance = Draw.path(optimizedAStarPath)
+        finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center,optimizedAStarPath)
+        resource.path = finalPath
+        resource.noOfSkips = noOfSkips
+        resource.distance = distance
+        #now sort the resources withrespect to the updated distance
+        resource_checkPoints.sort()
+    Config.obstacleList = resource_checkPoints
+else:
+    for resource in resource_checkPoints:
+        finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center)
+        resource.path = finalPath
+        resource.noOfSkips = noOfSkips
+
+
+
+Config.findPathOnce = False
 
 Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
 

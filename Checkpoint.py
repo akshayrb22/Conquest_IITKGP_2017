@@ -18,12 +18,13 @@ class CheckpointShape(object):
 
 class Checkpoint(object):
     
-    def __init__(self,area,position,distance,angle,shape):
+    def __init__(self,area,position,distance,angle,shape = None):
         from Utils import Utils
         self.shape = shape
         self.area = area
         self.center = position
         self.gridCenter = Utils.mapPoint(position)
+        self.path = None
         self.distance = distance #distance from origin to resource
         self.angle = angle
         

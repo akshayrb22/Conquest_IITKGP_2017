@@ -34,7 +34,6 @@ class Frame(object):
     runTimeCounter = 1
     runOnce = True
     botPosition = None
-    obsBoxList = None
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
@@ -128,7 +127,7 @@ class Frame(object):
                 display_contour = False
                 if area > 1000: 
                     shapeMessage = 'square'
-                    shape = CheckpointShape.RECTANGLE
+                    shape = CheckpointShape.SQUARE
                     display_contour = True
                 elif  area > 800:
                     shapeMessage = 'triangle'
@@ -137,7 +136,7 @@ class Frame(object):
                 else:
                     shapeMessage = 'null'
                 if display_contour:
-                    if(shape == CheckpointShape.RECTANGLE or shape == CheckpointShape.TRIANGLE):
+                    if(shape == CheckpointShape.SQUARE or shape == CheckpointShape.TRIANGLE):
                         if area > 150 :
                             angle = 0
                             
@@ -146,7 +145,9 @@ class Frame(object):
                             angle, dist = Utils.angleBetweenPoints(origin,position)
                             Frame.runTimeCounter += 1    
                             
-                            checkPointList.append(Checkpoint(area, position, dist, angle, CheckpointShape.RECTANGLE))
+
+                            
+                            checkPointList.append(Checkpoint(area, position, dist, angle, CheckpointShape.SQUARE))
                             
                             cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
                             cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
@@ -158,8 +159,8 @@ class Frame(object):
                             #cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
                             #cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
                             cyan = cyan - 1
-                            if Frame.runTimeCounter <= 2: 
-                                return checkPointList
+                            #if Frame.runTimeCounter <= 2: 
+                            #    return checkPointList
         #sort checkpoints
         checkPointList.sort()
         return checkPointList
@@ -203,7 +204,7 @@ class Frame(object):
                 Frame.runTimeCounter += 1
                 shapeDetector = ShapeDetector()
                 #shape = shapeDetector.detect(c)
-                shape = CheckpointShape.RECTANGLE
+                shape = CheckpointShape.SQUARE
                 #print "DEtected Shape " + shape
                 point = Point()
                 point.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio)#uses moment of inertia concept

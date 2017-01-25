@@ -6,3 +6,13 @@ class Config(object):
     FrameWidth = 800 * mapRatio
     FrameHeight = 800
     obstacleRange = 4
+    moveSpeed = 50
+    turnSpeed = 30
+    targetAngelRange = 6
+    resourcePositionRange = 25
+
+    #static DO NOT CHANGE !!!
+    findPathOnce = True
+    obstacleCount = 0
+    obstacleList = None
+    obstacleBoundingPointList = []
