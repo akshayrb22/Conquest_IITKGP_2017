@@ -14,5 +14,5 @@ class Config(object):
     #static DO NOT CHANGE !!!
     findPathOnce = True
     obstacleCount = 0
-    obstacleList = None
+    resourceList = None
     obstacleBoundingPointList = []

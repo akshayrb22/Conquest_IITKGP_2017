@@ -185,10 +185,10 @@ class AStar(object):
         #print came_from
         path.append(target)
         while target != AStar.position:
-            print came_from[target]
-            if came_from[target] != None:
-                target = came_from[target]
-                path.append(target)
+            #print came_from[target]
+            #if came_from[target] != None:
+            target = came_from[target]
+            path.append(target)
         path.reverse()
         return path
 

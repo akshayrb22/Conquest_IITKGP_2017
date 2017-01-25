@@ -37,6 +37,7 @@ Config.obstacleCount = len(obstacle_checkPoints)
 #do Astar Search in the beggining
 #
 resource_checkPoints = Frame.processStream(Bot.resource)
+Config.resourceList = resource_checkPoints
 if(Config.obstacleCount > 0):
     for resource in resource_checkPoints:
         optimizedAStarPath = AStar.search(Utils.mapPoint(Frame.townHall.center).get_coordinate(), Utils.mapPoint(resource.center).get_coordinate(), Config.mappedWidth, Config.mappedHeight, obstacle_checkPoints)
@@ -45,16 +46,22 @@ if(Config.obstacleCount > 0):
         resource.path = finalPath
         resource.noOfSkips = noOfSkips
         resource.distance = distance
-        #now sort the resources withrespect to the updated distance
-        resource_checkPoints.sort()
-    Config.obstacleList = resource_checkPoints
+        print "resource distance " + str(distance)
+    #now sort the resources withrespect to the updated distance
+    resource_checkPoints.sort()
+    #save sorted list
+    Config.resourceList = resource_checkPoints
 else:
     for resource in resource_checkPoints:
         finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center)
         resource.path = finalPath
         resource.noOfSkips = noOfSkips
 
+Frame.show_frame()
 
+print "Finished Astar"
+## Remove this~!  Only for testing!!!
+sleep(10)
 
 Config.findPathOnce = False
 
