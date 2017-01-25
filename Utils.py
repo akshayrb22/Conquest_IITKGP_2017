@@ -10,41 +10,36 @@ import numpy as np
 from Point import Point
 import copy
 from FindDirectionality import *
-from Checkpoint import Checkpoint
+from Checkpoint import Checkpoint,CheckpointShape
+from Config import Config
 class Utils(object):
     @staticmethod
     def arena_one_sort(checkPointList):
         for j in range(0,len(checkPointList)-1):
-            if ((checkPointList[j].distance > (checkPointList[j+1].distance)/2) and (checkPointList[j].shape == "square" and checkPointList[j+1].shape == "triangle")):
+            if ((checkPointList[j].distance > (checkPointList[j+1].distance)/2) and (checkPointList[j].shape ==  CheckpointShape.SQUARE and checkPointList[j+1].shape == CheckpointShape.TRIANGLE)):
                 checkPointList[j],checkPointList[j+1]=checkPointList[j+1],checkPointList[j]
         return checkPointList
 
     @staticmethod
     def arena_two_sort(checkPointList):
         if (checkPointList[0].shape == checkPointList[1].shape):
-            if checkPointList[0].shape=="square":
+            if checkPointList[0].shape== Checkpoint:
                 for i in range(len(checkPointList)):
-                    if checkPointList[i].shape=="triangle":
+                    if checkPointList[i].shape== CheckpointShape.TRIANGLE:
                         deleted_element = checkPointList.pop(i)
                         checkPointList.reverse()
                         checkPointList.append(deleted_element)                  
                         checkPointList.reverse()
                         break
-            elif checkPointList[0].shape=="triangle":
+            elif checkPointList[0].shape== CheckpointShape.TRIANGLE:
                 for i in range(len(checkPointList)):
-                    if checkPointList[i].shape=="square":
+                    if checkPointList[i].shape== CheckpointShape.SQUARE:
                         deleted_element = checkPointList.pop(i)
                         checkPointList.reverse()
                         checkPointList.append(deleted_element)                  
                         checkPointList.reverse()
                         break
         return checkPointList
-            
-
-                        
-
-                    
-
 
 
 
@@ -68,8 +63,19 @@ class Utils(object):
         return dist
     @staticmethod
     def map(value, in_min, in_max, out_min, out_max):
-        return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+        return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
     
+    @staticmethod
+    def mapPoint(point):
+        x = Utils.map(point.x, 0, Config.FrameWidth,0,Config.mappedWidth)
+        y = Utils.map(point.y,0,Config.FrameHeight,0,Config.mappedHeight)
+        return Point(x,y)
+    @staticmethod
+    def remapPoint(point):
+        x = Utils.map(point.x, 0, Config.mappedWidth,0,Config.FrameWidth)
+        y = Utils.map(point.y,0,Config.mappedHeight,0,Config.FrameHeight)
+        return Point(x,y)
+
     @staticmethod
     def midPoint(point1,point2):
         return Point((point1.x + point2.x)/2,(point1.y + point2.y)/2)
@@ -119,6 +125,7 @@ class Utils(object):
         if aStarPath != None:
             for point in aStarPath:
                 pathToTarget.append(Point(int(point[0]),int(point[1])))#+= copy.deepcopy(aStarPath)
+            pathToTarget[len(pathToTarget) - 1 ] = targetPosition
         else:
             pathToTarget = []
             pathToTarget.append(botPosition) #botPosition
@@ -140,12 +147,12 @@ class Utils(object):
     
 if __name__ == '__main__':
     checkPointList = []
-    checkPointList.append(Checkpoint(800,Point(10,10),100,0,"square"))
-    checkPointList.append(Checkpoint(800,Point(10,10),190,0,"square"))
-    checkPointList.append(Checkpoint(960,Point(400,200),370,0,"triangle"))
-    checkPointList.append(Checkpoint(1000,Point(100,60),4566,0,"triangle"))
-    checkPointList.append(Checkpoint(800,Point(10,10),5000,0,"square"))
-    checkPointList.append(Checkpoint(960,Point(400,200),9000,0,"triangle"))
+    checkPointList.append(Checkpoint(800,Point(10,10),100,0,CheckpointShape.SQUARE))
+    checkPointList.append(Checkpoint(800,Point(10,10),190,0,CheckpointShape.SQUARE))
+    checkPointList.append(Checkpoint(960,Point(400,200),370,0,CheckpointShape.TRIANGLE))
+    checkPointList.append(Checkpoint(1000,Point(100,60),4566,0,CheckpointShape.TRIANGLE))
+    checkPointList.append(Checkpoint(800,Point(10,10),5000,0,CheckpointShape.SQUARE))
+    checkPointList.append(Checkpoint(960,Point(400,200),9000,0,CheckpointShape.TRIANGLE))
     checkPointList = Utils.arena_two_sort(checkPointList)
     for i in checkPointList:
         print i.shape,i.distance

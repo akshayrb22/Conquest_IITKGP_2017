@@ -15,6 +15,8 @@ import copy
 from Checkpoint import Checkpoint
 from time import sleep
 from Draw import Draw
+from Config import Config
+from Utils import Utils
 
 
 class PriorityQueue(object):
@@ -56,32 +58,32 @@ class Grid(object):
         all_obstacles=[]
     
         totalObstaclePoints = 0
-        obstacle_range = 50
+        obstacle_range = Config.obstacleRange #round(5 * Config.mapRatio)
         Frame.obsBoxList = []
         for currentPoint in obstacle_checkPoints: #takes Checkpoint as input
-            corner_points = [(currentPoint.center.x - obstacle_range, currentPoint.center.y - obstacle_range),
-                (currentPoint.center.x + obstacle_range, currentPoint.center.y - obstacle_range),
-                (currentPoint.center.x - obstacle_range, currentPoint.center.y + obstacle_range),
-                (currentPoint.center.x + obstacle_range, currentPoint.center.y + obstacle_range)
+            corner_points = [(currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y - obstacle_range),
+                (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y - obstacle_range),
+                (currentPoint.gridCenter.x - obstacle_range, currentPoint.gridCenter.y + obstacle_range),
+                (currentPoint.gridCenter.x + obstacle_range, currentPoint.gridCenter.y + obstacle_range)
             ]
 
             Frame.obsBoxList.append(corner_points)
-            for p in range(corner_points[0][0], corner_points[1][0]): #take X coordinate
+            for p in range(corner_points[0][0], corner_points[1][0] + 1): #take X coordinate
                     q = corner_points[0][1] #Y is constant
                     all_obstacles.append((p,q))
                     totalObstaclePoints += 1
                     #Frame.resized[p,q]=(255,255,255)
-            for p in range(corner_points[2][0], corner_points[3][0]): #take X coordinate
+            for p in range(corner_points[2][0], corner_points[3][0] + 1): #take X coordinate
                     q = corner_points[2][1]#Y is constant
                     all_obstacles.append((p,q))
                     totalObstaclePoints += 1
                     #Frame.resized[p,q]=(255,255,255)
-            for p in range(corner_points[0][1], corner_points[2][1]): #take X coordinate
+            for p in range(corner_points[0][1], corner_points[2][1] + 1): #take X coordinate
                     q = corner_points[0][0]  #X is contant
                     all_obstacles.append((q,p))
                     totalObstaclePoints += 1
                     #Frame.resized[q,p]=(255,255,255)
-            for p in range(corner_points[1][1], corner_points[3][1]): #take X coordinate
+            for p in range(corner_points[1][1], corner_points[3][1] + 1): #take X coordinate
                     q = corner_points[1][0] #X is contant
                     all_obstacles.append((q,p))
                     totalObstaclePoints += 1
@@ -106,6 +108,7 @@ class Grid(object):
 class AStar(object):
     graph = None
     position = Point(0,0)
+    found = False
     @staticmethod
     def init(gridX, gridY, array_of_obst):
         AStar.graph=Grid(gridX,gridY)
@@ -114,7 +117,7 @@ class AStar(object):
     def heuristic(a, b):
         (x1, y1) = a
         (x2, y2) = b
-        distance=float((((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)))^(1/2))
+        distance = float((((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2))) ^ (1/2))
         return distance
 
     @staticmethod
@@ -133,6 +136,7 @@ class AStar(object):
         AStar.graph=Grid(gridX,gridY)
         AStar.graph.obstacles = Grid.find_obstacles(array_of_obst)
         AStar.position = start
+        AStar.found = False
 
         frontier = PriorityQueue()
         frontier.put(AStar.position, 0)
@@ -147,6 +151,7 @@ class AStar(object):
             current = frontier.get()
             
             if current == (goal):
+                AStar.found = True
                 break
             for next in AStar.graph.neighbors(current):
                 new_cost = cost_so_far[current] + 1
@@ -155,10 +160,8 @@ class AStar(object):
                     priority = new_cost + AStar.heuristic(goal,next)
                     frontier.put(next, priority)
                     came_from[next] = current
-                    
-                    print priority
-            sleep(0.001)
-            cv2.circle(Frame.resized,next,5,(0,0,255),2,4)
+            #sleep(0.001)
+            cv2.circle(Frame.resized,Utils.remapPoint(Point(next[0],next[1])).get_coordinate(),5,(0,0,255),2,4)
             if Frame.obsBoxList != None:
                 for boundingBox in Frame.obsBoxList:
                     Draw.line(boundingBox)
@@ -166,12 +169,17 @@ class AStar(object):
             counter += 1
             #if counter > 10000:
                 #return None
-        path = AStar.FindPath(came_from,goal)
+        if AStar.found:
+            path = AStar.FindPath(came_from,goal)
+        else:
+            print "Failed to find path!!!!! Bot or Target is inside Obstacle Range!!!!  XD"
+            sleep(10)
+            return None
         AStar.writeToFile(path)
         optimizedPathArray = (PathOptimizer.Optimize())
         optimizedPathList = []
         for node in optimizedPathArray:
-            optimizedPathList.append((int(node[0]),int(node[1])))
+            optimizedPathList.append(Utils.remapPoint(Point(int(node[0]),int(node[1]))).get_coordinate())
         print "Optimized Path is "
         print optimizedPathList
         return optimizedPathList
@@ -203,6 +211,8 @@ class AStar(object):
 
 
 if __name__ == '__main__':
+    Config.FrameWidth = 10
+    Config.FrameHeight = 10
     obs = []
     obs.append(Checkpoint(0,Point(4,5),0,0,0))
     obs.append(Checkpoint(0,Point(5,5),0,0,0))

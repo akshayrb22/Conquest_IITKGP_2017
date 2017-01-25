@@ -25,5 +25,5 @@ class Point(object):
 if __name__ == '__main__':
     p1 = Point(0,0)
     p2 = Point(10,10)
-    
+    print p2.get_coordinate()
     

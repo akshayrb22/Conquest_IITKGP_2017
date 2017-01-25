@@ -20,6 +20,7 @@ from AStar import AStar
 import copy
 import cv2
 from Draw import Draw
+from Config import Config
 
 class Bot(object):
     AngleRange = 5
@@ -81,7 +82,7 @@ class Bot(object):
                 #TODO Move to ImageProess
                 if Frame.obsBoxList != None:
                     for boundingBox in Frame.obsBoxList:
-                        Draw.line(boundingBox)
+                        Draw.line(boundingBox,True)
 
                 if Bot.currentResource != None:
                     cv2.circle(Frame.resized,Bot.currentResource.center.get_coordinate(),30,(255,150,0),2,8)
@@ -157,12 +158,13 @@ class Bot(object):
             if len(ListOfObstacles) == 0:
                 path, noOfSkips = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             else:
-                Bot.optimizedAStarPath = AStar.search(Bot.position.get_coordinate(), target.center.get_coordinate(),2000, 2000, ListOfObstacles)
+                Bot.optimizedAStarPath = AStar.search( Utils.mapPoint(Bot.position).get_coordinate(), Utils.mapPoint(target.center).get_coordinate(), Config.mappedWidth, Config.mappedHeight, ListOfObstacles)
                 if Bot.optimizedAStarPath != None:
                     path, noOfSkips = Utils.generatePath(Bot.position, Bot.currentTarget.center,Bot.optimizedAStarPath)
                 else:
                     Bot.UpdateProperties()
                     path = None
+                    print "Failed to find A Star Path"
             
             # #TEST
             # while True:

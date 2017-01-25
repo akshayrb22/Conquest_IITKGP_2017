@@ -1,5 +1,7 @@
 import cv2
 from ImageProcess import Frame
+from Utils import Utils
+from Point import Point
 
 class Draw(object):
     @staticmethod
@@ -11,7 +13,10 @@ class Draw(object):
             #print str(simplified[i]) + " & " +  str(simplified[i + 1])
             i += 1
     @staticmethod
-    def line(box):
+    def line(box,remap = False):
+        if remap:
+            for point in box:
+                point = Utils.remapPoint(Point(point[0],point[1])).get_coordinate()
         cv2.arrowedLine(Frame.resized,box[0],box[1],(255,255,25), 1,0,0,0.1)
         cv2.arrowedLine(Frame.resized,box[2],box[3],(255,255,25), 1,0,0,0.1)
         cv2.arrowedLine(Frame.resized,box[0],box[2],(255,255,25), 1,0,0,0.1)

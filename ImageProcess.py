@@ -15,12 +15,14 @@ from Point import Point
 from HSV import Color
 from pyimagesearch.shapedetector import ShapeDetector
 from Checkpoint import Checkpoint,CheckpointShape
+from Config import Config
 import math
 
 
 class Frame(object):
     width = None
     height = None
+
     elements = []
     camera = None
     image = None
@@ -61,8 +63,10 @@ class Frame(object):
     def find_ratio():
         Frame.resized = imutils.resize(Frame.image, height=600)
         Frame.ratio = Frame.image.shape[0] / float(Frame.resized.shape[0])
-        Frame.width = Frame.image.shape[1]
-        Frame.height = Frame.image.shape[0]
+        Frame.width = Frame.resized.shape[1]
+        Frame.height = Frame.resized.shape[0]
+        Config.FrameWidth = Frame.width
+        Config.FrameHeight = Frame.height
         return Frame.image, Frame.resized, Frame.ratio
 
     @staticmethod

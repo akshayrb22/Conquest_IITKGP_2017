@@ -12,7 +12,7 @@ from AStar import *
 
 
 #connect Bluetooth
-BluetoothController.connect()
+#BluetoothController.connect()
 Bot.Stop()
 sleep(1)
 Bot.setBotSpeed(40)
@@ -25,6 +25,7 @@ Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
 Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 
 
+Frame.capture_frame()
 Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
 
 #initially find center of townhall by finding bot center

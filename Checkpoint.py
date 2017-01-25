@@ -10,17 +10,20 @@ from HSV import Color
 from Area import Area
 import cv2
 
+
 class CheckpointShape(object):
-    RECTANGLE = 'RECTANGLE'
+    SQUARE = 'SQUARE'
     TRIANGLE = 'TRIANGLE'
 
 
 class Checkpoint(object):
     
     def __init__(self,area,position,distance,angle,shape):
+        from Utils import Utils
         self.shape = shape
         self.area = area
         self.center = position
+        self.gridCenter = Utils.mapPoint(position)
         self.distance = distance #distance from origin to resource
         self.angle = angle
         
