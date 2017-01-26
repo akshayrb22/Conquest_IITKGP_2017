@@ -1,6 +1,14 @@
+
+# DO NOT CHANGE CODE UNLESS IT IS NECESSARY!!!!! 
+# CALL ME IF YOU HAVE ANY DOUBTS!! PHONE no 992075227 :)
+# ALL CONFIGURATION OPTIONS ARE AVAILABLE IN Config.py.
+
+# I have not tried updated sorting algorithms!!!!
+# If you think this program works, cool. If it doesn't work, that's too bad
+# ALL THE BEST :)
+
 import math
 from time import sleep
-
 import cv2
 from Area import Area
 from AStar import *
@@ -9,6 +17,8 @@ from BotController import Bot
 from Checkpoint import Checkpoint, CheckpointType
 from ImageProcess import Frame
 from Point import Point
+
+
 
 #connect Bluetooth
 BluetoothController.connect()
@@ -49,6 +59,8 @@ if(Config.obstacleCount > 0):
         print "resource distance " + str(distance)
     #now sort the resources withrespect to the updated distance
     resource_checkPoints.sort()
+    #>>>> Call your updated sorting HERE (LEVEL 2)!!!!! Do not change if you dont want to try new algos. 
+    # >>>> HERE <<<<<<<
     #save sorted list
     Config.resourceList = resource_checkPoints
 else:
@@ -56,6 +68,9 @@ else:
         finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center)
         resource.path = finalPath
         resource.noOfSkips = noOfSkips
+
+    #>>>> Call your updated sorting HERE (LEVEL 1)!!!!!
+    # >>>> HERE <<<<<<<
 
 Frame.show_frame()
 

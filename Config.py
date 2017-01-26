@@ -31,3 +31,5 @@ class Config(object):
     obstacleCount = 0
     resourceList = None
     obstacleBoundingPointList = []
+
+    
