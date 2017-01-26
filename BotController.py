@@ -62,16 +62,10 @@ class Bot(object):
             if len(backCheckPointList) > 0 and len(frontCheckPointList) > 0:
                 Bot.prevBack = backCheckPointList[0]
                 Bot.prevFront = frontCheckPointList[0]
-            
-            #print "Counter is:" + str(Frame.runTimeCounter)
-
             Bot.position.x = (Bot.prevBack.center.x + Bot.prevFront.center.x) / 2
             Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
             Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
-            #print "Bot Position:" + Bot.position.toString() + " | Angle: " + str(Bot.angle)
-            #sleep(1)
-            #Frame.botPosition = 
-            
+
             if Bot.runOnce:#Frame.runTimeCounter == 6:
                 Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
                 Bot.runOnce = False
@@ -110,12 +104,6 @@ class Bot(object):
         Frame.show_frame()
         return Bot.position, Bot.angle
 
-    # @staticmethod
-    # def turnAntiClockwise():
-    #     BluetoothController.send_command("ac")
-    # @staticmethod
-    # def turnClockwise():
-    #     BluetoothController.send_command("c")
     @staticmethod
     def Stop():
         BluetoothController.send_command("s")
@@ -186,7 +174,7 @@ class Bot(object):
                                 firstAdjustLoop = False
                             tempCounter += 1
                             #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngelRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngelRange) :##receive red_point & green_point parameters
+                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngleRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngleRange) :##receive red_point & green_point parameters
                                 #print " " , (Bot.currentTarget.angle - Config.targetAngelRange) % 360, Bot.angle,  (Bot.currentTarget.angle + Config.targetAngelRange) % 360
                                 if Point.inRange(Bot.position, node):
                                     Bot.Stop()
@@ -194,13 +182,8 @@ class Bot(object):
                                 
                                 orientation, speed = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
                                 Bot.setBotSpeed(speed)
-                                #if bot is facing 0 deg
-                                # if (Bot.currentTarget.angle + Config.targetAngelRange) % 360 > (Bot.currentTarget.angle - Config.targetAngelRange):
-                                #      Bot.changeOrientation(orientation)
-                                #      Bot.moveDirection(Direction.FORWARD)
-                                #      sleep(0.1)
-                                #      break
                                 Bot.changeOrientation(orientation)
+                                #update bots angle withrespect to target
                                 Bot.currentTarget.angle, dist = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
                                 
                     
@@ -213,7 +196,9 @@ class Bot(object):
                         print 'BLINKING LED !!!!!!!!!!!!!! '
                         sleep(0.1)
                         Bot.Blink()
-                        #sleep(4.6)
+
+                        # >>>>>>> Value changes for 200 RPM
+                        sleep(1)
         print "REACHED ALL DESTINATIONS!!!!!!!!!!!!!!!!!"
         Bot.Stop()
         sleep(100)
@@ -224,9 +209,6 @@ class Bot(object):
         if speed != Bot.currentSpeed and speed in range(0,256):
             BluetoothController.send_command("X" + str(speed) + "$")
             Bot.currentSpeed = speed
-            #sleep(0.1)
-
-
 
 if __name__ == '__main__':
     botFront_green = CheckpointType('botFront', 'green',(0,255,0))

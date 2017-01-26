@@ -78,26 +78,22 @@ class Grid(object):
                     q = corner_points[0][1] #Y is constant
                     all_obstacles.append((p,q))
                     totalObstaclePoints += 1
-                    #Frame.resized[p,q]=(255,255,255)
+                    
             for p in range(corner_points[2][0], corner_points[3][0] + 1): #take X coordinate
                     q = corner_points[2][1]#Y is constant
                     all_obstacles.append((p,q))
                     totalObstaclePoints += 1
-                    #Frame.resized[p,q]=(255,255,255)
+                    
             for p in range(corner_points[0][1], corner_points[2][1] + 1): #take X coordinate
                     q = corner_points[0][0]  #X is contant
                     all_obstacles.append((q,p))
                     totalObstaclePoints += 1
-                    #Frame.resized[q,p]=(255,255,255)
+                    
             for p in range(corner_points[1][1], corner_points[3][1] + 1): #take X coordinate
                     q = corner_points[1][0] #X is contant
                     all_obstacles.append((q,p))
                     totalObstaclePoints += 1
-                    #Frame.resized[q,p]=(255,255,255)
 
-            lenWithDuplicates = len(all_obstacles)
-            #all_obstacles = list(set(all_obstacles))
-            lenWithoutDuplicates = len(all_obstacles)
         return all_obstacles
 
 class AStar(object):
@@ -121,10 +117,6 @@ class AStar(object):
         p=open("path.txt","w")
         for point in path:
             p.write(str(point[0]) + " " + str(point[1]) + "\n")
-
-
-    ##start=(0,0)
-    ##goal=(900,900)
 
     @staticmethod
     def search(start, goal,gridX, gridY, array_of_obst):
@@ -155,14 +147,11 @@ class AStar(object):
                     priority = new_cost + AStar.heuristic(goal,next)
                     frontier.put(next, priority)
                     came_from[next] = current
-            #sleep(0.001)
             cv2.circle(Frame.resized,Utils.remapPoint(Point(next[0],next[1])).get_coordinate(),5,(0,0,255),2,4)
             if Config.obstacleBoundingPointList != None:
                     Draw.boundingBox(Config.obstacleBoundingPointList)
+            #show preview of Path finding
             Frame.show_frame()
-            counter += 1
-            #if counter > 10000:
-                #return None
         if AStar.found:
             path = AStar.FindPath(came_from,goal)
         else:

@@ -23,7 +23,7 @@ class Checkpoint(object):
         self.shape = shape
         self.area = area
         self.center = position
-        self.gridCenter = Utils.mapPoint(position)
+        self.gridCenter = Utils.mapPoint(position) # DO NOT CHANGE!!
         self.path = None
         self.distance = distance #distance from origin to resource
         self.angle = angle
