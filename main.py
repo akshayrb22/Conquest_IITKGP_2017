@@ -13,9 +13,9 @@ from Point import Point
 #connect Bluetooth
 BluetoothController.connect()
 Bot.Stop()
-sleep(1)
-Bot.setBotSpeed(40)
-sleep(1)
+#sleep(1)
+Bot.setBotSpeed(200)
+#sleep(1)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
@@ -61,7 +61,7 @@ Frame.show_frame()
 
 print "Finished Astar"
 ## Remove this~!  Only for testing!!!
-sleep(10)
+sleep(5)
 
 Config.findPathOnce = False
 

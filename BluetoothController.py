@@ -4,16 +4,20 @@
 ##  connect to bluetooth
 ##  send commands to slave( ie pi)
 ##  disconnect
+
+from multiprocessing import Process
 import bluetooth
+from time import sleep
 from FindDirectionality import Orientation,MovementFunctions,Direction
 class BluetoothController(object):
-    target_name = "raspberrypi"
+    target_name = "HC-06"
     target_address = "B8:27:EB:26:F6:A4"
     nearby_devices = None
     is_connected = False
     port = 1
     sock = None
     prevCommand = ""
+    command = "s"
     #def __init__(se, target_name, target_address,target_port):
     #    target_name = "KAIZEN""
     #    target_address = target_address
@@ -46,20 +50,39 @@ class BluetoothController(object):
     @staticmethod
     def send_command(command,message = None):
 
+        #send all command
+        #print message
         if command != BluetoothController.prevCommand:
             if message == None:
                 print "Sent command " + command
             else:
                 print message
-            if BluetoothController.is_connected == True:
-                BluetoothController.prevCommand = command
-                BluetoothController.sock.send(command)
-        return 
+        if BluetoothController.is_connected == True:
+            BluetoothController.sock.send(command)
+            BluetoothController.prevCommand = command
         
+        #     if BluetoothController.is_connected == True:
+        #         BluetoothController.prevCommand = command
+        #         BluetoothController.sock.send(command)
+        return 
+
+def parallelProcess(command):
+    BluetoothController.connect()
+    while True:
+        print "sending  command " + command
+        BluetoothController.send_command(command)
+        sleep(1)
+
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
+    command = "s"
+    #bluetoothProcess = Process(target=parallelProcess,args=(command))
+    #bluetoothProcess.start()
+    #bluetoothProcess.join()
     BluetoothController.connect()
     while True:
         command = raw_input("Enter command: ")
+        print " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + command
+        #BluetoothController.command = command
         BluetoothController.send_command(command)
         

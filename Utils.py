@@ -101,19 +101,34 @@ class Utils(object):
         deltaAngle %= 360
         absDeltaAngle = abs(deltaAngle)
 
-        mappedAngle = 25 #Utils.map(distance,0,500,0,25)
+        mappedAngle = 50 #Utils.map(distance,0,500,0,25)
         #print " angle " + str(deltaAngle) + " distance " + str(distance) + " mappedAngle " + str(mappedAngle)
 
         if deltaAngle >= 180:
-            if absDeltaAngle > mappedAngle and distance < 50:
-                return Orientation.ARC_LEFT
-            else:
-                return Orientation.SPOT_LEFT
+            if absDeltaAngle > mappedAngle:
+                return Orientation.SPOT_LEFT, Config.turnSpeed 
+            elif distance > 120:
+                return Orientation.ARC_LEFT, Config.turnSpeed
+            else :
+                return Orientation.SPOT_LEFT, Config.turnSpeed - 60
         else:
-            if absDeltaAngle > mappedAngle  and distance < 50:
-                return Orientation.ARC_RIGHT
+            if absDeltaAngle > mappedAngle :
+                return Orientation.SPOT_RIGHT, Config.turnSpeed
+            elif  distance > 120:
+                return Orientation.ARC_RIGHT, Config.turnSpeed
             else:
-                return Orientation.SPOT_RIGHT
+                return Orientation.SPOT_RIGHT, Config.turnSpeed - 60
+
+        # if deltaAngle >= 180:
+        #     if absDeltaAngle > mappedAngle and distance > 120:
+        #         return Orientation.SPOT_LEFT, Config.turnSpeed 
+        #     else :
+        #         return Orientation.SPOT_LEFT, Config.turnSpeed - 20
+        # else:
+        #     if absDeltaAngle > mappedAngle  and distance > 120:
+        #         return Orientation.SPOT_RIGHT, Config.turnSpeed
+        #     else:
+        #         return Orientation.SPOT_RIGHT, Config.turnSpeed - 20
         
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):

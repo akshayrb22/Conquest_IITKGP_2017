@@ -54,7 +54,7 @@ class Bot(object):
         if(len(backCheckPointList) <=0 or len(frontCheckPointList)  <= 0):
             print "Failed to Capture bot position !!! >>>>>>>>>>>>>> "
             Bot.moveDirection(Direction.BACKWARD,False)
-            #sleep(2)
+            #sleep(1)
             Bot.Stop()
         else:
             backCheckPoint = None
@@ -135,7 +135,7 @@ class Bot(object):
             Bot.UpdateProperties()
     @staticmethod
     def changeOrientation(orientation):
-        Bot.setBotSpeed(Config.turnSpeed)
+        #Bot.setBotSpeed(Config.turnSpeed)
         if orientation == Orientation.SPOT_LEFT:
             BluetoothController.send_command(Orientation.command[orientation],"Left    : <<<<<<<<<<<<<<<<<") 
         elif orientation == Orientation.SPOT_RIGHT:
@@ -186,20 +186,22 @@ class Bot(object):
                                 firstAdjustLoop = False
                             tempCounter += 1
                             #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngelRange) % 360 or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngelRange) % 360:##receive red_point & green_point parameters
-                                print " " , (Bot.currentTarget.angle - Config.targetAngelRange) % 360, Bot.angle,  (Bot.currentTarget.angle + Config.targetAngelRange) % 360
+                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngelRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngelRange) :##receive red_point & green_point parameters
+                                #print " " , (Bot.currentTarget.angle - Config.targetAngelRange) % 360, Bot.angle,  (Bot.currentTarget.angle + Config.targetAngelRange) % 360
                                 if Point.inRange(Bot.position, node):
                                     Bot.Stop()
                                     break
                                 
-                                orientation = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
+                                orientation, speed = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
+                                Bot.setBotSpeed(speed)
                                 #if bot is facing 0 deg
-                                if (Bot.currentTarget.angle - Config.targetAngelRange) % 360 > (Bot.currentTarget.angle + Config.targetAngelRange):
-                                     Bot.changeOrientation(orientation)
-                                     Bot.moveDirection(Direction.FORWARD)
-                                     sleep(0.1)
-                                     break
+                                # if (Bot.currentTarget.angle + Config.targetAngelRange) % 360 > (Bot.currentTarget.angle - Config.targetAngelRange):
+                                #      Bot.changeOrientation(orientation)
+                                #      Bot.moveDirection(Direction.FORWARD)
+                                #      sleep(0.1)
+                                #      break
                                 Bot.changeOrientation(orientation)
+                                Bot.currentTarget.angle, dist = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
                                 
                     
                     #found the target
@@ -219,10 +221,10 @@ class Bot(object):
     def setBotSpeed(speed):
         ##if current speed is different than previous speed, set speed
         
-        if speed != Bot.currentSpeed and speed in range(0,101):
-            BluetoothController.send_command("X" + str(speed))
+        if speed != Bot.currentSpeed and speed in range(0,256):
+            BluetoothController.send_command("X" + str(speed) + "$")
             Bot.currentSpeed = speed
-            sleep(0.1)
+            #sleep(0.1)
 
 
 

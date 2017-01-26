@@ -1,13 +1,13 @@
 class Config(object):
     mapRatio = 1.33
-    mappedWidth = 30 * mapRatio
-    mappedHeight = 30
+    mappedWidth = 25 * mapRatio
+    mappedHeight = 25
     pathTolerance = 1.3
     FrameWidth = 800 * mapRatio
     FrameHeight = 800
-    obstacleRange = 4
-    moveSpeed = 50
-    turnSpeed = 30
+    obstacleRange = 3
+    moveSpeed = 250
+    turnSpeed = 240
     targetAngelRange = 6
     resourcePositionRange = 25
 
