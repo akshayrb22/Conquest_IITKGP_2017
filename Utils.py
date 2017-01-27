@@ -101,7 +101,7 @@ class Utils(object):
         deltaAngle %= 360
         absDeltaAngle = abs(deltaAngle)
 
-        mappedAngle = 50 # DECREASE THIS IF YOU WANT FAST SPOT TURN @ Node
+        mappedAngle = 30 # DECREASE THIS IF YOU WANT FAST SPOT TURN @ Node
 
         if deltaAngle >= 180:
             if absDeltaAngle > mappedAngle:

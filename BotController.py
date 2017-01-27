@@ -15,7 +15,8 @@ import FindDirectionality
 from FindDirectionality import Direction, Orientation, MovementFunctions
 import FindDirectionality
 from Utils import  Utils
-from time import sleep
+from time import sleep,time
+import timeit
 from AStar import AStar
 import copy
 import cv2
@@ -42,6 +43,7 @@ class Bot(object):
     
     @staticmethod
     def UpdateProperties():
+        Config.startTime = int(timeit.default_timer() * 1000)
         #assume that you are calling Akshay's Image proccesing function
         Frame.capture_frame()
         
@@ -71,8 +73,8 @@ class Bot(object):
                 Bot.runOnce = False
                 Frame.runOnce = False
             else:
-                resource_checkPoints = Frame.processStream(Bot.resource)
-                obstacles_checkPoints = Frame.processStream(Bot.obstacle)
+                #resource_checkPoints = Frame.processStream(Bot.resource)
+                #obstacles_checkPoints = Frame.processStream(Bot.obstacle)
                 #TODO Move to ImageProess
                 if Config.obstacleBoundingPointList != None:
                     Draw.boundingBox(Config.obstacleBoundingPointList)
@@ -100,8 +102,14 @@ class Bot(object):
             #print "Townhall center is:" + str(Frame.townHall.center.toString())
             Frame.drawCircle(Bot.position,(0,255,0))
             cv2.putText(Frame.resized, "           BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+        tempTime = Config.endTime = int(timeit.default_timer() * 1000)
 
+        #show time
+        cv2.putText(Frame.resized,"Processing Time : " + str(Config.endTime - Config.startTime), (10,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv2.putText(Frame.resized,"Time Elapsed  : " + str(Config.endTime/1000), (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         Frame.show_frame()
+        Config.endTime = int(timeit.default_timer() * 1000)
+        #print "Per frame : " + str((Config.endTime - Config.startTime)) + " | Time elapsed : " + str(Config.endTime/1000)
         return Bot.position, Bot.angle
 
     @staticmethod
@@ -113,7 +121,7 @@ class Bot(object):
     
     @staticmethod
     def moveDirection(direction,updateProperties = True):
-        Bot.setBotSpeed(Config.moveSpeed)
+        #Bot.setBotSpeed(Config.moveSpeed)
         
         if direction == Direction.FORWARD:
             BluetoothController.send_command(Direction.command[direction],"Forward : ^^^^^^^^^^^^^^^^^ ")
@@ -170,6 +178,11 @@ class Bot(object):
                     else:
                         while not Point.inRange(Bot.position, node):
                             if firstAdjustLoop != True:
+                                Bot.currentTarget.angle, distance = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
+                                if(distance > Config.reduceSpeedAt):
+                                    Bot.setBotSpeed(Config.moveSpeed)
+                                else:
+                                    Bot.setBotSpeed(Utils.map(distance,0, Config.reduceSpeedAt, 100,Config.moveSpeedNear))
                                 Bot.moveDirection(Direction.FORWARD)
                                 firstAdjustLoop = False
                             tempCounter += 1

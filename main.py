@@ -34,6 +34,9 @@ Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
 Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 
 
+raw_input("Start ?????? Press Enter to continue.... : ")
+
+
 Frame.capture_frame()
 Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
 
@@ -41,7 +44,9 @@ Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
 Bot.UpdateProperties()
 
 
+
 obstacle_checkPoints = Frame.processStream(Bot.obstacle)
+Config.obstacleList = obstacle_checkPoints
 Config.obstacleCount = len(obstacle_checkPoints)
 
 #do Astar Search in the beggining
@@ -76,7 +81,7 @@ Frame.show_frame()
 
 print "Finished Astar"
 ## Remove this~!  Only for testing!!!
-sleep(5)
+#sleep(5)
 
 Config.findPathOnce = False
 

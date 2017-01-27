@@ -44,7 +44,8 @@ int speed_slow = 50;
 int speed_medium = 150;
 int speed_fast = 255;
 
-int var = 50;
+int moveDelay = 50;
+int turnDelay = 30;
 /*
  * These are the functions which are required to
  * control the bot.
@@ -206,25 +207,25 @@ void loop()
       switch (recvChar)
       {  
        case 'f' :moveForward();
-                 delay(var);
+                 delay(moveDelay);
                  break;
        case 'b' :moveBackward();
-                delay(var);
+                delay(moveDelay);
                 break;
        case 'a' :spotLeft();
-                delay(var);
+                delay(turnDelay);
                 break;
        case 'c' :spotRight();
-                delay(var);
+                delay(turnDelay);
                 break;
        case 's' : Stop();
-                delay(var);
+                delay(moveDelay);
                 break;
        case 'r' : arcRight();
-                delay(var);
+                delay(turnDelay);
                 break;
        case 'l': arcLeft();
-                delay(var);
+                delay(turnDelay);
                 break;
        
        case 'X' : {String str = blueToothSerial.readStringUntil('$');

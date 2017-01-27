@@ -137,9 +137,9 @@ class AStar(object):
         while not frontier.empty():
             current = frontier.get()
             
-            if current == (goal):
-                AStar.found = True
-                break
+            #if current == (goal):
+            #    AStar.found = True
+            #    break
             for next in AStar.graph.neighbors(current):
                 new_cost = cost_so_far[current] + 1
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
@@ -151,13 +151,13 @@ class AStar(object):
             if Config.obstacleBoundingPointList != None:
                     Draw.boundingBox(Config.obstacleBoundingPointList)
             #show preview of Path finding
-            Frame.show_frame()
-        if AStar.found:
-            path = AStar.FindPath(came_from,goal)
-        else:
-            print "Failed to find path!!!!! Bot or Target is inside Obstacle Range!!!!  XD"
-            sleep(10)
-            return None
+            #Frame.show_frame()
+        #if AStar.found:
+        path = AStar.FindPath(came_from,goal)
+        # else:
+        #     print "Failed to find path!!!!! Bot or Target is inside Obstacle Range!!!!  XD"
+        #     sleep(10)
+        #     return None
         AStar.writeToFile(path)
         optimizedPathArray = (PathOptimizer.Optimize())
         optimizedPathList = []

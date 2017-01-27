@@ -39,7 +39,8 @@ class Frame(object):
         Frame.camera = cv2.VideoCapture(cameraID)
         Frame.camera.set(10,0.5)
         Frame.camera.set(12,255)
-        Frame.camera.set(5,24)
+        Frame.camera.set(5,18) #frame rate
+        Frame.camera.set(21,1) #buffer Size
 
     @staticmethod
     def disconnect():
