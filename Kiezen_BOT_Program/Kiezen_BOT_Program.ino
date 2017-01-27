@@ -64,10 +64,10 @@ void checkAUTO_FLAG();
 
 double Distance;    // Distance of the obstacle, this will be given by ping.
 //Mdouble AUTO_FLAG;   // To check whether the bot is controlled by you or autonomous.
-int leftA = 7;
-int leftB = 8;
-int rightA = 9;
-int rightB = 10;
+int leftA = 9;
+int leftB = 10;
+int rightA = 7;
+int rightB = 8;
 
 void moveForward()
 {

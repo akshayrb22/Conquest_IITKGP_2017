@@ -10,8 +10,8 @@ import bluetooth
 from time import sleep
 from FindDirectionality import Orientation,MovementFunctions,Direction
 class BluetoothController(object):
-    target_name = "HC-06"
-    target_address = "B8:27:EB:26:F6:A4"
+    target_name = "HC-05"
+    target_address = "20:16:07:05:04:67"
     nearby_devices = None
     is_connected = False
     port = 1
