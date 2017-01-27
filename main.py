@@ -44,7 +44,7 @@ Bot.UpdateProperties()
 obstacle_checkPoints = Frame.processStream(Bot.obstacle)
 Config.obstacleCount = len(obstacle_checkPoints)
 
-#do Astar Search in the beggining
+#do Astar Search in the beginning
 #
 resource_checkPoints = Frame.processStream(Bot.resource)
 Config.resourceList = resource_checkPoints
