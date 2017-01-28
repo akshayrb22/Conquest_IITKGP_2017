@@ -162,7 +162,7 @@ class Utils(object):
             if checkPointList[j].shape == CheckpointShape.TRIANGLE:
                 priorityResources.append(checkPointList[j])
             else:
-                skippedResources.append(checkPointList[j])
+                skippedResources.append(checkPointList[j]) #keep al
         priorityResources += copy.deepcopy(skippedResources)
         return priorityResources
     
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     checkPointList.append(Checkpoint(1000,Point(100,60),4566,0,CheckpointShape.TRIANGLE))
     checkPointList.append(Checkpoint(800,Point(10,10),5000,0,CheckpointShape.SQUARE))
     checkPointList.append(Checkpoint(960,Point(400,200),9000,0,CheckpointShape.TRIANGLE))
-    checkPointList = Utils.arena_two_sort(checkPointList)
+    checkPointList = Utils.prioritySort(checkPointList)
     for i in checkPointList:
         print i.shape,i.distance
     #print Utils.generatePath((0,0),(10,10),[(0,0),(9,9),(13,12)])
