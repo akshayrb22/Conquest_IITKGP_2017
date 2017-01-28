@@ -140,9 +140,13 @@ class Utils(object):
         pathToTarget.reverse()
         firstPass += copy.deepcopy(pathToTarget)
 
+    
+
         finalPath += copy.deepcopy(firstPass)       
-        del firstPass[0]
-        finalPath += copy.deepcopy(firstPass)
+        #if go to resource twice
+        if Config.goToResourceTwice == True:
+            del firstPass[0]
+            finalPath += copy.deepcopy(firstPass)
 
         del finalPath[0]
         return finalPath, noOfSkips
@@ -153,9 +157,13 @@ class Utils(object):
     @staticmethod
     def prioritySort(checkPointList):
         priorityResources = []
+        skippedResources = []
         for j in range (len(checkPointList)-1):
             if checkPointList[j].shape == CheckpointShape.TRIANGLE:
                 priorityResources.append(checkPointList[j])
+            else:
+                skippedResources.append(checkPointList[j]) #keep all Square resources to add at the end
+        priorityResources += copy.deepcopy(skippedResources)
         return priorityResources
     
 if __name__ == '__main__':
@@ -166,8 +174,9 @@ if __name__ == '__main__':
     checkPointList.append(Checkpoint(1000,Point(100,60),4566,0,CheckpointShape.TRIANGLE))
     checkPointList.append(Checkpoint(800,Point(10,10),5000,0,CheckpointShape.SQUARE))
     checkPointList.append(Checkpoint(960,Point(400,200),9000,0,CheckpointShape.TRIANGLE))
-    checkPointList = Utils.arena_two_sort(checkPointList)
+    checkPointList = Utils.prioritySort(checkPointList)
     for i in checkPointList:
         print i.shape,i.distance
+    #print Utils.generatePath((0,0),(10,10),[(0,0),(9,9),(13,12)])
     # turn = Utils.determineTurn3(180, 0)    
     # print turn

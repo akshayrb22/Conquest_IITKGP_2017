@@ -19,6 +19,8 @@ class Config(object):
     # + or - angle for target
     targetAngleRange = 8
 
+    goToResourceTwice = False   #if True Bot will go to resource twice
+
     resourcePositionRange = 25  # within 25X25, looks fine for current arena
     
     

@@ -214,7 +214,8 @@ class Bot(object):
                         sleep(1)
         print "REACHED ALL DESTINATIONS!!!!!!!!!!!!!!!!!"
         Bot.Stop()
-        sleep(100)
+        #sleep(100)
+        # its time to stop the first traverse
     @staticmethod
     def setBotSpeed(speed):
         ##if current speed is different than previous speed, set speed
