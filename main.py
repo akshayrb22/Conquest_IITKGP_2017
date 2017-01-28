@@ -95,7 +95,7 @@ Bot.Traverse(resource_checkPoints,obstacle_checkPoints)
 #call Traverse again with the new sorted resource list
 
 #if you want to travel to Triangles first then squares then use the following sorted
-shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints)
+shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints) # modified prioritySort. please check Source
 #if you want to sort using arena_one_sort
-#shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints)
+#shape_sorted_resource_checkPoints = Utils.arena_one_sort(resource_checkPoints)
 Bot.Traverse(shape_sorted_resource_checkPoints,obstacle_checkPoints)

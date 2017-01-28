@@ -162,7 +162,7 @@ class Utils(object):
             if checkPointList[j].shape == CheckpointShape.TRIANGLE:
                 priorityResources.append(checkPointList[j])
             else:
-                skippedResources.append(checkPointList[j]) #keep al
+                skippedResources.append(checkPointList[j]) #keep all Square resources to add at the end
         priorityResources += copy.deepcopy(skippedResources)
         return priorityResources
     
