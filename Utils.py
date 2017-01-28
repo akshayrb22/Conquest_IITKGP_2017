@@ -147,6 +147,16 @@ class Utils(object):
         del finalPath[0]
         return finalPath, noOfSkips
     
+    #This function is one that can be called once the first run is done. 
+    #Parameters:checkPointList
+    #It just goes for the triangles as they carry more points
+    @staticmethod
+    def prioritySort(checkPointList):
+        priorityResources = []
+        for j in range (len(checkPointList)-1):
+            if checkPointList[j].shape == CheckpointShape.TRIANGLE:
+                priorityResources.append(checkPointList[j])
+        return priorityResources
     
 if __name__ == '__main__':
     checkPointList = []
