@@ -87,8 +87,11 @@ print "Finished Astar"
 ## Remove this~!  Only for testing!!!
 #sleep(5)
 
-Config.findPathOnce = False
-
 Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
 
+#initial Run.. covers all resources once (considering only distance)
+Bot.Traverse(resource_checkPoints,obstacle_checkPoints)
+
+#call Traverse again with the new sorted resource list
+#>>>>>sort resource_checkPoints here <<<<<
 Bot.Traverse(resource_checkPoints,obstacle_checkPoints)
