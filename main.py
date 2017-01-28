@@ -29,12 +29,15 @@ Bot.setBotSpeed(200)
 
 Frame.connect(1)
 Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
-Bot.obstacle = CheckpointType("Obstacle", "purple",(255,0,0))
+Bot.obstacle = CheckpointType("Obstacle", "blue",(255,0,0))
 Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
 Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
 
 
 raw_input("Start ?????? Press Enter to continue.... : ")
+
+
+
 
 
 Frame.capture_frame()
@@ -65,7 +68,7 @@ if(Config.obstacleCount > 0):
     #now sort the resources withrespect to the updated distance
     resource_checkPoints.sort()
     #>>>> Call your updated sorting HERE (LEVEL 2)!!!!! Do not change if you dont want to try new algos. 
-    # >>>> HERE <<<<<<<
+    # >>>> HERE <<<<<<<      Utils.arena_two_sort(resource_checkPoints)
     #save sorted list
     Config.resourceList = resource_checkPoints
 else:
@@ -75,7 +78,8 @@ else:
         resource.noOfSkips = noOfSkips
 
     #>>>> Call your updated sorting HERE (LEVEL 1)!!!!!
-    # >>>> HERE <<<<<<<
+    # >>>> HERE <<<<<<<      Utils.arena_one_sort(resource_checkPoints)
+
 
 Frame.show_frame()
 

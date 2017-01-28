@@ -126,11 +126,11 @@ class Frame(object):
                 area = cv2.contourArea(c)
 
                 display_contour = False
-                if area > 1000: 
+                if area > 600: 
                     shapeMessage = 'square'
                     shape = CheckpointShape.SQUARE
                     display_contour = True
-                elif  area > 800:
+                elif  area > 400:
                     shapeMessage = 'triangle'
                     shape = CheckpointShape.TRIANGLE
                     display_contour = True
@@ -138,7 +138,7 @@ class Frame(object):
                     shapeMessage = 'null'
                 if display_contour:
                     if(shape == CheckpointShape.SQUARE or shape == CheckpointShape.TRIANGLE):
-                        if area > 150 :
+                        if area > 310 :
                             angle = 0
                             
                             origin = Frame.townHall.center
@@ -218,7 +218,7 @@ class Frame(object):
                 c *= Frame.ratio
                 c = c.astype("int")
                 area=cv2.contourArea(c)
-                if area > 200:
+                if area > 1600:
                     Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
                     checkPointList.append(Checkpoint(area,point,dist,0,shape))
                 

@@ -44,8 +44,8 @@ int speed_slow = 50;
 int speed_medium = 150;
 int speed_fast = 255;
 
-int moveDelay = 50;
-int turnDelay = 30;
+int moveDelay = 45;
+int turnDelay = 35;
 /*
  * These are the functions which are required to
  * control the bot.
@@ -175,7 +175,7 @@ void setup()
     pinMode(rightB,OUTPUT);
     pinMode(5,OUTPUT);
     pinMode(6,OUTPUT);
-    pinMode(13,OUTPUT);
+    pinMode(12,OUTPUT);
     pinMode(RxD, INPUT); // Set pin to receive INPUT from bluetooth shield on Digital Pin 6
     pinMode(TxD, OUTPUT);
     Serial.begin(9600);
@@ -235,16 +235,17 @@ void loop()
                   analogWrite(6,Speed);
                   break;
        }
-       case 'k' : digitalWrite(13,HIGH);
+       case 'k' : digitalWrite(12,HIGH);
                   delay(250);
-                  digitalWrite(13,LOW);
+                  digitalWrite(12,LOW);
                   delay(250);
-                  digitalWrite(13,HIGH);
+                  digitalWrite(12,HIGH);
                   delay(250);
-                  digitalWrite(13,LOW);
+                  digitalWrite(12,LOW);
                   delay(250);
        default : 
                  Stop();
+                  digitalWrite(12,LOW);
   
       }
        

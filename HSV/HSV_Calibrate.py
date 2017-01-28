@@ -34,8 +34,10 @@ def HSVProcess(x):
     p=open(  colorName + ".txt","w")
     p.write(upperColor.toString() + "," + lowerColor.toString() + "," + str(lowerColor.T) + "," + str(min_area) + "," + str(max_area))
 cv2.namedWindow('img',cv2.WINDOW_NORMAL)
+cap.set(5,18) #frame rate
 cap.set(10,0.5)#brightness
 cap.set(12,255)#saturation
+
 
 cv2.createTrackbar('H', 'img', int(upperColor.H),255,HSVProcess)
 cv2.createTrackbar('S','img',int(upperColor.S),255,HSVProcess)
@@ -97,6 +99,7 @@ while(1):
         cv2.imshow('frame',edges)
         cv2.imshow('mask',mask)
         cv2.imshow('resized',res)
+        
         #cv2.imshow("original",resized)
         k = cv2.waitKey(5) & 0xFF
         if k == 27:

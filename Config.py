@@ -2,17 +2,17 @@ class Config(object):
     
     
     #grid size > devide the arena into given value. Higher the value slower path finding and more resolution (Not required!! )
-    gridSize = 35  #CHANGE THIS for new AREANA (3m X 3m) may be 35?
+    gridSize = 35 #CHANGE THIS for new AREANA (3m X 3m) may be 35?
 
     #path optimizer value
     pathTolerance = 1.3
     # boundry of obtstacle
-    obstacleRange =  4#may be 4? for 3X3 arena | Reduce this if you get came_from[target] error!
+    obstacleRange =  4 #may be 4? for 3X3 arena | Reduce this if you get came_from[target] error!
 
     #max speed 255
     # reduce for 200 RPM Motors!!!!!!
-    moveSpeed = 255
-    moveSpeedNear = moveSpeed - 100 #When bot is closer to the target
+    moveSpeed = 250
+    moveSpeedNear = moveSpeed - 70 #When bot is closer to the target
     turnSpeed = 240
 
     reduceSpeedAt = 150

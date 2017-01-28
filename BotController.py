@@ -182,7 +182,7 @@ class Bot(object):
                                 if(distance > Config.reduceSpeedAt):
                                     Bot.setBotSpeed(Config.moveSpeed)
                                 else:
-                                    Bot.setBotSpeed(Utils.map(distance,0, Config.reduceSpeedAt, 100,Config.moveSpeedNear))
+                                    Bot.setBotSpeed(Utils.map(distance,0, Config.reduceSpeedAt, 150,Config.moveSpeedNear))
                                 Bot.moveDirection(Direction.FORWARD)
                                 firstAdjustLoop = False
                             tempCounter += 1

@@ -11,7 +11,7 @@ from time import sleep
 from FindDirectionality import Orientation,MovementFunctions,Direction
 class BluetoothController(object):
     target_name = "HC-05"
-    target_address = "20:16:07:05:04:67"
+    target_address = "20:16:07:05:28:54"
     nearby_devices = None
     is_connected = False
     port = 1
@@ -28,7 +28,7 @@ class BluetoothController(object):
         print 'Bluetooth Controller Searching for devices... '
         nearby_devices = bluetooth.discover_devices()
         for bluetooth_address in nearby_devices:
-            if BluetoothController.target_name == bluetooth.lookup_name(bluetooth_address):
+            if BluetoothController.target_address == bluetooth_address:
                 BluetoothController.is_connected = True
                 BluetoothController.target_address = bluetooth_address
                 if BluetoothController.target_address is not None:
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     #bluetoothProcess.start()
     #bluetoothProcess.join()
     BluetoothController.connect()
+    
     while True:
         command = raw_input("Enter command: ")
         print " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + command
