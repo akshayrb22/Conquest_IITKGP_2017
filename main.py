@@ -18,8 +18,6 @@ from Checkpoint import Checkpoint, CheckpointType
 from ImageProcess import Frame
 from Point import Point
 
-
-
 #connect Bluetooth
 BluetoothController.connect()
 Bot.Stop()

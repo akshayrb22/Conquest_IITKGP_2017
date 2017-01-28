@@ -44,8 +44,8 @@ int speed_slow = 50;
 int speed_medium = 150;
 int speed_fast = 255;
 
-int moveDelay = 45;
-int turnDelay = 35;
+int moveDelay = 42;
+int turnDelay = 32;
 /*
  * These are the functions which are required to
  * control the bot.
