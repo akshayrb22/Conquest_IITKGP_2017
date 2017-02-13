@@ -55,6 +55,9 @@ class Grid(object):
         return results
     @staticmethod
     def find_obstacles(obstacle_checkPoints):
+        '''
+        
+        '''
         all_obstacles=[]
     
         totalObstaclePoints = 0
@@ -113,13 +116,26 @@ class AStar(object):
 
     @staticmethod
     def writeToFile(path):
-
+        '''
+        param-it takes in the path list
+        returns-None
+        It takes in the path list and writes it to a file so that it can be used to 
+        reverse the path and perform operations on the list of points. 
+        '''
         p=open("path.txt","w")
         for point in path:
             p.write(str(point[0]) + " " + str(point[1]) + "\n")
 
     @staticmethod
     def search(start, goal,gridX, gridY, array_of_obst):
+        '''
+        param-it takes in the start Point type variable, the  goal Point type variable, the width of the frame,
+              the height of the frame and the array of obstacles.
+        returns- it returns the final path list the bot ahs to follow
+        This is a vital function in the program. It implements the A* algorithm. All the obstacles are taken in to 
+        find_obstacles() where it appends all the obstacle pixel points to the obstacle list and returns it. 
+        It then works on the A* implementation. For more info-http://www.redblobgames.com/pathfinding/a-star/introduction.html 
+        '''
         AStar.graph=Grid(gridX,gridY)
         AStar.graph.obstacles = Grid.find_obstacles(array_of_obst)
         AStar.position = start
@@ -169,6 +185,12 @@ class AStar(object):
 
     @staticmethod
     def FindPath(came_from,goal):
+        '''
+        param- it take's in the previous point and the goal points
+        returns- the path 
+        This function returns the reverse of the path so that it can go to the resource and come back in one shot.
+        It basically sets the whole path as-[path to resource point, path back to starting point].
+        '''
         target = goal
         path=[]
         #print came_from

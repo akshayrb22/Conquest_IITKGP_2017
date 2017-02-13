@@ -42,7 +42,11 @@ class Utils(object):
         return checkPointList
 
 
-
+    '''
+    param-initial point and final point
+    returns-the angle in degrees and the distance betwwen those 2 points
+    Uses simple tan inverse function to find hte angle then maps it to a proper angle between 0 to 360.
+    '''
     @staticmethod
     def angleBetweenPoints(origin,position):
         
@@ -91,7 +95,11 @@ class Utils(object):
         x=(101*p2.x)-(p1.x*100)
         y=(101*p2.y)-(p1.y*100)
         return (x,y)
-
+    '''
+    param-bot's angle, the target's angle with respect to the townhall, the distance between the bot and the 
+          the resource
+    returns-the direction it has to turn and the speed with whichit should make the turn
+    '''
     @staticmethod
     def determineTurn(botAngle, targetAngle,distance): #TODO fix it !
         deltaAngle = botAngle - targetAngle
@@ -117,12 +125,17 @@ class Utils(object):
                 return Orientation.ARC_RIGHT, Config.turnSpeed
             else:
                 return Orientation.SPOT_RIGHT, Config.turnSpeed - 60
-        
+    '''
+    param-the bot's position, the target's position and if there are obstacles, the AStar path
+    returns-the final path and the number of skips which is used to decide the at with which the bot will blink the LED
+    If there are obstacles, the obstacle points are added to the path list, otherwise i.e.if it is in t he first round,
+    there are only 2 points considered, the townhall and the resource point.
+    '''   
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):
         finalPath = []
 
-        #path for FirstPast
+        #path for FirstPass
         firstPass = []
         pathToTarget = []
         if aStarPath != None:
@@ -150,10 +163,13 @@ class Utils(object):
 
         del finalPath[0]
         return finalPath, noOfSkips
+    '''
+    Param:checkPointList
+    returns- the sorted list according to priority
+    This function is one that can be called once the first run is done. 
+    It just goes for the triangles as they carry more points
     
-    #This function is one that can be called once the first run is done. 
-    #Parameters:checkPointList
-    #It just goes for the triangles as they carry more points
+    '''
     @staticmethod
     def prioritySort(checkPointList):
         priorityResources = []

@@ -37,8 +37,8 @@ class Frame(object):
     @staticmethod
     def connect(cameraID):
         Frame.camera = cv2.VideoCapture(cameraID)
-        Frame.camera.set(10,0.5)
-        Frame.camera.set(12,255)
+        Frame.camera.set(10,0.5)#brightness
+        Frame.camera.set(12,255)#saturation
         Frame.camera.set(5,18) #frame rate
         Frame.camera.set(21,1) #buffer Size
 
@@ -72,9 +72,16 @@ class Frame(object):
     @staticmethod
     def drawCircle(point,color):
         cv2.circle(Frame.resized, point.get_coordinate(), 10 , color, -1)
-
+    
     @staticmethod
     def processStream(checkpointType):
+    ''''
+    param- it takes in an object of type checkpointType
+    returns-if the checkpoint is a resource or an obstacle it accesses Frame.processCheckpoints() and finally returns a sorted checkpoint list
+            otherwise, it is a Bot property i.e. the bot marker color and it will return the center of the bot
+    It converts the color of the frame to hsv, then it masks it, grays it, threshes, gets the canny image first and then resizes iter
+    After all this, we get the contours and based on if the checkpoint type is a resource or an obstacle and if it is a bot property, a function is called and returned.abs 
+    '''
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, checkpointType.lower_color.get_array(), checkpointType.upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)#TODO figure out why we put the same source for both parameters
@@ -92,12 +99,22 @@ class Frame(object):
         if(checkpointType.type == "Resource"):
             return Frame.processCheckpoints(contour, checkpointType)
         else:
-            return Frame.get_center(contour,checkpointType)
-
+            return Frame.processBot(contour,checkpointType)
+    
     @staticmethod
     def processCheckpoints(contour,checkpointType):
+    '''
+    param-it takes in a contour and a CheckpointType object
+    returns-a sorted checkpointlist of the resource and obstacle
+    I have commented the cyan lines as we don't use them in the final code.
+    After initializing a checkpointlist array, we get the center of each contour and then based on the 
+    area we decide if the checkpoint is a tringle or a square
+    Then we append them to the list
+    If it is a resource, it is both triangles and squares  and the final list is sorted according to area so the
+    triangles come first. If it is an obstacle we need only consider squares.
+    '''
 
-        cyan = 255
+        #cyan = 255
         #orign
         #
 
@@ -138,34 +155,35 @@ class Frame(object):
                     shapeMessage = 'null'
                 if display_contour:
                     if(shape == CheckpointShape.SQUARE or shape == CheckpointShape.TRIANGLE):
-                        if area > 310 :
-                            angle = 0
-                            
-                            origin = Frame.townHall.center
-                            #print origin.toString()
-                            angle, dist = Utils.angleBetweenPoints(origin,position)
-                            Frame.runTimeCounter += 1    
-                            
+                        #if area > 310 :#this is a boiler plate
+                        angle = 0
+                        
+                        origin = Frame.townHall.center
+                        #print origin.toString()
+                        angle, dist = Utils.angleBetweenPoints(origin,position)
+                        Frame.runTimeCounter += 1    
+                        
 
-                            
-                            checkPointList.append(Checkpoint(area, position, dist, angle, CheckpointShape.SQUARE))
-                            
-                            cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
-                            cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
-                            
-                            
-                            x,y,w,h = cv2.boundingRect(c)
-                            cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
+                        
+                        checkPointList.append(Checkpoint(area, position, dist, angle, shape))
+                        
+                        cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
+                        cv2.circle(Frame.resized, position.get_coordinate(), 3, (0,0,255), -1)#index_of_contours=>no of contours i guess... -1 means all
+                        
+                        
+                        x,y,w,h = cv2.boundingRect(c)
+                        cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
 
-                            #cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-                            #cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
-                            cyan = cyan - 1
-                            #if Frame.runTimeCounter <= 2: 
-                            #    return checkPointList
+                        #cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                        #cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
+                        #cyan = cyan - 1
+                        #if Frame.runTimeCounter <= 2: 
+                        #    return checkPointList
         #sort checkpoints
         checkPointList.sort()
         return checkPointList
-        
+    #has been defined, never used
+    ''''    
     @staticmethod
     def find_contour(threshold):
         #print 'Frame: findContour called '
@@ -179,15 +197,20 @@ class Frame(object):
         cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
         return cnts
-    
+    '''
     @staticmethod
     def draw_contour(contour,contour_name,postion,color):
         cv2.drawContours(Frame.resized, [contour], -1, color, 2)
         #cv2.putText(Frame.resized, contour_name, (postion.x, postion.y), cv2.FONT_HERSHEY_SIMPLEX,0.5, (255, 255, 255), 2)
         cv2.circle(Frame.resized, (postion.x, postion.y),3 , (0, 0, 0), -1)
-
+    
     @staticmethod
-    def get_center(contour,checkpointType):
+    def processBot(contour,checkpointType):
+    '''
+    param-It takes in a contour and a CheckpointType object
+    returns- the bot checkpointlist
+    It works the same way as Frame.processCheckpoints(). The exact same way as above.  
+    ''' 
         #print 'Frame: getCenter called '
         checkPointList = []
         for c in contour:
@@ -210,7 +233,7 @@ class Frame(object):
                 point = Point()
                 point.x = int((Moment["m10"] / Moment["m00"]+ 1e-7) * Frame.ratio)#uses moment of inertia concept
                 point.y = int((Moment["m01"] / Moment["m00"]+ 1e-7) * Frame.ratio)
-                dist = float((((origin.x-point.x)*(origin.x-point.x))+((origin.y - point.y )*(origin.x - point.y)))^(1/2))
+                dist = float(distance(origin,point))
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
                 #print "Position: " + point.toString()
@@ -219,10 +242,40 @@ class Frame(object):
                 c = c.astype("int")
                 area=cv2.contourArea(c)
                 if area > 1600:
-                    Frame.draw_contour(c,checkpointType.type,point,checkpointType.contour_color)
-                    checkPointList.append(Checkpoint(area,point,dist,0,shape))
+                    Frame.draw_contour(c,checkpointType.type, point, checkpointType.contour_color)
+                    checkPointList.append(Checkpoint(area, point, dist, 0, shape))
                 
         return checkPointList
+    
+    @staticmethod
+    def botImageProperties(botCurrentResource, botCurrentNode, botCurrentTarget, botPrevBack, botPrevFront, botPosition):
+    '''
+    param-it takes in the current resource in the list, the current node in the list, the current target, the red and
+          green checkpoints and the bot's position.
+    returns-None
+    It does some image processing. It draws the bounding boxes for the obstacles, the point on the current resource
+    that our bot has to traverse to. It draws a circle on the node that it has to reach. It also gives the target angle 
+    in real time on the screen. It draws line from one point to the other, last arg means thickness. It draws arrowed 
+    lines as well.
+    '''
+        if Config.obstacleBoundingPointList != None:
+            Draw.boundingBox(Config.obstacleBoundingPointList)
+        if botCurrentResource != None:
+            cv2.circle(Frame.resized,botCurrentResource.center.get_coordinate(),30,(255,150,0),2,8)
+            Draw.circle(botCurrentResource.path)
+        #Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+        if botCurrentNode != None:
+            cv2.circle(Frame.resized,botCurrentNode.get_coordinate(),20,(0,0,255),2,4)
+            #Frame.drawCircle(Bot.currentNode,(255,0,0))
+            cv2.putText(Frame.resized, "         Target @" + botCurrentTarget.center.toString() + " | A: "  + str(botCurrentTarget.angle) , botCurrentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+        cv2.putText(Frame.resized, "   " + str(Utils.distance(botPosition,botCurrentTarget.center)), Utils.midPoint(botPosition,botCurrentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        if botCurrentNode != None:
+            cv2.arrowedLine(Frame.resized,botPosition.get_coordinate(), botCurrentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
+        cv2.arrowedLine(Frame.resized,botPrevBack.center.get_coordinate(), botPrevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
+        #draw big arrow on top of BOT 
+        cv2.arrowedLine(Frame.resized,botPrevBack.center.get_coordinate(),Utils.getPointFromAngle(botPrevBack.center, botPrevFront.center),(255,255,25), 1,0,0,1)
+        Frame.drawCircle(Frame.townHall.center,(0,255,255)) 
+   
 
 '''
 if __name__ == '__main__':

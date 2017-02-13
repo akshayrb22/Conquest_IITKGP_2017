@@ -18,7 +18,7 @@ from Checkpoint import Checkpoint, CheckpointType
 from ImageProcess import Frame
 from Point import Point
 
-#connect Bluetooth
+'''connect Bluetooth'''
 BluetoothController.connect()
 Bot.Stop()
 #sleep(1)
@@ -41,7 +41,7 @@ raw_input("Start ?????? Press Enter to continue.... : ")
 Frame.capture_frame()
 Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
 
-#initially find center of townhall by finding bot center
+'''initially find center of townhall by finding bot center'''
 Bot.UpdateProperties()
 
 
@@ -50,8 +50,8 @@ obstacle_checkPoints = Frame.processStream(Bot.obstacle)
 Config.obstacleList = obstacle_checkPoints
 Config.obstacleCount = len(obstacle_checkPoints)
 
-#do Astar Search in the beggining
-#
+'''do Astar Search in the beginning'''
+
 resource_checkPoints = Frame.processStream(Bot.resource)
 Config.resourceList = resource_checkPoints
 if(Config.obstacleCount > 0):
@@ -63,7 +63,7 @@ if(Config.obstacleCount > 0):
         resource.noOfSkips = noOfSkips
         resource.distance = distance
         print "resource distance " + str(distance)
-    #now sort the resources withrespect to the updated distance
+    '''now sort the resources with respect to the updated distance'''
     resource_checkPoints.sort()
     #>>>> Call your updated sorting HERE (LEVEL 2)!!!!! Do not change if you dont want to try new algos. 
     # >>>> HERE <<<<<<<      Utils.arena_two_sort(resource_checkPoints)
@@ -87,13 +87,13 @@ print "Finished Astar"
 
 Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
 
-#initial Run.. covers all resources once (considering only distance)
+'''initial Run.. covers all resources once (considering only distance)'''
 Bot.Traverse(resource_checkPoints,obstacle_checkPoints)
 
-#call Traverse again with the new sorted resource list
 
-#if you want to travel to Triangles first then squares then use the following sorted
-shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints) # modified prioritySort. please check Source
-#if you want to sort using arena_one_sort
+'''if you want to travel to Triangles first then squares then use the following sorted
+modified prioritySort. please check Source if you want to sort using arena_one_sort'''
+shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints) 
 #shape_sorted_resource_checkPoints = Utils.arena_one_sort(resource_checkPoints)
+'''calls Traverse again with the new sorted resource list'''
 Bot.Traverse(shape_sorted_resource_checkPoints,obstacle_checkPoints)

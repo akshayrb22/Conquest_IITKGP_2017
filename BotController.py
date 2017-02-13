@@ -29,22 +29,31 @@ class Bot(object):
     angle = 0
     botFront = None#CheckpointType('botFront', 'green',(0,255,0))
     botBack = None #CheckpointType('botBack', 'red',(0,0,255))
-    resource = None
-    prevBack = None
-    prevFront = None
-    currentTarget = None
-    currentResource = None
-    currentNode = None
-    townHall = None
+    resource = None#Checkpoint object
+    prevBack = None#Checkpoint object
+    prevFront = None#Checkpoint object
+    currentTarget = None#Checkpoint object
+    currentResource = None#Checkpoint object
+    currentNode = None#Checkpoint object
+    townHall = None#Checkpoint object
     runOnce = True
     optimizedAStarPath = None
     currentSpeed = 0
     currentCommand = ''
-    
+   
     @staticmethod
-    def UpdateProperties():
+    def UpdateProperties():`
+     '''
+    param-None
+    returns-Bot.position[Type-str], Bot.angle[Type-int]
+    This function is used loads of times.
+    If not run before, it initializes the bot's position as the townhall.
+    Otherwise, it gives back the position of the bit at every instant when  it's running.
+    It also does  little bit of image processing in the function botImageProperties() where it shows 
+    the bot process speed and the time elapsed. 
+    But mainly, it gives the bot's position and angle.
+    '''    
         Config.startTime = int(timeit.default_timer() * 1000)
-        #assume that you are calling Akshay's Image proccesing function
         Frame.capture_frame()
         
         backCheckPointList = Frame.processStream(Bot.botBack)
@@ -75,36 +84,20 @@ class Bot(object):
             else:
                 #resource_checkPoints = Frame.processStream(Bot.resource)
                 #obstacles_checkPoints = Frame.processStream(Bot.obstacle)
-                #TODO Move to ImageProess
-                if Config.obstacleBoundingPointList != None:
-                    Draw.boundingBox(Config.obstacleBoundingPointList)
 
-                if Bot.currentResource != None:
-                    cv2.circle(Frame.resized,Bot.currentResource.center.get_coordinate(),30,(255,150,0),2,8)
-                    Draw.circle(Bot.currentResource.path)
-                #Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
-                if Bot.currentNode != None:
-                    cv2.circle(Frame.resized,Bot.currentNode.get_coordinate(),20,(0,0,255),2,4)
-                    #Frame.drawCircle(Bot.currentNode,(255,0,0))
-                    cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
-                cv2.putText(Frame.resized, "   " + str(Utils.distance(Bot.position,Bot.currentTarget.center)), Utils.midPoint(Bot.position,Bot.currentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                if Bot.currentNode != None:
-                    cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
-                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
-                #draw big arrow on top of BOT 
-                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(),Utils.getPointFromAngle(Bot.prevBack.center, Bot.prevFront.center),(255,255,25), 1,0,0,1)
-                Frame.drawCircle(Frame.townHall.center,(0,255,255))
-                
+               
+                Frame.botImageProperties(Bot.currentResource, Bot.currentNode, Bot.currentTarget, Bot.prevBack, Bot.prevFront, Bot.position)
                 if Bot.optimizedAStarPath != None:
                     Draw.path(Bot.optimizedAStarPath)
 
 
             #print "Townhall center is:" + str(Frame.townHall.center.toString())
             Frame.drawCircle(Bot.position,(0,255,0))
+            '''gives the bot angle'''
             cv2.putText(Frame.resized, "           BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         tempTime = Config.endTime = int(timeit.default_timer() * 1000)
 
-        #show time
+        '''show time'''
         cv2.putText(Frame.resized,"Processing Time : " + str(Config.endTime - Config.startTime), (10,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         cv2.putText(Frame.resized,"Time Elapsed  : " + str(Config.endTime/1000), (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         Frame.show_frame()
@@ -121,6 +114,13 @@ class Bot(object):
     
     @staticmethod
     def moveDirection(direction,updateProperties = True):
+    '''
+    param-direction [Type-str] - pass direction of the bot. Also, if the bot is not in the camera range, the updateProperties parameter is False
+          so that the position is not updated again
+    returns-None
+    Based on the direction that the bot had to run, it sends the command to move in tht direction... Usually forward
+    or any other direction
+    '''
         #Bot.setBotSpeed(Config.moveSpeed)
         
         if direction == Direction.FORWARD:
@@ -129,8 +129,14 @@ class Bot(object):
             BluetoothController.send_command(Direction.command[direction],"direction: " + direction)
         if updateProperties == True:
             Bot.UpdateProperties()
+    
     @staticmethod
     def changeOrientation(orientation):
+    '''
+    param-it takes in the orientation that it's required to turn
+    returns-None
+    Based on the orienttion, it sends the command to move in that direction.
+    '''
         #Bot.setBotSpeed(Config.turnSpeed)
         if orientation == Orientation.SPOT_LEFT:
             BluetoothController.send_command(Orientation.command[orientation],"Left    : <<<<<<<<<<<<<<<<<") 
@@ -139,9 +145,16 @@ class Bot(object):
         else:
             BluetoothController.send_command(Orientation.command[orientation],"orientation: " + orientation)
         Bot.UpdateProperties()
-
+    
     @staticmethod
     def Traverse(ListOfResources, ListOfObstacles = None):
+    '''
+    param-ListOfResources and ListOfObstacles
+    returns-None
+    It takes in the list of all the resources and the obstacles if any
+    It does a little bit of image processin i.e. printing the townhall center
+    It checks each target in the list of resources 
+    '''
         print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
             Bot.currentTarget = target
@@ -150,18 +163,18 @@ class Bot(object):
             Bot.UpdateProperties()
             blinkFlag = 0
            
-            #find list of PathPoints to traverse
+            '''find list of PathPoints to traverse'''
             # path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
-            tempCounter =0
+            tempCounter = 0
             if target.path != None:
                 for node in target.path:
-                    #print path
+                    
                     Bot.currentNode = node
                     angle, dist = Utils.angleBetweenPoints(Bot.position,node)
                     Bot.currentTarget = Checkpoint(0,node,0,angle,None)
 
                     firstAdjustLoop = False
-
+                    '''if the bot is in the 25X25 area range, then the the funtion returns True'''
                     if Point.inRange(Bot.position, node):
                         print 'Reached Destination  <<<<<<<<<<<<<<<< '
                         Bot.Stop()
@@ -187,7 +200,7 @@ class Bot(object):
                                 firstAdjustLoop = False
                             tempCounter += 1
                             #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngleRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngleRange) :##receive red_point & green_point parameters
+                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngleRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngleRange) :##while the bot angle is in the angle window 
                                 #print " " , (Bot.currentTarget.angle - Config.targetAngelRange) % 360, Bot.angle,  (Bot.currentTarget.angle + Config.targetAngelRange) % 360
                                 if Point.inRange(Bot.position, node):
                                     Bot.Stop()
@@ -196,11 +209,11 @@ class Bot(object):
                                 orientation, speed = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
                                 Bot.setBotSpeed(speed)
                                 Bot.changeOrientation(orientation)
-                                #update bots angle withrespect to target
+                                '''update bot's angle with respect to target'''
                                 Bot.currentTarget.angle, dist = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
                                 
                     
-                    #found the target
+                    '''found the target'''
                     print 'Reached Destination  >>>>>>>>>> '
                     Bot.Stop()
                     if target.noOfSkips == 1 or (blinkFlag % target.noOfSkips) == target.noOfSkips - 1:
@@ -215,10 +228,10 @@ class Bot(object):
         print "REACHED ALL DESTINATIONS!!!!!!!!!!!!!!!!!"
         Bot.Stop()
         #sleep(100)
-        # its time to stop the first traverse
+        '''its time to stop the first traverse'''
     @staticmethod
     def setBotSpeed(speed):
-        ##if current speed is different than previous speed, set speed
+        '''if current speed is different than previous speed, set speed'''
         
         if speed != Bot.currentSpeed and speed in range(0,256):
             BluetoothController.send_command("X" + str(speed) + "$")
@@ -233,3 +246,26 @@ if __name__ == '__main__':
     townhall=Checkpoint(0,Bot.position,0,0,0,0)
     BluetoothController.connect()
     Bot.Traverse(resourceList,townhall)
+
+
+
+'''
+                if Config.obstacleBoundingPointList != None:
+                    Draw.boundingBox(Config.obstacleBoundingPointList)
+
+                if Bot.currentResource != None:
+                    cv2.circle(Frame.resized,Bot.currentResource.center.get_coordinate(),30,(255,150,0),2,8)
+                    Draw.circle(Bot.currentResource.path)
+                #Frame.drawCircle(Bot.currentTarget.center,(255,0,0))
+                if Bot.currentNode != None:
+                    cv2.circle(Frame.resized,Bot.currentNode.get_coordinate(),20,(0,0,255),2,4)
+                    #Frame.drawCircle(Bot.currentNode,(255,0,0))
+                    cv2.putText(Frame.resized, "         Target @" + Bot.currentTarget.center.toString() + " | A: "  + str(Bot.currentTarget.angle) , Bot.currentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+                cv2.putText(Frame.resized, "   " + str(Utils.distance(Bot.position,Bot.currentTarget.center)), Utils.midPoint(Bot.position,Bot.currentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                if Bot.currentNode != None:
+                    cv2.arrowedLine(Frame.resized,Bot.position.get_coordinate(), Bot.currentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
+                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(), Bot.prevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
+                #draw big arrow on top of BOT 
+                cv2.arrowedLine(Frame.resized,Bot.prevBack.center.get_coordinate(),Utils.getPointFromAngle(Bot.prevBack.center, Bot.prevFront.center),(255,255,25), 1,0,0,1)
+                Frame.drawCircle(Frame.townHall.center,(0,255,255))
+'''
