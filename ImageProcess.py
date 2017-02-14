@@ -104,16 +104,16 @@ class Frame(object):
     
     @staticmethod
     def processCheckpoints(contour,checkpointType):
-    '''
-    param-contour [Type-list], checkpointType[Type-CheckpointType object]
-    returns-checkPointList[Type-list of Checkpoint objects]
-    I have commented the cyan lines as we don't use them in the final code.
-    After initializing a checkpointlist array, we get the center of each contour and then based on the 
-    area we decide if the checkpoint is a tringle or a square
-    Then we append them to the list
-    If it is a resource, it is both triangles and squares  and the final list is sorted according to area so the
-    triangles come first. If it is an obstacle we need only consider squares.
-    '''
+        '''
+        param-contour [Type-list], checkpointType[Type-CheckpointType object]
+        returns-checkPointList[Type-list of Checkpoint objects]
+        I have commented the cyan lines as we don't use them in the final code.
+        After initializing a checkpointlist array, we get the center of each contour and then based on the 
+        area we decide if the checkpoint is a tringle or a square
+        Then we append them to the list
+        If it is a resource, it is both triangles and squares  and the final list is sorted according to area so the
+        triangles come first. If it is an obstacle we need only consider squares.
+        '''
 
         #cyan = 255
         #orign
@@ -207,11 +207,11 @@ class Frame(object):
     
     @staticmethod
     def processBot(contour,checkpointType):
-    '''
-    param-contour [Type-list], checkpointType[Type-CheckpointType object]
-    returns-checkPointList[Type-list of Checkpoint objects]
-    It works the same way as Frame.processCheckpoints(). The exact same way as above.  
-    ''' 
+        '''
+        param-contour [Type-list], checkpointType[Type-CheckpointType object]
+        returns-checkPointList[Type-list of Checkpoint objects]
+        It works the same way as Frame.processCheckpoints(). The exact same way as above.  
+        ''' 
         #print 'Frame: getCenter called '
         checkPointList = []
         for c in contour:
@@ -250,16 +250,16 @@ class Frame(object):
     
     @staticmethod
     def botImageProperties(botCurrentResource, botCurrentNode, botCurrentTarget, botPrevBack, botPrevFront, botPosition):
-    '''
-    param-botCurrentResource [Type-Checkpoint object], botCurrentNode [Type-Checkpoint object],
-          botCurrentTarget [Type-Checkpoint object], botPrevBack [Type-Checkpoint object], 
-          botPrevFront [Type-Checkpoint object], botPosition [Type-Checkpoint object]
-    returns-None
-    It does some image processing. It draws the bounding boxes for the obstacles, the point on the current resource
-    that our bot has to traverse to. It draws a circle on the node that it has to reach. It also gives the target angle 
-    in real time on the screen. It draws line from one point to the other, last arg means thickness. It draws arrowed 
-    lines as well.
-    '''
+        '''
+        param-botCurrentResource [Type-Checkpoint object], botCurrentNode [Type-Checkpoint object],
+            botCurrentTarget [Type-Checkpoint object], botPrevBack [Type-Checkpoint object], 
+            botPrevFront [Type-Checkpoint object], botPosition [Type-Checkpoint object]
+        returns-None
+        It does some image processing. It draws the bounding boxes for the obstacles, the point on the current resource
+        that our bot has to traverse to. It draws a circle on the node that it has to reach. It also gives the target angle 
+        in real time on the screen. It draws line from one point to the other, last arg means thickness. It draws arrowed 
+        lines as well.
+        '''
         if Config.obstacleBoundingPointList != None:
             Draw.boundingBox(Config.obstacleBoundingPointList)
         if botCurrentResource != None:
