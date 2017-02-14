@@ -56,7 +56,11 @@ class Grid(object):
     @staticmethod
     def find_obstacles(obstacle_checkPoints):
         '''
-        
+        param-obstacle_checkPoints [Type-list of Checkpoint objects]
+        returns-all_obstacles [Type-list of Point objects]
+        This function finds all the obscale points based on the center point of the obstacle. It blacks out every pixel
+        in a particular x axis range and y axis range and removes them from the Grid object. So it becomes inaccessible to the
+        bot.
         '''
         all_obstacles=[]
     
@@ -104,7 +108,7 @@ class AStar(object):
     position = Point(0,0)
     found = False
     @staticmethod
-    def init(gridX, gridY, array_of_obst):
+    def __init__(gridX, gridY, array_of_obst):
         AStar.graph=Grid(gridX,gridY)
         AStar.graph.obstacles=array_of_obst
     @staticmethod  
@@ -186,8 +190,8 @@ class AStar(object):
     @staticmethod
     def FindPath(came_from,goal):
         '''
-        param- it take's in the previous point and the goal points
-        returns- the path 
+        param- came_from [Point object], goal [Point object]
+        returns- path [Type-list of Point objects] 
         This function returns the reverse of the path so that it can go to the resource and come back in one shot.
         It basically sets the whole path as-[path to resource point, path back to starting point].
         '''

@@ -42,13 +42,14 @@ class Utils(object):
         return checkPointList
 
 
-    '''
-    param-initial point and final point
-    returns-the angle in degrees and the distance betwwen those 2 points
-    Uses simple tan inverse function to find hte angle then maps it to a proper angle between 0 to 360.
-    '''
+    
     @staticmethod
     def angleBetweenPoints(origin,position):
+        '''
+        param-origin [Type-Point], position [Type-Point]
+        returns-angleInDegrees [Type-float], dist [Type-float]
+        Uses simple tan inverse function to find hte angle then maps it to a proper angle between 0 to 360.
+        '''
         
         deltaY = position.y - origin.y
         deltaX = position.x - origin.x
@@ -95,13 +96,14 @@ class Utils(object):
         x=(101*p2.x)-(p1.x*100)
         y=(101*p2.y)-(p1.y*100)
         return (x,y)
-    '''
-    param-bot's angle, the target's angle with respect to the townhall, the distance between the bot and the 
-          the resource
-    returns-the direction it has to turn and the speed with whichit should make the turn
-    '''
+    
     @staticmethod
-    def determineTurn(botAngle, targetAngle,distance): #TODO fix it !
+    def determineTurn(botAngle, targetAngle, distance): #TODO fix it !
+        '''
+        param-botAngle [Type-float], targetAngle [Type-float], distance [Type-float]
+        returns-Orientation.orientation [Type-str], Config.turnSpeed [Type-int]
+        This function decides the direction with which the bot should turn and the speed with which it should do it.
+        '''
         deltaAngle = botAngle - targetAngle
 
         if deltaAngle >= 180:
@@ -125,14 +127,15 @@ class Utils(object):
                 return Orientation.ARC_RIGHT, Config.turnSpeed
             else:
                 return Orientation.SPOT_RIGHT, Config.turnSpeed - 60
-    '''
-    param-the bot's position, the target's position and if there are obstacles, the AStar path
-    returns-the final path and the number of skips which is used to decide the at with which the bot will blink the LED
-    If there are obstacles, the obstacle points are added to the path list, otherwise i.e.if it is in t he first round,
-    there are only 2 points considered, the townhall and the resource point.
-    '''   
+       
     @staticmethod
     def generatePath(botPosition, targetPosition, aStarPath=None):
+        '''
+        param-botPosition [Point object], targetPosition [Point object], aStarPath [list of Point objects, default = None]
+        returns-finalPath [Type-list of Point objects], noOfSkips [Type-int]
+        If there are obstacles, the obstacle points are added to the path list, otherwise i.e.if it is in t he first round,
+        there are only 2 points considered, the townhall and the resource point.
+        '''
         finalPath = []
 
         #path for FirstPass
@@ -152,9 +155,6 @@ class Utils(object):
         del pathToTarget[len(pathToTarget) - 1]
         pathToTarget.reverse()
         firstPass += copy.deepcopy(pathToTarget)
-
-    
-
         finalPath += copy.deepcopy(firstPass)       
         #if go to resource twice
         if Config.goToResourceTwice == True:
@@ -163,15 +163,16 @@ class Utils(object):
 
         del finalPath[0]
         return finalPath, noOfSkips
-    '''
-    Param:checkPointList
-    returns- the sorted list according to priority
-    This function is one that can be called once the first run is done. 
-    It just goes for the triangles as they carry more points
     
-    '''
     @staticmethod
     def prioritySort(checkPointList):
+        '''
+        param:checkPointList [Type-list of Checkpoint objects, here resources]
+        returns- priorityResources [Type-list of Checkpoint objectS, here resources ]
+        This function is one that can be called once the first run is done. 
+        It just goes for the triangles as they carry more points
+
+        '''
         priorityResources = []
         skippedResources = []
         for j in range (len(checkPointList)-1):
