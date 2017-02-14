@@ -42,17 +42,17 @@ class Bot(object):
     currentCommand = ''
    
     @staticmethod
-    def UpdateProperties():`
-     '''
-    param-None
-    returns-Bot.position[Type-str], Bot.angle[Type-int]
-    This function is used loads of times.
-    If not run before, it initializes the bot's position as the townhall.
-    Otherwise, it gives back the position of the bit at every instant when  it's running.
-    It also does  little bit of image processing in the function botImageProperties() where it shows 
-    the bot process speed and the time elapsed. 
-    But mainly, it gives the bot's position and angle.
-    '''    
+    def UpdateProperties():
+        '''
+        param-None
+        returns-Bot.position[Type-str], Bot.angle[Type-int]
+        This function is used loads of times.
+        If not run before, it initializes the bot's position as the townhall.
+        Otherwise, it gives back the position of the bit at every instant when it's running.
+        It also does  little bit of image processing in the function botImageProperties() where it shows 
+        the bot process speed and the time elapsed. 
+        But mainly, it gives the bot's position and angle.
+        '''
         Config.startTime = int(timeit.default_timer() * 1000)
         Frame.capture_frame()
         
@@ -85,7 +85,7 @@ class Bot(object):
                 #resource_checkPoints = Frame.processStream(Bot.resource)
                 #obstacles_checkPoints = Frame.processStream(Bot.obstacle)
 
-               
+                
                 Frame.botImageProperties(Bot.currentResource, Bot.currentNode, Bot.currentTarget, Bot.prevBack, Bot.prevFront, Bot.position)
                 if Bot.optimizedAStarPath != None:
                     Draw.path(Bot.optimizedAStarPath)
@@ -114,13 +114,13 @@ class Bot(object):
     
     @staticmethod
     def moveDirection(direction,updateProperties = True):
-    '''
-    param-direction [Type-str] - pass direction of the bot. Also, if the bot is not in the camera range, the updateProperties parameter is False
-          so that the position is not updated again
-    returns-None
-    Based on the direction that the bot had to run, it sends the command to move in tht direction... Usually forward
-    or any other direction
-    '''
+        '''
+        param-direction [Type-str] - pass direction of the bot, updateProperties [Type-bool, default = True]
+        returns-None
+        Also, if the bot is not in the camera range, the updateProperties parameter is False so that the position is not 
+        updated again. Based on the direction that the bot had to run, it sends the command to move in that direction. Usually forward
+        or any other direction
+        '''
         #Bot.setBotSpeed(Config.moveSpeed)
         
         if direction == Direction.FORWARD:
@@ -132,11 +132,11 @@ class Bot(object):
     
     @staticmethod
     def changeOrientation(orientation):
-    '''
-    param-it takes in the orientation that it's required to turn
-    returns-None
-    Based on the orienttion, it sends the command to move in that direction.
-    '''
+        '''
+        param-orientation[Type-str]
+        returns-None
+        Based on the orientation, it sends the command to move in that direction.
+        '''
         #Bot.setBotSpeed(Config.turnSpeed)
         if orientation == Orientation.SPOT_LEFT:
             BluetoothController.send_command(Orientation.command[orientation],"Left    : <<<<<<<<<<<<<<<<<") 
@@ -148,13 +148,14 @@ class Bot(object):
     
     @staticmethod
     def Traverse(ListOfResources, ListOfObstacles = None):
-    '''
-    param-ListOfResources and ListOfObstacles
-    returns-None
-    It takes in the list of all the resources and the obstacles if any
-    It does a little bit of image processin i.e. printing the townhall center
-    It checks each target in the list of resources 
-    '''
+        '''
+        param-ListOfResources [Type-Checkpoint], ListOfObstacles [Type-Checkpoint, default = None]
+        returns-None
+        It takes in the list of all the resources and the obstacles if any
+        It does a little bit of image processing i.e. printing the townhall center
+        It checks each target in the list of resources 
+        '''
+#######################################################################################################################
         print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
             Bot.currentTarget = target

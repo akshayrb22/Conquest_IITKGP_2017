@@ -117,7 +117,7 @@ class AStar(object):
     @staticmethod
     def writeToFile(path):
         '''
-        param-it takes in the path list
+        param-path [Type-list]
         returns-None
         It takes in the path list and writes it to a file so that it can be used to 
         reverse the path and perform operations on the list of points. 
@@ -129,8 +129,8 @@ class AStar(object):
     @staticmethod
     def search(start, goal,gridX, gridY, array_of_obst):
         '''
-        param-it takes in the start Point type variable, the  goal Point type variable, the width of the frame,
-              the height of the frame and the array of obstacles.
+        param-start [Type-Point object], goal [Type-Point object],gridX [Type-float], gridY [Type-float], 
+        array_of_obst [Type-list of Checkpoint objects]
         returns- it returns the final path list the bot ahs to follow
         This is a vital function in the program. It implements the A* algorithm. All the obstacles are taken in to 
         find_obstacles() where it appends all the obstacle pixel points to the obstacle list and returns it. 

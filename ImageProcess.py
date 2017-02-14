@@ -75,13 +75,14 @@ class Frame(object):
     
     @staticmethod
     def processStream(checkpointType):
-    ''''
-    param- it takes in an object of type checkpointType
-    returns-if the checkpoint is a resource or an obstacle it accesses Frame.processCheckpoints() and finally returns a sorted checkpoint list
-            otherwise, it is a Bot property i.e. the bot marker color and it will return the center of the bot
-    It converts the color of the frame to hsv, then it masks it, grays it, threshes, gets the canny image first and then resizes iter
-    After all this, we get the contours and based on if the checkpoint type is a resource or an obstacle and if it is a bot property, a function is called and returned.abs 
-    '''
+        ''''
+        param- checkpointType [Type-CheckpointType object]
+        returns-if resource Frame.processCheckpoints(contour, checkpointType)->checkPointList [Type-list of resource or
+                obstacle Checkpoint] else Frame.processBot(contour,checkpointType)->checkPointList[Type-list of bot checkpoint]
+        It converts the color of the frame to hsv, then it masks it, grays it, threshes, gets the canny image first and then 
+        resizes it. After all this, we get the contours and based on if the checkpoint type is a resource or an obstacle and 
+        if it is a bot property, a function is called and returned.
+        '''
         hsv = cv2.cvtColor(Frame.resized, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, checkpointType.lower_color.get_array(), checkpointType.upper_color.get_array())
         result = cv2.bitwise_and(Frame.resized, Frame.resized, mask=mask)#TODO figure out why we put the same source for both parameters
@@ -104,8 +105,8 @@ class Frame(object):
     @staticmethod
     def processCheckpoints(contour,checkpointType):
     '''
-    param-it takes in a contour and a CheckpointType object
-    returns-a sorted checkpointlist of the resource and obstacle
+    param-contour [Type-list], checkpointType[Type-CheckpointType object]
+    returns-checkPointList[Type-list of Checkpoint objects]
     I have commented the cyan lines as we don't use them in the final code.
     After initializing a checkpointlist array, we get the center of each contour and then based on the 
     area we decide if the checkpoint is a tringle or a square
@@ -207,8 +208,8 @@ class Frame(object):
     @staticmethod
     def processBot(contour,checkpointType):
     '''
-    param-It takes in a contour and a CheckpointType object
-    returns- the bot checkpointlist
+    param-contour [Type-list], checkpointType[Type-CheckpointType object]
+    returns-checkPointList[Type-list of Checkpoint objects]
     It works the same way as Frame.processCheckpoints(). The exact same way as above.  
     ''' 
         #print 'Frame: getCenter called '
@@ -250,8 +251,9 @@ class Frame(object):
     @staticmethod
     def botImageProperties(botCurrentResource, botCurrentNode, botCurrentTarget, botPrevBack, botPrevFront, botPosition):
     '''
-    param-it takes in the current resource in the list, the current node in the list, the current target, the red and
-          green checkpoints and the bot's position.
+    param-botCurrentResource [Type-Checkpoint object], botCurrentNode [Type-Checkpoint object],
+          botCurrentTarget [Type-Checkpoint object], botPrevBack [Type-Checkpoint object], 
+          botPrevFront [Type-Checkpoint object], botPosition [Type-Checkpoint object]
     returns-None
     It does some image processing. It draws the bounding boxes for the obstacles, the point on the current resource
     that our bot has to traverse to. It draws a circle on the node that it has to reach. It also gives the target angle 
