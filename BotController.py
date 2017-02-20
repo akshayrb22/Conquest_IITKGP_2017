@@ -157,7 +157,6 @@ class Bot(object):
         it moves forward. If it is not in the angle window, it turns till it gets to tht angle window. Then it keeps moving forward
         till it reaches the resource. If it is in the resource range, it stops and blinks an LED. The LED blink is initialized here.
         '''
-#######################################################################################################################
         print "Townhall center is:" + str(Frame.townHall.center.toString())
         for target in ListOfResources:
             Bot.currentTarget = target
