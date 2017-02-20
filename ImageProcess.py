@@ -75,7 +75,7 @@ class Frame(object):
     
     @staticmethod
     def processStream(checkpointType):
-        ''''
+        '''
         param- checkpointType [Type-CheckpointType object]
         returns-if resource Frame.processCheckpoints(contour, checkpointType)->checkPointList [Type-list of resource or
                 obstacle Checkpoint] else Frame.processBot(contour,checkpointType)->checkPointList[Type-list of bot checkpoint]
@@ -184,7 +184,7 @@ class Frame(object):
         checkPointList.sort()
         return checkPointList
     #has been defined, never used
-    ''''    
+    '''
     @staticmethod
     def find_contour(threshold):
         #print 'Frame: findContour called '

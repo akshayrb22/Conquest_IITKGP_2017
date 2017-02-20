@@ -153,7 +153,9 @@ class Bot(object):
         returns-None
         It takes in the list of all the resources and the obstacles if any
         It does a little bit of image processing i.e. printing the townhall center
-        It checks each target in the list of resources 
+        It checks each target in the list of resources. Also, if the bot is in the angle window and in the range of the resource,
+        it moves forward. If it is not in the angle window, it turns till it gets to tht angle window. Then it keeps moving forward
+        till it reaches the resource. If it is in the resource range, it stops and blinks an LED. The LED blink is initialized here.
         '''
 #######################################################################################################################
         print "Townhall center is:" + str(Frame.townHall.center.toString())
