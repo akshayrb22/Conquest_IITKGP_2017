@@ -1,4 +1,3 @@
-
 # DO NOT CHANGE CODE UNLESS IT IS NECESSARY!!!!! 
 # CALL ME IF YOU HAVE ANY DOUBTS!! PHONE no 992075227 :)
 # ALL CONFIGURATION OPTIONS ARE AVAILABLE IN Config.py.
@@ -9,6 +8,7 @@
 
 import math
 from time import sleep
+
 import cv2
 from Area import Area
 from AStar import *
@@ -26,39 +26,33 @@ Bot.setBotSpeed(200)
 #sleep(1)
 
 Frame.connect(1)
-Bot.resource = CheckpointType("Resource", "yellow",(0,255,255))
-Bot.obstacle = CheckpointType("Obstacle", "blue",(255,0,0))
-Bot.botFront = CheckpointType('botFront', 'green',(0,255,0))
-Bot.botBack = CheckpointType('botBack', 'red',(0,0,255))
-
+Bot.resource = CheckpointType("Resource", "yellow", (0, 255, 255))
+Bot.obstacle = CheckpointType("Obstacle", "blue", (255, 0, 0))
+Bot.botFront = CheckpointType('botFront', 'green', (0, 255, 0))
+Bot.botBack = CheckpointType('botBack', 'red', (0, 0, 255))
 
 raw_input("Start ?????? Press Enter to continue.... : ")
 
-
-
-
-
 Frame.capture_frame()
-Frame.townHall = Checkpoint(0,Point(0,0),0,0,0)
-
+Frame.townHall = Checkpoint(0, Point(0, 0), 0, 0, 0)
 '''initially find center of townhall by finding bot center'''
 Bot.UpdateProperties()
-
-
 
 obstacle_checkPoints = Frame.processStream(Bot.obstacle)
 Config.obstacleList = obstacle_checkPoints
 Config.obstacleCount = len(obstacle_checkPoints)
-
 '''do Astar Search in the beginning'''
 
 resource_checkPoints = Frame.processStream(Bot.resource)
 Config.resourceList = resource_checkPoints
-if(Config.obstacleCount > 0):
+if (Config.obstacleCount > 0):
     for resource in resource_checkPoints:
-        optimizedAStarPath = AStar.search(Utils.mapPoint(Frame.townHall.center).get_coordinate(), Utils.mapPoint(resource.center).get_coordinate(), Config.mappedWidth, Config.mappedHeight, obstacle_checkPoints)
+        optimizedAStarPath = AStar.search(
+            Utils.mapPoint(Frame.townHall.center).get_coordinate(),
+            Utils.mapPoint(resource.center).get_coordinate(), Config.mappedWidth, Config.mappedHeight,
+            obstacle_checkPoints)
         distance = Draw.path(optimizedAStarPath)
-        finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center,optimizedAStarPath)
+        finalPath, noOfSkips = Utils.generatePath(Frame.townHall.center, resource.center, optimizedAStarPath)
         resource.path = finalPath
         resource.noOfSkips = noOfSkips
         resource.distance = distance
@@ -78,7 +72,6 @@ else:
     #>>>> Call your updated sorting HERE (LEVEL 1)!!!!!
     # >>>> HERE <<<<<<<      Utils.arena_one_sort(resource_checkPoints)
 
-
 Frame.show_frame()
 
 print "Finished Astar"
@@ -86,14 +79,11 @@ print "Finished Astar"
 #sleep(5)
 
 Bot.currentTarget = Checkpoint(0, Point(0, 0), 0, 0, 0)
-
 '''initial Run.. covers all resources once (considering only distance)'''
-Bot.Traverse(resource_checkPoints,obstacle_checkPoints)
-
-
+Bot.Traverse(resource_checkPoints, obstacle_checkPoints)
 '''if you want to travel to Triangles first then squares then use the following sorted
 modified prioritySort. please check Source if you want to sort using arena_one_sort'''
-shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints) 
+shape_sorted_resource_checkPoints = Utils.prioritySort(resource_checkPoints)
 #shape_sorted_resource_checkPoints = Utils.arena_one_sort(resource_checkPoints)
 '''calls Traverse again with the new sorted resource list'''
-Bot.Traverse(shape_sorted_resource_checkPoints,obstacle_checkPoints)
+Bot.Traverse(shape_sorted_resource_checkPoints, obstacle_checkPoints)

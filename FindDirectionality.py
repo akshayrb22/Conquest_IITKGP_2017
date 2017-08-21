@@ -147,4 +147,3 @@ class MovementFunctions():
 
 if __name__ == '__main__':
     print MovementFunctions.get_direction(-230)
-    

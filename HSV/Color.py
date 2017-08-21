@@ -1,4 +1,6 @@
 import numpy as np
+
+
 class Color():
     
     def __init__(self,color, type):

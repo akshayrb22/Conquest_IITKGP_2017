@@ -1,4 +1,6 @@
 from math import *
+
+
 def angle_trunc(a):
     while a < 0.0:
         a += pi * 2

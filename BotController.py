@@ -7,40 +7,41 @@
 ##  bot speed control
 ##  bot orientation (i.e. clock or aclock)
 ##  should contain the bot class with all it's properties
-from Point import Point
-from BluetoothController import BluetoothController
-from ImageProcess import Frame
-from Checkpoint import Checkpoint, CheckpointType, CheckpointShape
-import FindDirectionality
-from FindDirectionality import Direction, Orientation, MovementFunctions
-import FindDirectionality
-from Utils import  Utils
-from time import sleep,time
-import timeit
-from AStar import AStar
 import copy
+import timeit
+from time import sleep, time
+
 import cv2
-from Draw import Draw
+import FindDirectionality
+from AStar import AStar
+from BluetoothController import BluetoothController
+from Checkpoint import Checkpoint, CheckpointShape, CheckpointType
 from Config import Config
+from Draw import Draw
+from FindDirectionality import Direction, MovementFunctions, Orientation
+from ImageProcess import Frame
+from Point import Point
+from Utils import Utils
+
 
 class Bot(object):
-    
+
     position = Point(0, 0)
     angle = 0
-    botFront = None#CheckpointType('botFront', 'green',(0,255,0))
-    botBack = None #CheckpointType('botBack', 'red',(0,0,255))
-    resource = None#Checkpoint object
-    prevBack = None#Checkpoint object
-    prevFront = None#Checkpoint object
-    currentTarget = None#Checkpoint object
-    currentResource = None#Checkpoint object
-    currentNode = None#Checkpoint object
-    townHall = None#Checkpoint object
+    botFront = None  #CheckpointType('botFront', 'green',(0,255,0))
+    botBack = None  #CheckpointType('botBack', 'red',(0,0,255))
+    resource = None  #Checkpoint object
+    prevBack = None  #Checkpoint object
+    prevFront = None  #Checkpoint object
+    currentTarget = None  #Checkpoint object
+    currentResource = None  #Checkpoint object
+    currentNode = None  #Checkpoint object
+    townHall = None  #Checkpoint object
     runOnce = True
     optimizedAStarPath = None
     currentSpeed = 0
     currentCommand = ''
-   
+
     @staticmethod
     def UpdateProperties():
         '''
@@ -48,23 +49,23 @@ class Bot(object):
         returns-Bot.position[Type-str], Bot.angle[Type-int]
         This function is used loads of times.
         If not run before, it initializes the bot's position as the townhall.
-        Otherwise, it gives back the position of the bit at every instant when it's running.
+        Otherwise, it gives back the position of the bot at every instant when it's running.
         It also does  little bit of image processing in the function botImageProperties() where it shows 
         the bot process speed and the time elapsed. 
         But mainly, it gives the bot's position and angle.
         '''
         Config.startTime = int(timeit.default_timer() * 1000)
         Frame.capture_frame()
-        
+
         backCheckPointList = Frame.processStream(Bot.botBack)
         frontCheckPointList = Frame.processStream(Bot.botFront)
-        
+
         #print str(Frame.isItMyFirstTime)
 
         #print "BOT Contours " + str(len(backCheckPointList))  + " , " + str(len(frontCheckPointList))
-        if(len(backCheckPointList) <=0 or len(frontCheckPointList)  <= 0):
+        if (len(backCheckPointList) <= 0 or len(frontCheckPointList) <= 0):
             print "Failed to Capture bot position !!! >>>>>>>>>>>>>> "
-            Bot.moveDirection(Direction.BACKWARD,False)
+            Bot.moveDirection(Direction.BACKWARD, False)
             #sleep(1)
             Bot.Stop()
         else:
@@ -77,29 +78,30 @@ class Bot(object):
             Bot.position.y = (Bot.prevBack.center.y + Bot.prevFront.center.y) / 2
             Bot.angle, temp = Utils.angleBetweenPoints(Bot.prevBack.center, Bot.prevFront.center)
 
-            if Bot.runOnce:#Frame.runTimeCounter == 6:
-                Frame.townHall = Checkpoint(0,copy.deepcopy(Bot.position),0,0,0)
+            if Bot.runOnce:  #Frame.runTimeCounter == 6:
+                Frame.townHall = Checkpoint(0, copy.deepcopy(Bot.position), 0, 0, 0)
                 Bot.runOnce = False
                 Frame.runOnce = False
             else:
                 #resource_checkPoints = Frame.processStream(Bot.resource)
                 #obstacles_checkPoints = Frame.processStream(Bot.obstacle)
 
-                
-                Frame.botImageProperties(Bot.currentResource, Bot.currentNode, Bot.currentTarget, Bot.prevBack, Bot.prevFront, Bot.position)
+                Frame.botImageProperties(Bot.currentResource, Bot.currentNode, Bot.currentTarget, Bot.prevBack,
+                                         Bot.prevFront, Bot.position)
                 if Bot.optimizedAStarPath != None:
                     Draw.path(Bot.optimizedAStarPath)
 
-
             #print "Townhall center is:" + str(Frame.townHall.center.toString())
-            Frame.drawCircle(Bot.position,(0,255,0))
+            Frame.drawCircle(Bot.position, (0, 255, 0))
             '''gives the bot angle'''
-            cv2.putText(Frame.resized, "           BOT @" +Bot.position.toString() + " | A: "  + str(Bot.angle) , Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+            cv2.putText(Frame.resized, "           BOT @" + Bot.position.toString() + " | A: " + str(Bot.angle),
+                        Bot.position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         tempTime = Config.endTime = int(timeit.default_timer() * 1000)
-
         '''show time'''
-        cv2.putText(Frame.resized,"Processing Time : " + str(Config.endTime - Config.startTime), (10,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-        cv2.putText(Frame.resized,"Time Elapsed  : " + str(Config.endTime/1000), (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv2.putText(Frame.resized, "Processing Time : " + str(Config.endTime - Config.startTime), (10, 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv2.putText(Frame.resized, "Time Elapsed  : " + str(Config.endTime / 1000), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (0, 0, 255), 2)
         Frame.show_frame()
         Config.endTime = int(timeit.default_timer() * 1000)
         #print "Per frame : " + str((Config.endTime - Config.startTime)) + " | Time elapsed : " + str(Config.endTime/1000)
@@ -108,12 +110,13 @@ class Bot(object):
     @staticmethod
     def Stop():
         BluetoothController.send_command("s")
+
     @staticmethod
     def Blink():
         BluetoothController.send_command("k")
-    
+
     @staticmethod
-    def moveDirection(direction,updateProperties = True):
+    def moveDirection(direction, updateProperties=True):
         '''
         param-direction [Type-str] - pass direction of the bot, updateProperties [Type-bool, default = True]
         returns-None
@@ -122,14 +125,14 @@ class Bot(object):
         or any other direction
         '''
         #Bot.setBotSpeed(Config.moveSpeed)
-        
+
         if direction == Direction.FORWARD:
-            BluetoothController.send_command(Direction.command[direction],"Forward : ^^^^^^^^^^^^^^^^^ ")
+            BluetoothController.send_command(Direction.command[direction], "Forward : ^^^^^^^^^^^^^^^^^ ")
         else:
-            BluetoothController.send_command(Direction.command[direction],"direction: " + direction)
+            BluetoothController.send_command(Direction.command[direction], "direction: " + direction)
         if updateProperties == True:
             Bot.UpdateProperties()
-    
+
     @staticmethod
     def changeOrientation(orientation):
         '''
@@ -139,15 +142,15 @@ class Bot(object):
         '''
         #Bot.setBotSpeed(Config.turnSpeed)
         if orientation == Orientation.SPOT_LEFT:
-            BluetoothController.send_command(Orientation.command[orientation],"Left    : <<<<<<<<<<<<<<<<<") 
+            BluetoothController.send_command(Orientation.command[orientation], "Left    : <<<<<<<<<<<<<<<<<")
         elif orientation == Orientation.SPOT_RIGHT:
-            BluetoothController.send_command(Orientation.command[orientation],"Right   : >>>>>>>>>>>>>>>>>")
+            BluetoothController.send_command(Orientation.command[orientation], "Right   : >>>>>>>>>>>>>>>>>")
         else:
-            BluetoothController.send_command(Orientation.command[orientation],"orientation: " + orientation)
+            BluetoothController.send_command(Orientation.command[orientation], "orientation: " + orientation)
         Bot.UpdateProperties()
-    
+
     @staticmethod
-    def Traverse(ListOfResources, ListOfObstacles = None):
+    def Traverse(ListOfResources, ListOfObstacles=None):
         '''
         param-ListOfResources [Type-Checkpoint], ListOfObstacles [Type-Checkpoint, default = None]
         returns-None
@@ -164,23 +167,22 @@ class Bot(object):
             print " | Target Angle: " + str(Bot.currentTarget.angle)
             Bot.UpdateProperties()
             blinkFlag = 0
-           
             '''find list of PathPoints to traverse'''
             # path = Utils.generatePath(Bot.position, Bot.currentTarget.center)
             tempCounter = 0
             if target.path != None:
                 for node in target.path:
-                    
+
                     Bot.currentNode = node
-                    angle, dist = Utils.angleBetweenPoints(Bot.position,node)
-                    Bot.currentTarget = Checkpoint(0,node,0,angle,None)
+                    angle, dist = Utils.angleBetweenPoints(Bot.position, node)
+                    Bot.currentTarget = Checkpoint(0, node, 0, angle, None)
 
                     firstAdjustLoop = False
                     '''if the bot is in the 25X25 area range, then the the funtion returns True'''
                     if Point.inRange(Bot.position, node):
                         print 'Reached Destination  <<<<<<<<<<<<<<<< '
                         Bot.Stop()
-                        if (blinkFlag % target.noOfSkips) == (target.noOfSkips-1) & blinkFlag == 1:
+                        if (blinkFlag % target.noOfSkips) == (target.noOfSkips - 1) & blinkFlag == 1:
                             sleep(0.1)
                             Bot.changeOrientation(Orientation.SPOT_LEFT)
                             print 'BLINKING LED !!!!!!!!!!!!!! '
@@ -189,32 +191,36 @@ class Bot(object):
                             #sleep(4.6)
                             firstAdjustLoop = True
 
-                        
                     else:
                         while not Point.inRange(Bot.position, node):
                             if firstAdjustLoop != True:
-                                Bot.currentTarget.angle, distance = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
-                                if(distance > Config.reduceSpeedAt):
+                                Bot.currentTarget.angle, distance = Utils.angleBetweenPoints(
+                                    Bot.position, Bot.currentTarget.center)
+                                if (distance > Config.reduceSpeedAt):
                                     Bot.setBotSpeed(Config.moveSpeed)
                                 else:
-                                    Bot.setBotSpeed(Utils.map(distance,0, Config.reduceSpeedAt, 150,Config.moveSpeedNear))
+                                    Bot.setBotSpeed(
+                                        Utils.map(distance, 0, Config.reduceSpeedAt, 150, Config.moveSpeedNear))
                                 Bot.moveDirection(Direction.FORWARD)
                                 firstAdjustLoop = False
                             tempCounter += 1
                             #print "Distance from center is:" + str(Utils.distance(Bot.position,target.center))
-                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngleRange) or Bot.angle >= (Bot.currentTarget.angle + Config.targetAngleRange) :##while the bot angle is in the angle window 
+                            while Bot.angle <= (Bot.currentTarget.angle - Config.targetAngleRange) or Bot.angle >= (
+                                    Bot.currentTarget.angle +
+                                    Config.targetAngleRange):  ##while the bot angle is in the angle window 
                                 #print " " , (Bot.currentTarget.angle - Config.targetAngelRange) % 360, Bot.angle,  (Bot.currentTarget.angle + Config.targetAngelRange) % 360
                                 if Point.inRange(Bot.position, node):
                                     Bot.Stop()
                                     break
-                                
-                                orientation, speed = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,Utils.distance(Bot.position,Bot.currentTarget.center))
+
+                                orientation, speed = Utils.determineTurn(Bot.angle, Bot.currentTarget.angle,
+                                                                         Utils.distance(
+                                                                             Bot.position, Bot.currentTarget.center))
                                 Bot.setBotSpeed(speed)
                                 Bot.changeOrientation(orientation)
                                 '''update bot's angle with respect to target'''
-                                Bot.currentTarget.angle, dist = Utils.angleBetweenPoints(Bot.position,Bot.currentTarget.center)
-                                
-                    
+                                Bot.currentTarget.angle, dist = Utils.angleBetweenPoints(
+                                    Bot.position, Bot.currentTarget.center)
                     '''found the target'''
                     print 'Reached Destination  >>>>>>>>>> '
                     Bot.Stop()
@@ -231,26 +237,25 @@ class Bot(object):
         Bot.Stop()
         #sleep(100)
         '''its time to stop the first traverse'''
+
     @staticmethod
     def setBotSpeed(speed):
         '''if current speed is different than previous speed, set speed'''
-        
-        if speed != Bot.currentSpeed and speed in range(0,256):
+
+        if speed != Bot.currentSpeed and speed in range(0, 256):
             BluetoothController.send_command("X" + str(speed) + "$")
             Bot.currentSpeed = speed
 
+
 if __name__ == '__main__':
-    botFront_green = CheckpointType('botFront', 'green',(0,255,0))
-    botBack_red = CheckpointType('botBack', 'red',(0,0,255))
+    botFront_green = CheckpointType('botFront', 'green', (0, 255, 0))
+    botBack_red = CheckpointType('botBack', 'red', (0, 0, 255))
     resourceList = []
-    resourceList.append(Checkpoint(0,Point(275,0),0,0,0))
+    resourceList.append(Checkpoint(0, Point(275, 0), 0, 0, 0))
     Bot.UpdateProperties()
-    townhall=Checkpoint(0,Bot.position,0,0,0,0)
+    townhall = Checkpoint(0, Bot.position, 0, 0, 0, 0)
     BluetoothController.connect()
-    Bot.Traverse(resourceList,townhall)
-
-
-
+    Bot.Traverse(resourceList, townhall)
 '''
                 if Config.obstacleBoundingPointList != None:
                     Draw.boundingBox(Config.obstacleBoundingPointList)

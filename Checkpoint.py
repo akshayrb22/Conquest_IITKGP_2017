@@ -5,10 +5,10 @@
 ##  area
 ##  angle with respect townhall
 
-from Point import Point
-from HSV import Color
-from Area import Area
 import cv2
+from Area import Area
+from HSV import Color
+from Point import Point
 
 
 class CheckpointShape(object):
@@ -38,5 +38,3 @@ class CheckpointType(object):
         self.upper_color = Color.Color(color, 1)
         self.lower_color = Color.Color(color, 0)
         self.type = checkpoint_type
-
-

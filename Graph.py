@@ -2,13 +2,14 @@
 ##Functionalities required-
 ##  a graph class
 ##  mapped graph
-import matplotlib.pyplot as plot
 import heapq
-import cv2
+
 import numpy as np
+
+import cv2
+import matplotlib.pyplot as plot
 import PIL
 from PIL import Image
-
 
 
 class PriorityQueue(object):

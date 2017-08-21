@@ -1,7 +1,8 @@
 #! /usr/bin/env python2
 
-import cv2
 import numpy as np
+
+import cv2
 import imutils
 from pyimagesearch.shapedetector import ShapeDetector
 

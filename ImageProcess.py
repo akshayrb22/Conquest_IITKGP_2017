@@ -5,18 +5,20 @@
 ##  find bot
 ##  find resources,obstacles,town hall
 ##  resizing, ratio
-import numpy as np
-import cv2
-import PIL
-from PIL import Image
-import imutils
-from Utils import Utils
-from Point import Point
-from HSV import Color
-from pyimagesearch.shapedetector import ShapeDetector
-from Checkpoint import Checkpoint,CheckpointShape
-from Config import Config
 import math
+
+import numpy as np
+
+import cv2
+import imutils
+import PIL
+from Checkpoint import Checkpoint, CheckpointShape
+from Config import Config
+from HSV import Color
+from PIL import Image
+from Point import Point
+from pyimagesearch.shapedetector import ShapeDetector
+from Utils import Utils
 
 
 class Frame(object):

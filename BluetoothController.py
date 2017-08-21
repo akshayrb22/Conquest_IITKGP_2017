@@ -6,9 +6,12 @@
 ##  disconnect
 
 from multiprocessing import Process
-import bluetooth
 from time import sleep
-from FindDirectionality import Orientation,MovementFunctions,Direction
+
+import bluetooth
+from FindDirectionality import Direction, MovementFunctions, Orientation
+
+
 class BluetoothController(object):
     target_name = "HC-05"
     target_address = "20:16:07:05:28:54"
@@ -86,4 +89,3 @@ if __name__ == '__main__':
         print " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + command
         #BluetoothController.command = command
         BluetoothController.send_command(command)
-        

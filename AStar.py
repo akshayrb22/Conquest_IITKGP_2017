@@ -2,20 +2,22 @@
 ##Functionalities required
 ##  return shortest path in an array of points(i.e coordinates)
 
-import matplotlib.pyplot as plot
+import copy
 import heapq
-import cv2
+from time import sleep
+
 import numpy as np
+
+import cv2
+import matplotlib.pyplot as plot
 import PIL
+from Checkpoint import Checkpoint
+from Config import Config
+from Draw import Draw
+from ImageProcess import Frame
+from PathOptimizer import PathOptimizer
 from PIL import Image
 from Point import Point
-from ImageProcess import Frame 
-from PathOptimizer import PathOptimizer
-import copy
-from Checkpoint import Checkpoint
-from time import sleep
-from Draw import Draw
-from Config import Config
 from Utils import Utils
 
 
@@ -232,7 +234,3 @@ if __name__ == '__main__':
     print optimizedPath
     AStar.PrintInImage(10,10,optimizedPath)
     raw_input()
-    
-    
-
-

@@ -1,15 +1,13 @@
-import numpy as np
-import cv2
-from pyimagesearch.shapedetector import ShapeDetector
 import argparse
-import imutils
-import urllib2
 import sys
+import urllib2
+
+import numpy as np
+
+import cv2
+import imutils
 from Color import Color
-
-
-
-
+from pyimagesearch.shapedetector import ShapeDetector
 
 colorName =raw_input("Enter the color : ")
 upperColor = Color(colorName,1)

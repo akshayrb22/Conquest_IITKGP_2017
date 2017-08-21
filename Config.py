@@ -38,5 +38,3 @@ class Config(object):
     obstacleBoundingPointList = []
     startTime = None
     endTime = None
-
-    

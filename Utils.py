@@ -5,13 +5,17 @@
 ##  Angle for marker()
 ##  distance formula()
 
-from math import *
-import numpy as np
-from Point import Point
 import copy
-from FindDirectionality import *
-from Checkpoint import Checkpoint,CheckpointShape
+from math import *
+
+import numpy as np
+
+from Checkpoint import Checkpoint, CheckpointShape
 from Config import Config
+from FindDirectionality import *
+from Point import Point
+
+
 class Utils(object):
     @staticmethod
     def arena_one_sort(checkPointList):

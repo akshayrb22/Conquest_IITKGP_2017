@@ -2,6 +2,7 @@
 ##It can also return the x & y coordinates separately
 from Config import Config
 
+
 class Point(object):
     value = 40
     def __init__(self, x=0, y=0):
@@ -27,4 +28,3 @@ if __name__ == '__main__':
     p1 = Point(0,0)
     p2 = Point(10,10)
     print p2.get_coordinate()
-    

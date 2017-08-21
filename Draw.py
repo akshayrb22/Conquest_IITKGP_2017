@@ -1,7 +1,8 @@
 import cv2
 from ImageProcess import Frame
-from Utils import Utils
 from Point import Point
+from Utils import Utils
+
 
 class Draw(object):
     @staticmethod
