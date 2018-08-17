@@ -1,14 +1,18 @@
 {
-    "python.unitTest.unittestArgs": [
-        "-v",
-        "-s",
-        ".",
-        "-p",
-        "test*.py"
-    ]
+	"python.unitTest.unittestArgs": [
+		"-v",
+		"-s",
+		".",
+		"-p",
+		"test*.py"
+	]
 ,
+"editor.tabSize": 4,
+"python.pythonPath": "/usr/local/lib/python3.5",
+"python.linting.pylintPath": "/usr/local/bin/pylint",
 "python.unitTest.unittestEnabled": false,
 "python.unitTest.promptToConfigure": false,
 "python.unitTest.pyTestEnabled": false,
-"python.unitTest.nosetestsEnabled": false
+"python.unitTest.nosetestsEnabled": false,
+"python.linting.pylintEnabled": true
 }
