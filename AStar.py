@@ -1,13 +1,7 @@
-##Assign to Akshay
-##Functionalities required
-##  return shortest path in an array of points(i.e coordinates)
-
 import copy
 import heapq
 from time import sleep
-
 import numpy as np
-
 import cv2
 import matplotlib.pyplot as plot
 import PIL

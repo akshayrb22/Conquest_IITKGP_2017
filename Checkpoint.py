@@ -5,10 +5,8 @@
 ##  area
 ##  angle with respect townhall
 
-import cv2
 from Area import Area
 from HSV import Color
-from Point import Point
 
 
 class CheckpointShape(object):

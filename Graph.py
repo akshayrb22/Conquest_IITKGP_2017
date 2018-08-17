@@ -1,11 +1,5 @@
-##Assign to Akshay 
-##Functionalities required-
-##  a graph class
-##  mapped graph
 import heapq
-
 import numpy as np
-
 import cv2
 import matplotlib.pyplot as plot
 import PIL
@@ -52,17 +46,9 @@ class SimpleGraph(object):
     def neighbors(self, id):
         return self.edges[id]
 
-  
-    
-    
     def heuristic(self, a, b):
         (x1, y1) = a
         (x2, y2) = b
         distance=float((((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)))^(1/2))
         return distance
 
-
-
-
-    graph=Grid(gridX,gridY)
-    graph.obstacles=array_of_obst

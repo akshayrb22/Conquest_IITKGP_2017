@@ -5,11 +5,9 @@
 ##  send commands to slave( ie arduino)
 ##  disconnect
 
-from multiprocessing import Process
 from time import sleep
 
 import bluetooth
-from FindDirectionality import Direction, MovementFunctions, Orientation
 
 
 class BluetoothController(object):
@@ -37,21 +35,24 @@ class BluetoothController(object):
                 if BluetoothController.target_address is not None:
                     print "Bluetooth Controller  found target with address ", BluetoothController.target_address
                     BluetoothController.connect_to_slave()
-                                      
+
                 else:
-                    print "could not find target bluetooth device nearby"                  
+                    print "could not find target bluetooth device nearby"
                 break
+
     @staticmethod
     def connect_to_slave():
         BluetoothController.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
         print "Bluetooth Controller  >> Connecting to Slave...."
         BluetoothController.sock.connect((BluetoothController.target_address, BluetoothController.port))
-        print"Bluetooth Controller conected success"
-    @staticmethod    
+        print "Bluetooth Controller conected success"
+
+    @staticmethod
     def disconnect():
         BluetoothController.sock.close()
+
     @staticmethod
-    def send_command(command,message = None):
+    def send_command(command, message=None):
 
         #send all command
         #print message
@@ -63,11 +64,12 @@ class BluetoothController(object):
         if BluetoothController.is_connected == True:
             BluetoothController.sock.send(command)
             BluetoothController.prevCommand = command
-        
+
         #     if BluetoothController.is_connected == True:
         #         BluetoothController.prevCommand = command
         #         BluetoothController.sock.send(command)
-        return 
+        return
+
 
 def parallelProcess(command):
     BluetoothController.connect()
@@ -76,6 +78,7 @@ def parallelProcess(command):
         BluetoothController.send_command(command)
         sleep(1)
 
+
 if __name__ == '__main__':
     #bluetoothController = BluetoothController("KAIZEN","B8:27:EB:26:F6:A4",1)
     command = "s"
@@ -83,7 +86,7 @@ if __name__ == '__main__':
     #bluetoothProcess.start()
     #bluetoothProcess.join()
     BluetoothController.connect()
-    
+
     while True:
         command = raw_input("Enter command: ")
         print " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + command

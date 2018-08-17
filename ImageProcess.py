@@ -1,14 +1,5 @@
-##Assign to Akshay
-##Functionalities required-
-##  capture frame(single image for resource & obsatcle processing)
-##  capture video
-##  find bot
-##  find resources,obstacles,town hall
-##  resizing, ratio
 import math
-
 import numpy as np
-
 import cv2
 import imutils
 import PIL
@@ -116,11 +107,6 @@ class Frame(object):
         If it is a resource, it is both triangles and squares  and the final list is sorted according to area so the
         triangles come first. If it is an obstacle we need only consider squares.
         '''
-
-        #cyan = 255
-        #orign
-        #
-
         checkPointList = []
 
         #ShapeDetector
@@ -164,10 +150,8 @@ class Frame(object):
                         origin = Frame.townHall.center
                         #print origin.toString()
                         angle, dist = Utils.angleBetweenPoints(origin,position)
-                        Frame.runTimeCounter += 1    
-                        
+                        Frame.runTimeCounter += 1
 
-                        
                         checkPointList.append(Checkpoint(area, position, dist, angle, shape))
                         
                         cv2.drawContours(Frame.resized, [c], -1, checkpointType.contour_color, 2)#cv2.drawContours(source,contours_to_be_passed_as_list,index_of_contours,colour,thickness)
@@ -177,16 +161,11 @@ class Frame(object):
                         x,y,w,h = cv2.boundingRect(c)
                         cv2.rectangle(Frame.resized,(x,y),(x+w,y+h),(0,255,0),2)
 
-                        #cv2.putText(Frame.resized, shapeMessage + " @" +position.toString() + " | A: "  + str(angle) , position.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-                        #cv2.line(Frame.resized, origin.get_coordinate(), position.get_coordinate(), (255,cyan,0), 2)#draws line from one point ti the other, last arg means thickness
-                        #cyan = cyan - 1
-                        #if Frame.runTimeCounter <= 2: 
-                        #    return checkPointList
         #sort checkpoints
         checkPointList.sort()
         return checkPointList
     #has been defined, never used
-    '''
+    
     @staticmethod
     def find_contour(threshold):
         #print 'Frame: findContour called '
@@ -200,7 +179,7 @@ class Frame(object):
         cnts = cv2.findContours(edges_resized.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
         return cnts
-    '''
+    
     @staticmethod
     def draw_contour(contour,contour_name,postion,color):
         cv2.drawContours(Frame.resized, [contour], -1, color, 2)
@@ -274,40 +253,11 @@ class Frame(object):
             cv2.putText(Frame.resized, "         Target @" + botCurrentTarget.center.toString() + " | A: "  + str(botCurrentTarget.angle) , botCurrentTarget.center.get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
         cv2.putText(Frame.resized, "   " + str(Utils.distance(botPosition,botCurrentTarget.center)), Utils.midPoint(botPosition,botCurrentTarget.center).get_coordinate(), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         if botCurrentNode != None:
-            cv2.arrowedLine(Frame.resized,botPosition.get_coordinate(), botCurrentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point ti the other, last arg means thickness
-        cv2.arrowedLine(Frame.resized,botPrevBack.center.get_coordinate(), botPrevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point ti the other, last arg means thickness
+            cv2.arrowedLine(Frame.resized,botPosition.get_coordinate(), botCurrentNode.get_coordinate(), (255,150,0), 2,0,0,0.1)#draws line from one point to the other, last arg means thickness
+        cv2.arrowedLine(Frame.resized,botPrevBack.center.get_coordinate(), botPrevFront.center.get_coordinate(), (255,255,255), 10,0,0,1)#draws line from one point to the other, last arg means thickness
         #draw big arrow on top of BOT 
         cv2.arrowedLine(Frame.resized,botPrevBack.center.get_coordinate(),Utils.getPointFromAngle(botPrevBack.center, botPrevFront.center),(255,255,25), 1,0,0,1)
         Frame.drawCircle(Frame.townHall.center,(0,255,255)) 
    
 
 '''
-if __name__ == '__main__':
-    Frame.connect(0)
-    Frame.cap_frame()
-    Frame.find_ratio()
-    Frame.show_frame()
-
-    while True:
-        Frame.cap_frame()
-        Frame.find_ratio()
-        Frame.show_frame()
-        #cv2.imwrite("frame.jpg", Frame.image)
-        #cv2.imshow("frame.jpg", Frame.image)
-        #rame.get_center_color("red")
-
-
-                            if position.x > origin.x and position.y > origin.y:
-                                quad = 4
-                                angle = 270 + angle
-                            elif position.x < origin.x and position.y > origin.y:
-                                quad = 3
-                                angle = 270 - angle
-                            elif position.x < origin.x and position.y < origin.y:
-                                quad = 2
-                                angle = angle + 90
-                            else:
-                                quad = 1
-                                angle = 90 - angle
-
-        '''

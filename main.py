@@ -1,14 +1,5 @@
-# DO NOT CHANGE CODE UNLESS IT IS NECESSARY!!!!! 
-# CALL ME IF YOU HAVE ANY DOUBTS!! PHONE no 992075227 :)
-# ALL CONFIGURATION OPTIONS ARE AVAILABLE IN Config.py.
-
-# I have not tried updated sorting algorithms!!!!
-# If you think this program works, cool. If it doesn't work, that's too bad
-# ALL THE BEST :)
-
 import math
 from time import sleep
-
 import cv2
 from Area import Area
 from AStar import *
