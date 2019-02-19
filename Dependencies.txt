@@ -1,0 +1,6 @@
+cv2
+numpy
+bluetooth
+matplotlib
+PIL
+rdp
